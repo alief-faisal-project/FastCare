@@ -177,17 +177,32 @@
            {/* Mobile menu button */}
            <button
              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-             className="md:hidden p-2 text-foreground"
+             className="md:hidden p-2 relative w-10 h-10 flex items-center justify-center"
            >
-             <i
-               className={`fa-solid ${isMobileMenuOpen ? "fa-xmark" : "fa-bars"} text-xl`}
-             />
+             <div className="relative w-6 h-4">
+               {/* Top bar */}
+               <span
+                 className={`absolute w-full h-1 bg-foreground rounded transition-all duration-300 ease-in-out
+        ${isMobileMenuOpen ? "rotate-45 top-1.5" : "top-0"}
+      `}
+               />
+
+               {/* Bottom bar */}
+               <span
+                 className={`absolute w-full h-1 bg-foreground rounded transition-all duration-300 ease-in-out
+        ${isMobileMenuOpen ? "-rotate-45 top-1.5" : "top-3"}
+      `}
+               />
+             </div>
            </button>
          </div>
 
          {/* Mobile Menu */}
          {isMobileMenuOpen && (
-           <div className="md:hidden py-4 border-t border-border animate-fade-in">
+           <div
+             className="md:hidden py-4 border-t border-border
+  animate-[slideDown_0.45s_cubic-bezier(0.22,1,0.36,1)]"
+           >
              {/* Mobile Auth */}
              <div className="pt-2">
                {isAuthenticated ? (
