@@ -1,0 +1,232 @@
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* FastCare.id Design System - Navy Blue & White Industrial Clean Theme */
+
+@layer base {
+  :root {
+    /* Primary Colors - Blue #3399FF */
+    --primary: 210 100% 60%;
+    --primary: 210 100% 20%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 210 100% 50%;
+
+    /* Background & Surface */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --card-hover: 210 40% 98%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Secondary & Muted */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Accent - Light Blue */
+    --accent: 210 100% 95%;
+    --accent-foreground: 210 100% 45%;
+
+    /* Status Colors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 205 90% 55%;
+
+    --radius: 0.75rem;
+
+    /* Sidebar */
+    --sidebar-background: 210 50% 15%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 205 90% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 50% 22%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 210 50% 22%;
+    --sidebar-ring: 205 90% 55%;
+
+    /* Custom FastCare tokens */
+    --hero-gradient: linear-gradient(
+      135deg,
+      hsl(205 90% 48%) 0%,
+      hsl(205 90% 65%) 100%
+    );
+    --card-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --card-shadow-hover:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .dark {
+    --primary: 205 90% 55%;
+    --primary-foreground: 205 50% 10%;
+    --background: 210 50% 5%;
+    --foreground: 210 40% 98%;
+    --card: 210 50% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 210 50% 8%;
+    --popover-foreground: 210 40% 98%;
+    --secondary: 210 50% 15%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 210 50% 15%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 210 50% 18%;
+    --accent-foreground: 210 100% 70%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 210 50% 18%;
+    --input: 210 50% 18%;
+    --ring: 205 90% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: "Open Sans", "Inter", system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inter", "Open Sans", system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  /* Loading Animation */
+  .loading-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* Fade In Animation */
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Slide animations */
+  .slide-up {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Hero Gradient */
+  .hero-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(205 90% 48%) 0%,
+      hsl(205 90% 65%) 100%
+    );
+  }
+
+  /* Card hover effect */
+  .hospital-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hospital-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  /* Navbar sticky */
+  .navbar-sticky {
+    @apply sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border;
+  }
+
+  /* Button variants */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200;
+  }
+
+  .btn-outline-primary {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-200;
+  }
+
+  /* Status badges */
+  .badge-success {
+    @apply bg-green-100 text-green-800 border-green-200;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+  }
+
+  .badge-danger {
+    @apply bg-red-100 text-red-800 border-red-200;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+}
