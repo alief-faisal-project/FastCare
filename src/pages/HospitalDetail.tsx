@@ -67,7 +67,7 @@ const HospitalDetail = () => {
           {/* Left Column - Main Info */}
           <div className="lg:col-span-2 space-y-6">
             {/* Hero Image */}
-            <div className="relative aspect-video overflow-hidden">
+            <div className="relative aspect-video overflow-hidden rounded-3xl">
               <img
                 src={hospital.image}
                 alt={hospital.name}
@@ -89,7 +89,7 @@ const HospitalDetail = () => {
             </div>
 
             {/* Facilities & Services */}
-            <div className="bg-card border border-border p-6">
+            <div className="bg-card border border-border p-6 rounded-3xl">
               <h2 className="text-lg font-semibold text-foreground mb-4 font-heading flex items-center gap-2">
                 <i className="fa-solid fa-stethoscope text-primary" />
                 Fasilitas & Layanan
@@ -111,7 +111,7 @@ const HospitalDetail = () => {
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
             {/* Information - Now on top */}
-            <div className="bg-card border border-border p-6">
+            <div className="bg-card border border-border p-6 rounded-3xl">
               <h3 className="text-lg font-semibold text-foreground mb-4 font-heading flex items-center gap-2">
                 <i className="fa-solid fa-circle-info text-primary" />
                 Informasi
@@ -161,37 +161,31 @@ const HospitalDetail = () => {
             </div>
 
             {/* Desktop: Action Buttons in a row */}
-            <div className="hidden md:flex gap-3">
+            <div className="hidden md:flex flex-col gap-3">
               <a
                 href={`tel:${hospital.phone}`}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-primary text-primary font-medium transition-colors"
+                className="flex items-center justify-center gap-2 py-3 rounded-xl border border-primary text-primary font-medium transition-colors"
               >
                 <i className="fa-solid fa-phone-volume" />
                 <span>Telepon</span>
               </a>
+
               <a
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-primary text-primary font-medium transition-colors"
+                className="flex items-center justify-center gap-2 py-3 rounded-xl border border-primary text-primary font-medium transition-colors"
               >
                 <i className="fa-solid fa-location-arrow" />
                 <span>Maps</span>
               </a>
-              <button
-                onClick={() => navigate(-1)}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-primary text-primary font-medium transition-colors"
-              >
-                <i class="fa-solid fa-chevron-left"></i>
-                <span>Kembali</span>
-              </button>
             </div>
 
             {/* Mobile: Stacked buttons */}
             <div className="md:hidden space-y-3">
               <a
                 href={`tel:${hospital.phone}`}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl  border border-primary text-primary font-medium transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-3xl  border border-primary text-primary font-medium transition-colors"
               >
                 <i className="fa-solid fa-phone-volume" />
                 <span>{hospital.phone}</span>
@@ -200,18 +194,11 @@ const HospitalDetail = () => {
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-primary text-primary font-medium transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-3xl border border-primary text-primary font-medium transition-colors"
               >
                 <i className="fa-solid fa-location-arrow" />
                 <span>Buka di Google Maps</span>
               </a>
-              <button
-                onClick={() => navigate(-1)}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-primary text-primary font-medium transition-colors"
-              >
-                <i class="fa-solid fa-chevron-left"></i>
-                <span>Kembali</span>
-              </button>
             </div>
           </div>
         </div>
