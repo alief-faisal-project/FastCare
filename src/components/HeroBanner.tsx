@@ -131,20 +131,20 @@ const HeroBanner = () => {
             )}
           </div>
 
-          {/* Desktop Dots Indicator */}
+          {/* Desktop Pill Indicator */}
           {activeBanners.length > 3 && (
-            <div className="flex items-center justify-center gap-2 mt-4">
-              {activeBanners.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`transition-all duration-300 rounded-full ${
-                    currentSlide === index
-                      ? "w-6 h-2 bg-primary"
-                      : "w-2 h-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                  }`}
+            <div className="flex justify-center mt-4">
+              <div className="relative flex items-center w-20 h-3 rounded-full bg-muted-foreground/20 overflow-hidden">
+                {/* inner sliding pill */}
+                <div
+                  className="absolute top-1/2 -translate-y-1/2 h-3 w-6 rounded-full bg-primary transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(${
+                      (currentSlide / (activeBanners.length - 1)) * (80 - 24)
+                    }px) translateY(-50%)`,
+                  }}
                 />
-              ))}
+              </div>
             </div>
           )}
         </div>
@@ -179,19 +179,22 @@ const HeroBanner = () => {
             ))}
           </div>
 
-          {/* Mobile Dots Indicator */}
+          {/* Mobile Pill Indicator */}
           {activeBanners.length > 2 && (
-            <div className="flex items-center justify-center gap-1.5 mt-3">
-              {activeBanners.map((_, index) => (
+            <div className="flex items-center justify-center mt-3">
+              <div className="relative w-12 h-2 rounded-full bg-muted-foreground/20 overflow-hidden">
                 <div
-                  key={index}
-                  className={`transition-all duration-300 rounded-full ${
-                    mobileCurrentSlide === index
-                      ? "w-5 h-1.5 bg-primary"
-                      : "w-1.5 h-1.5 bg-muted-foreground/30"
-                  }`}
+                  className="absolute top-1/2 h-1.5 w-4 -translate-y-1/2 rounded-full bg-primary transition-transform duration-300 ease-in-out"
+                  style={{
+                    transform: `translateX(${
+                      activeBanners.length > 1
+                        ? (mobileCurrentSlide / (activeBanners.length - 1)) *
+                          (48 - 16)
+                        : 0
+                    }px) translateY(-50%)`,
+                  }}
                 />
-              ))}
+              </div>
             </div>
           )}
         </div>
