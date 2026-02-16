@@ -2,11 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 
 const emergencyServices = [
-  {
-    icon: "fa-solid fa-truck-medical",
-    label: "Ambulan",
-    number: "119",
-  },
+  { icon: "fa-solid fa-truck-medical", label: "Ambulan", number: "119" },
   {
     icon: "fa-solid fa-heart-crack",
     label: "Kesehatan Jiwa",
@@ -22,20 +18,16 @@ const emergencyServices = [
     label: "Basarnas",
     number: "129",
   },
-  {
-    icon: "fa-solid fa-building-shield",
-    label: "Polisi",
-    number: "110",
-  },
+  { icon: "fa-solid fa-building-shield", label: "Polisi", number: "110" },
 ];
 
 const HeroBanner = () => {
   const { heroBanners } = useApp();
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [mobileCurrentSlide, setMobileCurrentSlide] = useState(0);
+  const [mobileProgress, setMobileProgress] = useState(0);
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const mobileRef = useRef<HTMLDivElement>(null);
 
   const activeBanners = heroBanners
     .filter((b) => b.isActive)
@@ -44,7 +36,7 @@ const HeroBanner = () => {
   if (activeBanners.length === 0) return null;
 
   // ===============================
-  // DESKTOP NAVIGATION (NO INFINITE)
+  // DESKTOP (NO INFINITE)
   // ===============================
 
   const maxDesktopSlide =
@@ -61,24 +53,28 @@ const HeroBanner = () => {
   };
 
   // ===============================
-  // MOBILE SCROLL DETECTOR (REALTIME)
+  // MOBILE SMOOTH PROGRESS (NO SNAP)
   // ===============================
 
   useEffect(() => {
-    const container = scrollContainerRef.current;
+    const container = mobileRef.current;
     if (!container) return;
 
     const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const itemWidth = container.offsetWidth / 2; // 2 visible
-      const index = Math.round(scrollLeft / itemWidth);
+      const maxScroll = container.scrollWidth - container.clientWidth;
 
-      setMobileCurrentSlide(Math.min(index, activeBanners.length - 1));
+      const progress = maxScroll > 0 ? container.scrollLeft / maxScroll : 0;
+
+      const indicatorWidth = 16; // px
+      const trackWidth = 64; // px
+      const maxTranslate = trackWidth - indicatorWidth;
+
+      setMobileProgress(progress * maxTranslate);
     };
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [activeBanners.length]);
+  }, []);
 
   return (
     <section className="py-3 md:py-4">
@@ -89,7 +85,6 @@ const HeroBanner = () => {
             <div
               className="flex gap-4 transition-transform duration-500 ease-in-out"
               style={{
-                // geser sesuai index, 1 slide = 33.333%
                 transform: `translateX(-${currentSlide * (100 / 3)}%)`,
               }}
             >
@@ -116,29 +111,27 @@ const HeroBanner = () => {
               ))}
             </div>
 
-            {/* Arrow Navigation */}
             {activeBanners.length > 3 && (
               <>
                 <button
                   onClick={goToPrevious}
                   disabled={currentSlide === 0}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-muted transition-colors z-20 disabled:opacity-40"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
                 >
-                  <i className="fa-solid fa-chevron-left text-foreground text-sm" />
+                  <i className="fa-solid fa-chevron-left text-sm" />
                 </button>
 
                 <button
                   onClick={goToNext}
                   disabled={currentSlide === maxDesktopSlide}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-muted transition-colors z-20 disabled:opacity-40"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
                 >
-                  <i className="fa-solid fa-chevron-right text-foreground text-sm" />
+                  <i className="fa-solid fa-chevron-right text-sm" />
                 </button>
               </>
             )}
           </div>
 
-          {/* Desktop Indicator (REAL POSITION) */}
           {activeBanners.length > 3 && (
             <div className="flex justify-center mt-4">
               <div className="relative flex items-center w-20 h-3 rounded-full bg-muted-foreground/20 overflow-hidden">
@@ -160,15 +153,15 @@ const HeroBanner = () => {
         {/* ================= MOBILE ================= */}
         <div className="md:hidden px-4">
           <div
-            ref={scrollContainerRef}
-            className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
+            ref={mobileRef}
+            className="flex gap-3 overflow-x-auto scroll-smooth scrollbar-hide"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {activeBanners.map((banner) => (
               <a
                 key={banner.id}
                 href={banner.link || "#"}
-                className="flex-shrink-0 w-[calc(50%-6px)] snap-start rounded-3xl overflow-hidden"
+                className="flex-shrink-0 w-[calc(50%-6px)] rounded-3xl overflow-hidden"
               >
                 <div className="aspect-[16/9] relative">
                   <img
@@ -187,19 +180,13 @@ const HeroBanner = () => {
             ))}
           </div>
 
-          {/* Mobile Indicator */}
-          {activeBanners.length > 2 && (
+          {activeBanners.length > 1 && (
             <div className="flex items-center justify-center mt-3">
-              <div className="relative w-12 h-2 rounded-full bg-muted-foreground/20 overflow-hidden">
+              <div className="relative w-16 h-2 rounded-full bg-muted-foreground/20 overflow-hidden">
                 <div
-                  className="absolute top-1/2 h-1.5 w-4 -translate-y-1/2 rounded-full bg-primary transition-transform duration-300 ease-in-out"
+                  className="absolute top-1/2 h-2 w-4 -translate-y-1/2 rounded-full bg-primary transition-transform duration-75 ease-linear"
                   style={{
-                    transform: `translateX(${
-                      activeBanners.length > 1
-                        ? (mobileCurrentSlide / (activeBanners.length - 1)) *
-                          (48 - 16)
-                        : 0
-                    }px) translateY(-50%)`,
+                    transform: `translateX(${mobileProgress}px) translateY(-50%)`,
                   }}
                 />
               </div>
@@ -208,14 +195,14 @@ const HeroBanner = () => {
         </div>
       </div>
 
-      {/* Emergency Services tetap sama */}
+      {/* ================= EMERGENCY SERVICES ================= */}
       <div className="container mx-auto px-4 mt-4">
         <div className="hidden md:flex items-start justify-between w-full max-w-xl mx-auto">
           {emergencyServices.map((service, index) => (
             <div key={index} className="flex flex-col items-center gap-1.5">
               <a
                 href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-xl hover:border-primary/50 hover:bg-accent/50 transition-colors min-w-[90px]"
+                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-xl min-w-[90px]"
               >
                 <i className={`${service.icon} text-primary text-lg`} />
                 <span className="text-xs font-bold text-primary">
@@ -240,7 +227,7 @@ const HeroBanner = () => {
             >
               <a
                 href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-xl hover:border-primary/50 hover:bg-accent/50 transition-colors min-w-[100px]"
+                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-xl min-w-[100px]"
               >
                 <i className={`${service.icon} text-primary text-sm`} />
                 <span className="text-[10px] font-bold text-primary">
