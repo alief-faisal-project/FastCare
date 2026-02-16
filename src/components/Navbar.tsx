@@ -68,7 +68,7 @@
                      : selectedCity}
                  </span>
                  <i
-                   className={`fa-solid fa-chevron-down text-primary text-x text-muted-foreground transition-transform ${isLocationOpen ? "rotate-180" : ""}`}
+                   className={`fa-solid fa-chevron-down text-primary text-muted-foreground transition-transform ${isLocationOpen ? "rotate-180" : ""}`}
                  />
                </button>
 

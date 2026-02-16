@@ -77,7 +77,7 @@ const HospitalDetail = () => {
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <div className="flex flex-wrap gap-2 mb-3">
                   {hospital.hasIGD && (
-                    <span className="px-3 py-1 bg-red-600 rounded-r-xl text-white text-sm font-semibold">
+                    <span className="px-3 py-1 bg-red-600 text-white text-sm font-semibold">
                       IGD 24 Jam
                     </span>
                   )}
@@ -164,7 +164,7 @@ const HospitalDetail = () => {
             <div className="hidden md:flex flex-col gap-3">
               <a
                 href={`tel:${hospital.phone}`}
-                className="flex items-center justify-center gap-2 py-3 rounded-xl border border-primary text-primary font-medium transition-colors"
+                className="flex items-center justify-center gap-2 py-3 rounded-xl bg-primary border border-primary text-white font-medium transition-colors"
               >
                 <i className="fa-solid fa-phone-volume" />
                 <span>Telepon</span>
@@ -181,20 +181,21 @@ const HospitalDetail = () => {
               </a>
             </div>
 
-            {/* Mobile: Stacked buttons */}
-            <div className="md:hidden space-y-3">
+            {/* Mobile: Side by side buttons */}
+            <div className="md:hidden flex gap-3">
               <a
                 href={`tel:${hospital.phone}`}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-3xl  border border-primary text-primary font-medium transition-colors"
+                className="flex items-center justify-center gap-2 flex-1 py-3 rounded-3xl bg-primary border border-primary text-white font-medium transition-colors"
               >
                 <i className="fa-solid fa-phone-volume" />
                 <span>{hospital.phone}</span>
               </a>
+
               <a
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-3xl border border-primary text-primary font-medium transition-colors"
+                className="flex items-center justify-center gap-2 flex-1 py-3 rounded-3xl border border-primary text-primary font-medium transition-colors"
               >
                 <i className="fa-solid fa-location-arrow" />
                 <span>Buka di Google Maps</span>

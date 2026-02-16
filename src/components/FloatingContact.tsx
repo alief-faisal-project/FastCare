@@ -57,8 +57,7 @@ const FloatingContact = () => {
 
           <div className="space-y-4 pt-2">
             <p className="text-muted-foreground text-sm">
-              Tim FastCare.id siap membantu Anda menemukan rumah sakit yang
-              tepat di Provinsi Banten.
+              Kami siap membantu Anda, silahkan pilih bantuan yg anda butuhkan :
             </p>
 
             <div className="space-y-3">
@@ -66,9 +65,9 @@ const FloatingContact = () => {
                 href="https://wa.me/6281234567890"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 border border-border hover:border-primary hover:bg-accent transition-colors"
+                className="flex items-center gap-3 p-3 border border-border rounded-xl hover:border-primary hover:bg-accent transition-colors"
               >
-                <i className="fa-brands fa-whatsapp text-emerald-500 text-2xl" />
+                <i className="fa-brands fa-whatsapp text-primary text-2xl" />
                 <div>
                   <p className="font-medium text-foreground text-sm">
                     WhatsApp
@@ -81,7 +80,7 @@ const FloatingContact = () => {
 
               <a
                 href="mailto:help@fastcare.id"
-                className="flex items-center gap-3 p-3 border border-border hover:border-primary hover:bg-accent transition-colors"
+                className="flex items-center gap-3 p-3 border border-border rounded-xl hover:border-primary hover:bg-accent transition-colors"
               >
                 <i className="fa-solid fa-envelope text-primary text-2xl" />
                 <div>
