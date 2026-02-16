@@ -25,9 +25,9 @@ const HeroBanner = () => {
   const { heroBanners } = useApp();
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [mobileProgress, setMobileProgress] = useState(0);
 
   const mobileRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
 
   const activeBanners = heroBanners
     .filter((b) => b.isActive)
@@ -36,7 +36,7 @@ const HeroBanner = () => {
   if (activeBanners.length === 0) return null;
 
   // ===============================
-  // DESKTOP (NO INFINITE)
+  // DESKTOP
   // ===============================
 
   const maxDesktopSlide =
@@ -53,27 +53,41 @@ const HeroBanner = () => {
   };
 
   // ===============================
-  // MOBILE SMOOTH PROGRESS (NO SNAP)
+  // MOBILE ULTRA SMOOTH INDICATOR
   // ===============================
 
   useEffect(() => {
     const container = mobileRef.current;
-    if (!container) return;
+    const indicator = indicatorRef.current;
 
-    const handleScroll = () => {
+    if (!container || !indicator) return;
+
+    let ticking = false;
+
+    const updateIndicator = () => {
       const maxScroll = container.scrollWidth - container.clientWidth;
 
       const progress = maxScroll > 0 ? container.scrollLeft / maxScroll : 0;
 
-      const indicatorWidth = 16; // px
-      const trackWidth = 64; // px
-      const maxTranslate = trackWidth - indicatorWidth;
+      const maxTranslate = 48; // 64 track - 16 dot
 
-      setMobileProgress(progress * maxTranslate);
+      indicator.style.transform = `translate3d(${progress * maxTranslate}px, 0, 0)`;
+
+      ticking = false;
     };
 
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(updateIndicator);
+        ticking = true;
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   return (
@@ -100,12 +114,6 @@ const HeroBanner = () => {
                       alt={banner.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-                      <h3 className="text-white font-bold text-sm md:text-lg line-clamp-2 font-heading">
-                        {banner.title}
-                      </h3>
-                    </div>
                   </div>
                 </a>
               ))}
@@ -131,30 +139,13 @@ const HeroBanner = () => {
               </>
             )}
           </div>
-
-          {activeBanners.length > 3 && (
-            <div className="flex justify-center mt-4">
-              <div className="relative flex items-center w-20 h-3 rounded-full bg-muted-foreground/20 overflow-hidden">
-                <div
-                  className="absolute top-1/2 -translate-y-1/2 h-3 w-6 rounded-full bg-primary transition-transform duration-500 ease-in-out"
-                  style={{
-                    transform: `translateX(${
-                      maxDesktopSlide > 0
-                        ? (currentSlide / maxDesktopSlide) * (80 - 24)
-                        : 0
-                    }px) translateY(-50%)`,
-                  }}
-                />
-              </div>
-            </div>
-          )}
         </div>
 
         {/* ================= MOBILE ================= */}
         <div className="md:hidden px-4">
           <div
             ref={mobileRef}
-            className="flex gap-3 overflow-x-auto scroll-smooth scrollbar-hide"
+            className="flex gap-3 overflow-x-auto scrollbar-hide"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {activeBanners.map((banner) => (
@@ -169,12 +160,6 @@ const HeroBanner = () => {
                     alt={banner.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-2">
-                    <h3 className="text-white font-bold text-xs line-clamp-2 font-heading">
-                      {banner.title}
-                    </h3>
-                  </div>
                 </div>
               </a>
             ))}
@@ -184,61 +169,12 @@ const HeroBanner = () => {
             <div className="flex items-center justify-center mt-3">
               <div className="relative w-16 h-2 rounded-full bg-muted-foreground/20 overflow-hidden">
                 <div
-                  className="absolute top-1/2 h-2 w-4 -translate-y-1/2 rounded-full bg-primary transition-transform duration-75 ease-linear"
-                  style={{
-                    transform: `translateX(${mobileProgress}px) translateY(-50%)`,
-                  }}
+                  ref={indicatorRef}
+                  className="absolute top-0 left-0 h-2 w-4 rounded-full bg-primary will-change-transform"
                 />
               </div>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* ================= EMERGENCY SERVICES ================= */}
-      <div className="container mx-auto px-4 mt-4">
-        <div className="hidden md:flex items-start justify-between w-full max-w-xl mx-auto">
-          {emergencyServices.map((service, index) => (
-            <div key={index} className="flex flex-col items-center gap-1.5">
-              <a
-                href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-xl min-w-[90px]"
-              >
-                <i className={`${service.icon} text-primary text-lg`} />
-                <span className="text-xs font-bold text-primary">
-                  {service.number}
-                </span>
-              </a>
-              <span className="text-xs font-medium text-foreground text-center leading-tight">
-                {service.label}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div
-          className="md:hidden flex gap-3 overflow-x-auto scrollbar-hide"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {emergencyServices.map((service, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center gap-1 flex-shrink-0"
-            >
-              <a
-                href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-xl min-w-[100px]"
-              >
-                <i className={`${service.icon} text-primary text-sm`} />
-                <span className="text-[10px] font-bold text-primary">
-                  {service.number}
-                </span>
-              </a>
-              <span className="text-[10px] font-medium text-foreground text-center leading-tight">
-                {service.label}
-              </span>
-            </div>
-          ))}
         </div>
       </div>
     </section>
