@@ -35,9 +35,7 @@ const HeroBanner = () => {
 
   if (activeBanners.length === 0) return null;
 
-  // ===============================
-  // DESKTOP
-  // ===============================
+  // ================= DESKTOP =================
 
   const maxDesktopSlide =
     activeBanners.length > 3 ? activeBanners.length - 3 : 0;
@@ -52,27 +50,24 @@ const HeroBanner = () => {
     setCurrentSlide((prev) => prev + 1);
   };
 
-  // ===============================
-  // MOBILE ULTRA SMOOTH INDICATOR
-  // ===============================
+  // ================= MOBILE ULTRA SMOOTH =================
 
   useEffect(() => {
     const container = mobileRef.current;
     const indicator = indicatorRef.current;
-
     if (!container || !indicator) return;
 
     let ticking = false;
 
     const updateIndicator = () => {
       const maxScroll = container.scrollWidth - container.clientWidth;
-
       const progress = maxScroll > 0 ? container.scrollLeft / maxScroll : 0;
 
-      const maxTranslate = 48; // 64 track - 16 dot
+      const trackWidth = 64;
+      const dotWidth = 16;
+      const maxTranslate = trackWidth - dotWidth;
 
-      indicator.style.transform = `translate3d(${progress * maxTranslate}px, 0, 0)`;
-
+      indicator.style.transform = `translate3d(${progress * maxTranslate}px,0,0)`;
       ticking = false;
     };
 
@@ -114,6 +109,12 @@ const HeroBanner = () => {
                       alt={banner.title}
                       className="w-full h-full object-cover"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+                      <h3 className="text-white font-bold text-sm md:text-lg line-clamp-2 font-heading">
+                        {banner.title}
+                      </h3>
+                    </div>
                   </div>
                 </a>
               ))}
@@ -160,6 +161,12 @@ const HeroBanner = () => {
                     alt={banner.title}
                     className="w-full h-full object-cover"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-2">
+                    <h3 className="text-white font-bold text-xs line-clamp-2 font-heading">
+                      {banner.title}
+                    </h3>
+                  </div>
                 </div>
               </a>
             ))}
@@ -175,6 +182,53 @@ const HeroBanner = () => {
               </div>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* ================= EMERGENCY SERVICES ================= */}
+      <div className="container mx-auto px-4 mt-4">
+        <div className="hidden md:flex items-start justify-between w-full max-w-xl mx-auto">
+          {emergencyServices.map((service, index) => (
+            <div key={index} className="flex flex-col items-center gap-1.5">
+              <a
+                href={`tel:${service.number.replace(/\s/g, "")}`}
+                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-xl min-w-[90px]"
+              >
+                <i className={`${service.icon} text-primary text-lg`} />
+                <span className="text-xs font-bold text-primary">
+                  {service.number}
+                </span>
+              </a>
+              <span className="text-xs font-medium text-foreground text-center leading-tight">
+                {service.label}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div
+          className="md:hidden flex gap-3 overflow-x-auto scrollbar-hide"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {emergencyServices.map((service, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center gap-1 flex-shrink-0"
+            >
+              <a
+                href={`tel:${service.number.replace(/\s/g, "")}`}
+                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-xl min-w-[100px]"
+              >
+                <i className={`${service.icon} text-primary text-sm`} />
+                <span className="text-[10px] font-bold text-primary">
+                  {service.number}
+                </span>
+              </a>
+              <span className="text-[10px] font-medium text-foreground text-center leading-tight">
+                {service.label}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </section>
