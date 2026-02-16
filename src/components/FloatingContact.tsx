@@ -90,6 +90,22 @@ const FloatingContact = () => {
                   </p>
                 </div>
               </a>
+              <a
+                href="/qr-dana-bank.png" // ganti dengan path atau link QR code kamu
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-3 border border-border rounded-xl hover:border-primary hover:bg-accent transition-colors"
+              >
+                <i className="fa-solid fa-qrcode text-primary text-2xl" />
+                <div>
+                  <p className="font-medium text-foreground text-sm">
+                    Dukung Pengembangan
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Scan QR e-Money / Transfer Bank
+                  </p>
+                </div>
+              </a>
             </div>
           </div>
         </DialogContent>
