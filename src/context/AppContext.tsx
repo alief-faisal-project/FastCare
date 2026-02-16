@@ -50,24 +50,59 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // =============================
+  // INITIAL LOAD
+  // =============================
+
   useEffect(() => {
     fetchInitialData();
-    checkAuth();
+    checkSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        console.log("AUTH CHANGED:", session);
+
+        setIsAuthenticated(!!session);
+        setCurrentUser(session?.user ?? null);
+      },
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
+
+  const checkSession = async () => {
+    const { data, error } = await supabase.auth.getSession();
+
+    console.log("SESSION:", data);
+    console.log("SESSION ERROR:", error);
+
+    if (data.session) {
+      setIsAuthenticated(true);
+      setCurrentUser(data.session.user);
+    } else {
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+    }
+  };
 
   const fetchInitialData = async () => {
     setIsLoading(true);
 
-    const { data: hospitalsData } = await supabase
+    const { data: hospitalsData, error: hospitalsError } = await supabase
       .from("hospitals")
       .select("*")
       .order("created_at", { ascending: false });
 
-    const { data: bannersData } = await supabase
+    const { data: bannersData, error: bannersError } = await supabase
       .from("hero_banners")
       .select("*")
       .eq("is_active", true)
       .order("sort_order", { ascending: true });
+
+    if (hospitalsError) console.error("FETCH HOSPITAL ERROR:", hospitalsError);
+    if (bannersError) console.error("FETCH BANNER ERROR:", bannersError);
 
     if (hospitalsData) setHospitals(hospitalsData as Hospital[]);
     if (bannersData) setHeroBanners(bannersData as HeroBanner[]);
@@ -75,24 +110,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   };
 
-  const checkAuth = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      setIsAuthenticated(true);
-      setCurrentUser(user);
-    }
-  };
-
   // =============================
   // HOSPITAL CRUD
   // =============================
 
   const addHospital = async (hospital: Partial<Hospital>) => {
-    const { error } = await supabase.from("hospitals").insert(hospital);
-    if (!error) fetchInitialData();
+    const { data, error } = await supabase
+      .from("hospitals")
+      .insert([hospital])
+      .select();
+
+    if (error) {
+      console.error("INSERT ERROR:", error);
+      alert(error.message);
+      return;
+    }
+
+    if (data) {
+      setHospitals((prev) => [data[0], ...prev]);
+    }
   };
 
   const updateHospital = async (id: string, hospital: Partial<Hospital>) => {
@@ -101,13 +137,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
       .update(hospital)
       .eq("id", id);
 
-    if (!error) fetchInitialData();
+    if (error) {
+      console.error("UPDATE ERROR:", error);
+      alert(error.message);
+      return;
+    }
+
+    fetchInitialData();
   };
 
   const deleteHospital = async (id: string) => {
     const { error } = await supabase.from("hospitals").delete().eq("id", id);
 
-    if (!error) fetchInitialData();
+    if (error) {
+      console.error("DELETE ERROR:", error);
+      alert(error.message);
+      return;
+    }
+
+    setHospitals((prev) => prev.filter((h) => h.id !== id));
   };
 
   const getHospitalById = (id: string) => {
@@ -119,17 +167,41 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // =============================
 
   const addHeroBanner = async (banner: Partial<HeroBanner>) => {
-    await supabase.from("hero_banners").insert(banner);
+    const { error } = await supabase.from("hero_banners").insert([banner]);
+
+    if (error) {
+      console.error("BANNER INSERT ERROR:", error);
+      alert(error.message);
+      return;
+    }
+
     fetchInitialData();
   };
 
   const updateHeroBanner = async (id: string, banner: Partial<HeroBanner>) => {
-    await supabase.from("hero_banners").update(banner).eq("id", id);
+    const { error } = await supabase
+      .from("hero_banners")
+      .update(banner)
+      .eq("id", id);
+
+    if (error) {
+      console.error("BANNER UPDATE ERROR:", error);
+      alert(error.message);
+      return;
+    }
+
     fetchInitialData();
   };
 
   const deleteHeroBanner = async (id: string) => {
-    await supabase.from("hero_banners").delete().eq("id", id);
+    const { error } = await supabase.from("hero_banners").delete().eq("id", id);
+
+    if (error) {
+      console.error("BANNER DELETE ERROR:", error);
+      alert(error.message);
+      return;
+    }
+
     fetchInitialData();
   };
 
@@ -165,15 +237,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // =============================
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) return false;
+    if (error) {
+      console.error("LOGIN ERROR:", error);
+      return false;
+    }
 
-    setIsAuthenticated(true);
-    setCurrentUser(data.user);
     return true;
   };
 
