@@ -1,224 +1,186 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Hospital, HeroBanner, AdminUser, UserLocation, BantenCity } from '@/types';
-import { initialHospitals, initialHeroBanners, demoAdminUsers } from '@/data/initialData';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { supabase } from "@/lib/supabase";
+import { Hospital, HeroBanner, UserLocation, BantenCity } from "@/types";
 
 interface AppContextType {
-  // Hospitals
   hospitals: Hospital[];
-  addHospital: (hospital: Omit<Hospital, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  updateHospital: (id: string, hospital: Partial<Hospital>) => void;
-  deleteHospital: (id: string) => void;
+  addHospital: (hospital: Partial<Hospital>) => Promise<void>;
+  updateHospital: (id: string, hospital: Partial<Hospital>) => Promise<void>;
+  deleteHospital: (id: string) => Promise<void>;
   getHospitalById: (id: string) => Hospital | undefined;
-  
-  // Hero Banners
+
   heroBanners: HeroBanner[];
-  addHeroBanner: (banner: Omit<HeroBanner, 'id'>) => void;
-  updateHeroBanner: (id: string, banner: Partial<HeroBanner>) => void;
-  deleteHeroBanner: (id: string) => void;
-  
-  // Location
+  addHeroBanner: (banner: Partial<HeroBanner>) => Promise<void>;
+  updateHeroBanner: (id: string, banner: Partial<HeroBanner>) => Promise<void>;
+  deleteHeroBanner: (id: string) => Promise<void>;
+
   userLocation: UserLocation | null;
   setUserLocation: (location: UserLocation | null) => void;
-  selectedCity: BantenCity | 'Semua' | 'Lokasi Terdekat';
-  setSelectedCity: (city: BantenCity | 'Semua' | 'Lokasi Terdekat') => void;
+  selectedCity: BantenCity | "Semua" | "Lokasi Terdekat";
+  setSelectedCity: (city: BantenCity | "Semua" | "Lokasi Terdekat") => void;
   detectLocation: () => Promise<void>;
-  
-  // Auth
+
   isAuthenticated: boolean;
-  currentUser: AdminUser | null;
-  login: (username: string, password: string) => boolean;
-  logout: () => void;
-  
-  // UI
+  currentUser: any;
+  login: (email: string, password: string) => Promise<boolean>;
+  logout: () => Promise<void>;
+
   isLoading: boolean;
-  setIsLoading: (loading: boolean) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const STORAGE_KEYS = {
-  HOSPITALS: 'fastcare_hospitals',
-  BANNERS: 'fastcare_banners',
-  AUTH: 'fastcare_auth',
-};
-
 export function AppProvider({ children }: { children: ReactNode }) {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [heroBanners, setHeroBanners] = useState<HeroBanner[]>([]);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
-  const [selectedCity, setSelectedCity] = useState<BantenCity | 'Semua' | 'Lokasi Terdekat'>('Semua');
+  const [selectedCity, setSelectedCity] = useState<
+    BantenCity | "Semua" | "Lokasi Terdekat"
+  >("Semua");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Initialize data from localStorage or use initial data
   useEffect(() => {
-    const storedHospitals = localStorage.getItem(STORAGE_KEYS.HOSPITALS);
-    const storedBanners = localStorage.getItem(STORAGE_KEYS.BANNERS);
-    const storedAuth = localStorage.getItem(STORAGE_KEYS.AUTH);
-
-    if (storedHospitals) {
-      setHospitals(JSON.parse(storedHospitals));
-    } else {
-      setHospitals(initialHospitals);
-      localStorage.setItem(STORAGE_KEYS.HOSPITALS, JSON.stringify(initialHospitals));
-    }
-
-    if (storedBanners) {
-      setHeroBanners(JSON.parse(storedBanners));
-    } else {
-      setHeroBanners(initialHeroBanners);
-      localStorage.setItem(STORAGE_KEYS.BANNERS, JSON.stringify(initialHeroBanners));
-    }
-
-    if (storedAuth) {
-      const auth = JSON.parse(storedAuth);
-      setIsAuthenticated(true);
-      setCurrentUser(auth);
-    }
-
-    // Simulate loading
-    setTimeout(() => setIsLoading(false), 2000);
+    fetchInitialData();
+    checkAuth();
   }, []);
 
-  // Save to localStorage when data changes
-  useEffect(() => {
-    if (hospitals.length > 0) {
-      localStorage.setItem(STORAGE_KEYS.HOSPITALS, JSON.stringify(hospitals));
-    }
-  }, [hospitals]);
+  const fetchInitialData = async () => {
+    setIsLoading(true);
 
-  useEffect(() => {
-    if (heroBanners.length > 0) {
-      localStorage.setItem(STORAGE_KEYS.BANNERS, JSON.stringify(heroBanners));
-    }
-  }, [heroBanners]);
+    const { data: hospitalsData } = await supabase
+      .from("hospitals")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-  // Calculate distance for hospitals
-  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-    const R = 6371; // Earth's radius in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLng = (lng2 - lng1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLng / 2) * Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+    const { data: bannersData } = await supabase
+      .from("hero_banners")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
+
+    if (hospitalsData) setHospitals(hospitalsData as Hospital[]);
+    if (bannersData) setHeroBanners(bannersData as HeroBanner[]);
+
+    setIsLoading(false);
   };
 
-  // Detect user location
+  const checkAuth = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      setIsAuthenticated(true);
+      setCurrentUser(user);
+    }
+  };
+
+  // =============================
+  // HOSPITAL CRUD
+  // =============================
+
+  const addHospital = async (hospital: Partial<Hospital>) => {
+    const { error } = await supabase.from("hospitals").insert(hospital);
+    if (!error) fetchInitialData();
+  };
+
+  const updateHospital = async (id: string, hospital: Partial<Hospital>) => {
+    const { error } = await supabase
+      .from("hospitals")
+      .update(hospital)
+      .eq("id", id);
+
+    if (!error) fetchInitialData();
+  };
+
+  const deleteHospital = async (id: string) => {
+    const { error } = await supabase.from("hospitals").delete().eq("id", id);
+
+    if (!error) fetchInitialData();
+  };
+
+  const getHospitalById = (id: string) => {
+    return hospitals.find((h) => h.id === id);
+  };
+
+  // =============================
+  // HERO BANNER CRUD
+  // =============================
+
+  const addHeroBanner = async (banner: Partial<HeroBanner>) => {
+    await supabase.from("hero_banners").insert(banner);
+    fetchInitialData();
+  };
+
+  const updateHeroBanner = async (id: string, banner: Partial<HeroBanner>) => {
+    await supabase.from("hero_banners").update(banner).eq("id", id);
+    fetchInitialData();
+  };
+
+  const deleteHeroBanner = async (id: string) => {
+    await supabase.from("hero_banners").delete().eq("id", id);
+    fetchInitialData();
+  };
+
+  // =============================
+  // GEO LOCATION
+  // =============================
+
   const detectLocation = async (): Promise<void> => {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
-        reject(new Error('Geolocation not supported'));
+        reject(new Error("Geolocation not supported"));
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
+        (position) => {
           const location: UserLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
+
           setUserLocation(location);
-          setSelectedCity('Lokasi Terdekat');
-          
-          // Update hospitals with distance after setting location
-          setHospitals(prev => prev.map(hospital => ({
-            ...hospital,
-            distance: calculateDistance(
-              location.lat,
-              location.lng,
-              hospital.coordinates.lat,
-              hospital.coordinates.lng
-            ),
-          })));
-          
+          setSelectedCity("Lokasi Terdekat");
           resolve();
         },
-        (error) => {
-          console.error('Error getting location:', error);
-          reject(error);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 60000
-        }
+        (error) => reject(error),
       );
     });
   };
 
-  // Hospital CRUD
-  const addHospital = (hospital: Omit<Hospital, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const newHospital: Hospital = {
-      ...hospital,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: new Date().toISOString().split('T')[0],
-    };
-    setHospitals(prev => [...prev, newHospital]);
+  // =============================
+  // AUTH
+  // =============================
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) return false;
+
+    setIsAuthenticated(true);
+    setCurrentUser(data.user);
+    return true;
   };
 
-  const updateHospital = (id: string, updates: Partial<Hospital>) => {
-    setHospitals(prev =>
-      prev.map(hospital =>
-        hospital.id === id
-          ? { ...hospital, ...updates, updatedAt: new Date().toISOString().split('T')[0] }
-          : hospital
-      )
-    );
-  };
-
-  const deleteHospital = (id: string) => {
-    setHospitals(prev => prev.filter(hospital => hospital.id !== id));
-  };
-
-  const getHospitalById = (id: string) => {
-    return hospitals.find(h => h.id === id);
-  };
-
-  // Banner CRUD
-  const addHeroBanner = (banner: Omit<HeroBanner, 'id'>) => {
-    const newBanner: HeroBanner = {
-      ...banner,
-      id: Date.now().toString(),
-    };
-    setHeroBanners(prev => [...prev, newBanner]);
-  };
-
-  const updateHeroBanner = (id: string, updates: Partial<HeroBanner>) => {
-    setHeroBanners(prev =>
-      prev.map(banner => (banner.id === id ? { ...banner, ...updates } : banner))
-    );
-  };
-
-  const deleteHeroBanner = (id: string) => {
-    setHeroBanners(prev => prev.filter(banner => banner.id !== id));
-  };
-
-  // Auth
-  const login = (username: string, password: string): boolean => {
-    const user = demoAdminUsers.find(
-      u => u.username === username && u.password === password
-    );
-    if (user) {
-      setIsAuthenticated(true);
-      setCurrentUser(user);
-      localStorage.setItem(STORAGE_KEYS.AUTH, JSON.stringify(user));
-      return true;
-    }
-    return false;
-  };
-
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setIsAuthenticated(false);
     setCurrentUser(null);
-    localStorage.removeItem(STORAGE_KEYS.AUTH);
   };
 
   return (
@@ -243,7 +205,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         isLoading,
-        setIsLoading,
         searchQuery,
         setSearchQuery,
       }}
@@ -255,8 +216,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
 export function useApp() {
   const context = useContext(AppContext);
-  if (context === undefined) {
-    throw new Error('useApp must be used within an AppProvider');
+  if (!context) {
+    throw new Error("useApp must be used within AppProvider");
   }
   return context;
 }
