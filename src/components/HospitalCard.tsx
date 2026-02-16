@@ -62,7 +62,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
           <span className="flex items-center gap-1">
             <i className="fa-solid fa-bed" />
-            {hospital.totalBeds} Bed
+            {hospital.totalBeds} Kamar
           </span>
           {hospital.hasICU && (
             <span className="flex items-center gap-1">

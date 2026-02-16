@@ -53,15 +53,31 @@ const HeroBanner = () => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
+    let frame: number;
+
     const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const itemWidth = container.offsetWidth / 2;
-      const newSlide = Math.round(scrollLeft / itemWidth);
-      setMobileCurrentSlide(Math.min(newSlide, activeBanners.length - 1));
+      if (frame) cancelAnimationFrame(frame);
+
+      frame = requestAnimationFrame(() => {
+        const scrollLeft = container.scrollLeft;
+        const maxScrollLeft = container.scrollWidth - container.clientWidth;
+
+        if (maxScrollLeft <= 0) {
+          setMobileCurrentSlide(0);
+          return;
+        }
+
+        // realtime progress (0 → 1)
+        const progress = scrollLeft / maxScrollLeft;
+        setMobileCurrentSlide(progress);
+      });
     };
 
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, [activeBanners.length]);
 
   if (activeBanners.length === 0) return null;
@@ -184,14 +200,9 @@ const HeroBanner = () => {
             <div className="flex items-center justify-center mt-3">
               <div className="relative w-12 h-2 rounded-full bg-muted-foreground/20 overflow-hidden">
                 <div
-                  className="absolute top-1/2 h-1.5 w-4 -translate-y-1/2 rounded-full bg-primary transition-transform duration-300 ease-in-out"
+                  className="absolute top-1/2 h-1.5 w-4 -translate-y-1/2 rounded-full bg-primary"
                   style={{
-                    transform: `translateX(${
-                      activeBanners.length > 1
-                        ? (mobileCurrentSlide / (activeBanners.length - 1)) *
-                          (48 - 16)
-                        : 0
-                    }px) translateY(-50%)`,
+                    transform: `translateX(${mobileCurrentSlide * (48 - 16)}px) translateY(-50%)`,
                   }}
                 />
               </div>

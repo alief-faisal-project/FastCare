@@ -372,7 +372,7 @@ const AdminPanel = () => {
                     </div>
                     <div className="p-4 bg-accent rounded-lg">
                       <p className="text-2xl font-bold text-primary">{hospitals.reduce((a, b) => a + b.totalBeds, 0)}</p>
-                      <p className="text-sm text-muted-foreground">Total Bed</p>
+                      <p className="text-sm text-muted-foreground">Total Kamar</p>
                     </div>
                     <div className="p-4 bg-accent rounded-lg">
                       <p className="text-2xl font-bold text-success">{hospitals.filter(h => h.googleMapsLink).length}</p>
