@@ -1,8 +1,8 @@
 export interface Hospital {
   id: string;
   name: string;
-  type: 'RS Umum' | 'RS Khusus' | 'RS Ibu & Anak' | 'RS Jiwa' | 'Klinik';
-  class: 'A' | 'B' | 'C' | 'D' | 'Tidak Berkelas';
+  type: "RS Umum" | "RS Khusus" | "RS Ibu & Anak" | "RS Jiwa" | "Klinik";
+  class: "A" | "B" | "C" | "D" | "Tidak Berkelas";
   address: string;
   city: string; // Kabupaten/Kota
   district: string; // Kecamatan
@@ -17,11 +17,9 @@ export interface Hospital {
   hasIGD: boolean;
   hasICU: boolean;
   operatingHours: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
-  googleMapsLink?: string;
+  latitude: number;
+  longitude: number;
+  leMapsLink?: string;
   distance?: number; // km from user location
   rating?: number;
   createdAt: string;

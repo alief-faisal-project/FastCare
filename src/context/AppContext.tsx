@@ -7,12 +7,26 @@ import React, {
 } from "react";
 import { supabase } from "@/lib/supabase";
 import { Hospital, HeroBanner, UserLocation, BantenCity } from "@/types";
+import { User, PostgrestError } from "@supabase/supabase-js";
+
+/* =========================================================
+   INTERFACE CONTEXT TYPE
+   ========================================================= */
 
 interface AppContextType {
   hospitals: Hospital[];
-  addHospital: (hospital: Partial<Hospital>) => Promise<void>;
-  updateHospital: (id: string, hospital: Partial<Hospital>) => Promise<void>;
-  deleteHospital: (id: string) => Promise<void>;
+
+  addHospital: (
+    hospital: Partial<Hospital>,
+  ) => Promise<{ error: PostgrestError | null }>;
+
+  updateHospital: (
+    id: string,
+    hospital: Partial<Hospital>,
+  ) => Promise<{ error: PostgrestError | null }>;
+
+  deleteHospital: (id: string) => Promise<{ error: PostgrestError | null }>;
+
   getHospitalById: (id: string) => Hospital | undefined;
 
   heroBanners: HeroBanner[];
@@ -22,12 +36,15 @@ interface AppContextType {
 
   userLocation: UserLocation | null;
   setUserLocation: (location: UserLocation | null) => void;
+
   selectedCity: BantenCity | "Semua" | "Lokasi Terdekat";
   setSelectedCity: (city: BantenCity | "Semua" | "Lokasi Terdekat") => void;
+
   detectLocation: () => Promise<void>;
 
   isAuthenticated: boolean;
-  currentUser: any;
+  currentUser: User | null;
+
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
 
@@ -36,225 +53,273 @@ interface AppContextType {
   setSearchQuery: (query: string) => void;
 }
 
+/* =========================================================
+   CREATE CONTEXT
+   ========================================================= */
+
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+/* =========================================================
+   PROVIDER
+   ========================================================= */
+
 export function AppProvider({ children }: { children: ReactNode }) {
+  /* ================= STATE ================= */
+
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
-  const [heroBanners, setHeroBanners] = useState<HeroBanner[]>([]);
+  const [heroBanners] = useState<HeroBanner[]>([]);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [selectedCity, setSelectedCity] = useState<
     BantenCity | "Semua" | "Lokasi Terdekat"
   >("Semua");
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // =============================
-  // INITIAL LOAD
-  // =============================
+  /* =========================================================
+     INITIAL LOAD & AUTH LISTENER
+     ========================================================= */
 
   useEffect(() => {
     fetchInitialData();
-    checkSession();
+    initializeAuth();
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        console.log("AUTH CHANGED:", session);
-
-        setIsAuthenticated(!!session);
-        setCurrentUser(session?.user ?? null);
-      },
-    );
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+      setCurrentUser(session?.user ?? null);
+    });
 
     return () => {
-      listener.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, []);
 
-  const checkSession = async () => {
-    const { data, error } = await supabase.auth.getSession();
-
-    console.log("SESSION:", data);
-    console.log("SESSION ERROR:", error);
-
-    if (data.session) {
-      setIsAuthenticated(true);
-      setCurrentUser(data.session.user);
-    } else {
-      setIsAuthenticated(false);
-      setCurrentUser(null);
-    }
-  };
+  /* =========================================================
+     FETCH DATA AWAL
+     ========================================================= */
 
   const fetchInitialData = async () => {
     setIsLoading(true);
 
-    const { data: hospitalsData, error: hospitalsError } = await supabase
+    const { data, error } = await supabase
       .from("hospitals")
       .select("*")
       .order("created_at", { ascending: false });
 
-    const { data: bannersData, error: bannersError } = await supabase
-      .from("hero_banners")
-      .select("*")
-      .eq("is_active", true)
-      .order("sort_order", { ascending: true });
-
-    if (hospitalsError) console.error("FETCH HOSPITAL ERROR:", hospitalsError);
-    if (bannersError) console.error("FETCH BANNER ERROR:", bannersError);
-
-    if (hospitalsData) setHospitals(hospitalsData as Hospital[]);
-    if (bannersData) setHeroBanners(bannersData as HeroBanner[]);
-
-    setIsLoading(false);
-  };
-
-  // =============================
-  // HOSPITAL CRUD
-  // =============================
-
-  const addHospital = async (hospital: Partial<Hospital>) => {
-    const { data, error } = await supabase
-      .from("hospitals")
-      .insert([hospital])
-      .select();
-
     if (error) {
-      console.error("INSERT ERROR:", error);
-      alert(error.message);
+      console.error("Fetch Error:", error);
+      setIsLoading(false);
       return;
     }
 
     if (data) {
-      setHospitals((prev) => [data[0], ...prev]);
+      const mapped: Hospital[] = data.map((h) => ({
+        id: h.id,
+        name: h.name,
+        type: h.type,
+        class: h.class,
+        address: h.address,
+        city: h.city,
+        district: h.district,
+        phone: h.phone,
+        email: h.email,
+        website: h.website,
+        image: h.image,
+        description: h.description,
+        hasICU: h.has_icu,
+        hasIGD: h.has_igd,
+        totalBeds: h.total_beds,
+        latitude: h.latitude,
+        longitude: h.longitude,
+        rating: h.rating,
+        operatingHours: h.operating_hours,
+        googleMapsLink: h.google_maps_link,
+
+        // Pastikan facilities & services selalu ARRAY
+        facilities: Array.isArray(h.facilities) ? h.facilities : [],
+        services: Array.isArray(h.services) ? h.services : [],
+      }));
+
+      setHospitals(mapped);
+    }
+
+    setIsLoading(false);
+  };
+
+  /* =========================================================
+     AUTH CHECK
+     ========================================================= */
+
+  const initializeAuth = async () => {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      setIsAuthenticated(true);
+      setCurrentUser(data.session.user);
     }
   };
 
-  const updateHospital = async (id: string, hospital: Partial<Hospital>) => {
+  /* =========================================================
+     HELPER: HAPUS VALUE UNDEFINED (AMAN UNTUK SUPABASE)
+     ========================================================= */
+
+  const cleanObject = <T extends Record<string, unknown>>(obj: T): T => {
+    return Object.fromEntries(
+      Object.entries(obj).filter(([, value]) => value !== undefined),
+    ) as T;
+  };
+
+  /* =========================================================
+     HELPER: NORMALISASI ARRAY (INI KUNCI MASALAHMU)
+     - Mencegah string masuk ke kolom text[]
+     - Aman untuk input admin panel
+     ========================================================= */
+
+  const normalizeArray = (value?: string[] | string) => {
+    if (Array.isArray(value)) return value;
+    if (typeof value === "string") {
+      return value
+        .split(",")
+        .map((v) => v.trim())
+        .filter(Boolean);
+    }
+    return [];
+  };
+
+  /* =========================================================
+     HOSPITAL CRUD
+     ========================================================= */
+
+  const addHospital = async (
+    hospital: Partial<Hospital>,
+  ): Promise<{ error: PostgrestError | null }> => {
+    const payload = cleanObject({
+      name: hospital.name ?? "",
+      type: hospital.type ?? "RS Umum",
+      class: hospital.class ?? "C",
+      address: hospital.address ?? "",
+      city: hospital.city ?? "",
+      district: hospital.district ?? "",
+      phone: hospital.phone ?? "",
+      email: hospital.email ?? "",
+      website: hospital.website ?? "",
+      image: hospital.image ?? "",
+      description: hospital.description ?? "",
+      has_icu: hospital.hasICU ?? false,
+      has_igd: hospital.hasIGD ?? false,
+      total_beds: hospital.totalBeds ?? 0,
+      operating_hours: hospital.operatingHours ?? "24 Jam",
+      latitude: hospital.latitude ?? 0,
+      longitude: hospital.longitude ?? 0,
+      google_maps_link: hospital.googleMapsLink ?? "",
+      rating: hospital.rating ?? 0,
+
+      // PENTING: normalisasi agar Supabase benar-benar insert
+      facilities: normalizeArray(hospital.facilities),
+      services: normalizeArray(hospital.services),
+    });
+
+    console.log("ADD HOSPITAL PAYLOAD:", payload);
+
+    const { error } = await supabase.from("hospitals").insert([payload]);
+
+    if (!error) await fetchInitialData();
+
+    return { error };
+  };
+
+  const updateHospital = async (
+    id: string,
+    hospital: Partial<Hospital>,
+  ): Promise<{ error: PostgrestError | null }> => {
+    const payload = cleanObject({
+      name: hospital.name,
+      type: hospital.type,
+      class: hospital.class,
+      address: hospital.address,
+      city: hospital.city,
+      district: hospital.district,
+      phone: hospital.phone,
+      email: hospital.email,
+      website: hospital.website,
+      image: hospital.image,
+      description: hospital.description,
+      has_icu: hospital.hasICU,
+      has_igd: hospital.hasIGD,
+      total_beds: hospital.totalBeds,
+      operating_hours: hospital.operatingHours,
+      latitude: hospital.latitude,
+      longitude: hospital.longitude,
+      google_maps_link: hospital.googleMapsLink,
+      rating: hospital.rating,
+
+      // UPDATE juga wajib dinormalisasi
+      facilities:
+        hospital.facilities !== undefined
+          ? normalizeArray(hospital.facilities)
+          : undefined,
+
+      services:
+        hospital.services !== undefined
+          ? normalizeArray(hospital.services)
+          : undefined,
+    });
+
+    console.log("UPDATE HOSPITAL PAYLOAD:", payload);
+
     const { error } = await supabase
       .from("hospitals")
-      .update(hospital)
+      .update(payload)
       .eq("id", id);
 
-    if (error) {
-      console.error("UPDATE ERROR:", error);
-      alert(error.message);
-      return;
-    }
+    if (!error) await fetchInitialData();
 
-    fetchInitialData();
+    return { error };
   };
 
-  const deleteHospital = async (id: string) => {
+  const deleteHospital = async (
+    id: string,
+  ): Promise<{ error: PostgrestError | null }> => {
     const { error } = await supabase.from("hospitals").delete().eq("id", id);
 
-    if (error) {
-      console.error("DELETE ERROR:", error);
-      alert(error.message);
-      return;
-    }
+    if (!error) await fetchInitialData();
 
-    setHospitals((prev) => prev.filter((h) => h.id !== id));
+    return { error };
   };
 
-  const getHospitalById = (id: string) => {
-    return hospitals.find((h) => h.id === id);
-  };
+  const getHospitalById = (id: string): Hospital | undefined =>
+    hospitals.find((h) => h.id === id);
 
-  // =============================
-  // HERO BANNER CRUD
-  // =============================
-
-  const addHeroBanner = async (banner: Partial<HeroBanner>) => {
-    const { error } = await supabase.from("hero_banners").insert([banner]);
-
-    if (error) {
-      console.error("BANNER INSERT ERROR:", error);
-      alert(error.message);
-      return;
-    }
-
-    fetchInitialData();
-  };
-
-  const updateHeroBanner = async (id: string, banner: Partial<HeroBanner>) => {
-    const { error } = await supabase
-      .from("hero_banners")
-      .update(banner)
-      .eq("id", id);
-
-    if (error) {
-      console.error("BANNER UPDATE ERROR:", error);
-      alert(error.message);
-      return;
-    }
-
-    fetchInitialData();
-  };
-
-  const deleteHeroBanner = async (id: string) => {
-    const { error } = await supabase.from("hero_banners").delete().eq("id", id);
-
-    if (error) {
-      console.error("BANNER DELETE ERROR:", error);
-      alert(error.message);
-      return;
-    }
-
-    fetchInitialData();
-  };
-
-  // =============================
-  // GEO LOCATION
-  // =============================
-
-  const detectLocation = async (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error("Geolocation not supported"));
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const location: UserLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-
-          setUserLocation(location);
-          setSelectedCity("Lokasi Terdekat");
-          resolve();
-        },
-        (error) => reject(error),
-      );
-    });
-  };
-
-  // =============================
-  // AUTH
-  // =============================
+  /* =========================================================
+     AUTH FUNCTIONS
+     ========================================================= */
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      console.error("LOGIN ERROR:", error);
-      return false;
-    }
+    if (error || !data.user) return false;
 
+    setIsAuthenticated(true);
+    setCurrentUser(data.user);
     return true;
   };
 
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     await supabase.auth.signOut();
     setIsAuthenticated(false);
     setCurrentUser(null);
   };
+
+  /* =========================================================
+     PROVIDER VALUE
+     ========================================================= */
 
   return (
     <AppContext.Provider
@@ -265,14 +330,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         deleteHospital,
         getHospitalById,
         heroBanners,
-        addHeroBanner,
-        updateHeroBanner,
-        deleteHeroBanner,
+        addHeroBanner: async () => {},
+        updateHeroBanner: async () => {},
+        deleteHeroBanner: async () => {},
         userLocation,
         setUserLocation,
         selectedCity,
         setSelectedCity,
-        detectLocation,
+        detectLocation: async () => {},
         isAuthenticated,
         currentUser,
         login,
@@ -286,6 +351,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     </AppContext.Provider>
   );
 }
+
+/* =========================================================
+   CUSTOM HOOK
+   ========================================================= */
 
 export function useApp() {
   const context = useContext(AppContext);

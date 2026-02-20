@@ -13,6 +13,7 @@ const HospitalDetail = () => {
 
   if (!hospital) {
     return (
+      
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <div className="flex-1 flex items-center justify-center">
@@ -37,7 +38,8 @@ const HospitalDetail = () => {
     );
   }
 
-  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${hospital.coordinates.lat},${hospital.coordinates.lng}`;
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`;
+
 
   // Determine ownership type based on hospital name
   const getOwnership = () => {
@@ -95,7 +97,7 @@ const HospitalDetail = () => {
                 Fasilitas & Layanan
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {hospital.facilities.map((facility, index) => (
+                {(hospital.facilities ?? []).map((facility, index) => (
                   <div
                     key={index}
                     className="flex items-center space-x-3 p-3 rounded-xl bg-accent/50"
@@ -127,7 +129,7 @@ const HospitalDetail = () => {
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border">
                   <span className="text-sm text-muted-foreground">
-                    Tempat Tidur
+                    Total Kamar
                   </span>
                   <span className="font-medium text-primary">
                     {hospital.totalBeds}

@@ -1,30 +1,37 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useApp } from '@/context/AppContext';
-import fastcareLogo from '@/assets/fastcare-logo.png';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useApp } from "@/context/AppContext";
+import fastcareLogo from "@/assets/fastcare-logo.png";
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const { login } = useApp();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
-    // Simulate loading
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      const success = await login(email, password); // WAJIB await
 
-    const success = login(username, password);
-    if (success) {
-      navigate('/admin');
-    } else {
-      setError('Username atau password salah');
+      if (!success) {
+        setError("Email atau password salah");
+        setIsLoading(false);
+        return;
+      }
+
+      navigate("/admin");
+    } catch (err) {
+      console.error("LOGIN ERROR:", err);
+      setError("Terjadi kesalahan saat login");
     }
+
     setIsLoading(false);
   };
 
@@ -40,82 +47,68 @@ const Login = () => {
           />
         </div>
 
-        {/* Login Form */}
+        {/* Card */}
         <div className="bg-card border border-border rounded-2xl p-8 shadow-card">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Username */}
+            {/* EMAIL */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Username
+                Email
               </label>
               <div className="relative">
-                <i className="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Masukkan username"
-                  className="w-full pl-11 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-background"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Masukkan email"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-background"
                   required
                 />
               </div>
             </div>
 
-            {/* Password */}
+            {/* PASSWORD */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 Password
               </label>
               <div className="relative">
-                <i className="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Masukkan password"
-                  className="w-full pl-11 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-background"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-background"
                   required
                 />
               </div>
             </div>
 
-            {/* Error */}
+            {/* ERROR */}
             {error && (
-              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm flex items-center space-x-2">
-                <i className="fa-solid fa-circle-exclamation" />
-                <span>{error}</span>
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
+                {error}
               </div>
             )}
 
-            {/* Submit */}
+            {/* BUTTON */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2"
+              className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
-              {isLoading ? (
-                <>
-                  <i className="fa-solid fa-spinner fa-spin" />
-                  <span>Memproses...</span>
-                </>
-              ) : (
-                <>
-                  <i className="fa-solid fa-right-to-bracket" />
-                  <span>Masuk</span>
-                </>
-              )}
+              {isLoading ? "Memproses..." : "Masuk"}
             </button>
           </form>
         </div>
 
-        {/* link kembali */}
+        {/* Back Link */}
         <div className="text-center mt-6">
           <a
             href="/"
             className="text-sm text-muted-foreground hover:text-primary transition-colors"
           >
-            <i class="fa-solid fa-chevron-left"></i>
-            Kembali ke Halaman Utama
+            ← Kembali ke Halaman Utama
           </a>
         </div>
       </div>
