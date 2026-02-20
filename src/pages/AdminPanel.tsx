@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { Hospital, HeroBanner, BANTEN_CITIES } from "@/types";
@@ -306,12 +306,21 @@ const AdminPanel = () => {
                       key={banner.id}
                       className="bg-card border border-border rounded-xl overflow-hidden"
                     >
-                      <div className="aspect-video relative">
-                        <img
-                          src={banner.image}
-                          alt={banner.title}
-                          className="w-full h-full object-cover"
-                        />
+                      <div className="aspect-video relative bg-gray-300">
+                        {banner.image ? (
+                          <img
+                            src={banner.image}
+                            alt={banner.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-400">
+                            <div className="text-center text-white/70">
+                              <i className="fa-solid fa-image text-4xl mb-2" />
+                              <p className="text-sm">No Image</p>
+                            </div>
+                          </div>
+                        )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         <div className="absolute bottom-0 left-0 right-0 p-4">
                           <h3 className="text-white font-semibold">
@@ -457,24 +466,30 @@ const AdminPanel = () => {
             setEditingHospital(null);
           }}
           onSave={async (data) => {
-            let error;
+            try {
+              if (editingHospital) {
+                const result = await updateHospital(editingHospital.id, data);
+                if (result?.error) {
+                  console.error("Update error:", result.error);
+                  alert("Gagal mengupdate: " + result.error.message);
+                  return;
+                }
+              } else {
+                const result = await addHospital(data as any);
+                if (result?.error) {
+                  console.error("Add error:", result.error);
+                  alert("Gagal menambah: " + result.error.message);
+                  return;
+                }
+              }
 
-            if (editingHospital) {
-              const result = await updateHospital(editingHospital.id, data);
-              error = result?.error;
-            } else {
-              const result = await addHospital(data as any);
-              error = result?.error;
+              // hanya tutup jika sukses
+              setShowHospitalForm(false);
+              setEditingHospital(null);
+            } catch (error) {
+              console.error("Unexpected error:", error);
+              alert("Error: " + (error instanceof Error ? error.message : "Terjadi kesalahan"));
             }
-
-            if (error) {
-              alert(error.message);
-              return; // ❗ STOP → jangan tutup modal
-            }
-
-            // hanya tutup jika sukses
-            setShowHospitalForm(false);
-            setEditingHospital(null);
           }}
         />
       )}
@@ -487,14 +502,24 @@ const AdminPanel = () => {
             setShowBannerForm(false);
             setEditingBanner(null);
           }}
-          onSave={(data) => {
-            if (editingBanner) {
-              updateHeroBanner(editingBanner.id, data);
-            } else {
-              addHeroBanner(data as any);
+          onSave={async (data) => {
+            try {
+              if (editingBanner) {
+                await updateHeroBanner(editingBanner.id, data);
+              } else {
+                await addHeroBanner(data as HeroBanner);
+              }
+              setShowBannerForm(false);
+              setEditingBanner(null);
+            } catch (error: unknown) {
+              console.error("Banner error:", error);
+              const errorMessage =
+                error instanceof Error
+                  ? error.message
+                  : "Gagal menyimpan banner";
+              alert("Error: " + errorMessage);
+              // Jangan tutup modal jika ada error, biarkan user retry
             }
-            setShowBannerForm(false);
-            setEditingBanner(null);
           }}
         />
       )}
@@ -506,7 +531,7 @@ const AdminPanel = () => {
 interface HospitalFormModalProps {
   hospital: Hospital | null;
   onClose: () => void;
-  onSave: (data: Partial<Hospital>) => void;
+  onSave: (data: Partial<Hospital>) => Promise<void>;
 }
 
 const HospitalFormModal = ({
@@ -541,28 +566,70 @@ const HospitalFormModal = ({
     googleMapsLink: hospital?.googleMapsLink || "",
   });
 
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  // 🔥 convert string "IGD, ICU" → ["IGD", "ICU"]
-  const formattedFacilities = formData.facilities
-    .split(",")
-    .map((f) => f.trim())
-    .filter(Boolean);
+    // Validasi input
+    if (!formData.name.trim()) {
+      alert("Nama Rumah Sakit tidak boleh kosong!");
+      return;
+    }
+    if (!formData.address.trim()) {
+      alert("Alamat tidak boleh kosong!");
+      return;
+    }
+    if (!formData.phone.trim()) {
+      alert("Telepon tidak boleh kosong!");
+      return;
+    }
+    if (!formData.image.trim()) {
+      alert("URL Gambar tidak boleh kosong!");
+      return;
+    }
+    if (!formData.description.trim()) {
+      alert("Deskripsi tidak boleh kosong!");
+      return;
+    }
 
-  const formattedServices = formData.services
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+    // 🔥 convert string "IGD, ICU" → ["IGD", "ICU"]
+    const formattedFacilities = formData.facilities
+      .split(",")
+      .map((f) => f.trim())
+      .filter(Boolean);
 
-  onSave({
-    ...formData,
-    facilities: formattedFacilities,
-    services: formattedServices,
-    latitude: formData.lat,
-    longitude: formData.lng,
-  });
-};
+    const formattedServices = formData.services
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    try {
+      await onSave({
+        name: formData.name,
+        type: formData.type,
+        class: formData.class,
+        address: formData.address,
+        city: formData.city,
+        district: formData.district,
+        phone: formData.phone,
+        email: formData.email,
+        website: formData.website,
+        image: formData.image,
+        description: formData.description,
+        facilities: formattedFacilities,
+        services: formattedServices,
+        totalBeds: formData.totalBeds,
+        hasIGD: formData.hasIGD,
+        hasICU: formData.hasICU,
+        operatingHours: formData.operatingHours,
+        latitude: formData.lat,
+        longitude: formData.lng,
+        googleMapsLink: formData.googleMapsLink,
+      });
+    } catch (error) {
+      console.error("Error dalam handleSubmit:", error);
+      alert("Gagal menyimpan data: " + (error instanceof Error ? error.message : "Error tidak diketahui"));
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -599,7 +666,10 @@ const handleSubmit = (e: React.FormEvent) => {
               <select
                 value={formData.type}
                 onChange={(e) =>
-                  setFormData({ ...formData, type: e.target.value as any })
+                  setFormData({
+                    ...formData,
+                    type: e.target.value as Hospital["type"],
+                  })
                 }
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
               >
@@ -615,7 +685,10 @@ const handleSubmit = (e: React.FormEvent) => {
               <select
                 value={formData.class}
                 onChange={(e) =>
-                  setFormData({ ...formData, class: e.target.value as any })
+                  setFormData({
+                    ...formData,
+                    class: e.target.value as Hospital["class"],
+                  })
                 }
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
               >
@@ -868,10 +941,11 @@ const handleSubmit = (e: React.FormEvent) => {
 interface BannerFormModalProps {
   banner: HeroBanner | null;
   onClose: () => void;
-  onSave: (data: Partial<HeroBanner>) => void;
+  onSave: (data: Partial<HeroBanner>) => Promise<void>;
 }
 
 const BannerFormModal = ({ banner, onClose, onSave }: BannerFormModalProps) => {
+  const { uploadBannerImage } = useApp();
   const [formData, setFormData] = useState({
     title: banner?.title || "",
     subtitle: banner?.subtitle || "",
@@ -880,15 +954,84 @@ const BannerFormModal = ({ banner, onClose, onSave }: BannerFormModalProps) => {
     isActive: banner?.isActive ?? true,
     order: banner?.order || 1,
   });
+  const [isUploading, setIsUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>(banner?.image || "");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Pilih file gambar yang valid");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Ukuran gambar maksimal 5MB");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      console.log("📤 Starting image upload...");
+      
+      // Upload to Supabase
+      const imageUrl = await uploadBannerImage(file);
+      
+      setFormData({ ...formData, image: imageUrl });
+      setImagePreview(imageUrl);
+      console.log("✅ Image uploaded successfully:", imageUrl);
+    } catch (error) {
+      console.error("❌ Upload failed:", error);
+      alert("Gagal upload gambar: " + (error instanceof Error ? error.message : "Error"));
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+
+    // Validasi input
+    if (!formData.title.trim()) {
+      alert("Judul tidak boleh kosong!");
+      return;
+    }
+    if (!formData.image.trim()) {
+      alert("Gambar harus diisi (URL atau upload)!");
+      return;
+    }
+
+    try {
+      // Buat payload dengan format internal (camelCase)
+      // yang akan di-map ke snake_case di AppContext
+      const payload = {
+        title: formData.title,
+        subtitle: formData.subtitle,
+        image: formData.image,
+        link: formData.link || null,
+        isActive: formData.isActive,  // camelCase, bukan snake_case
+        order: formData.order,
+      };
+      
+      console.log("Sending banner payload:", payload);
+      console.log("isActive value:", formData.isActive, "Type:", typeof formData.isActive);
+      await onSave(payload as Partial<HeroBanner>);
+    } catch (error) {
+      console.error("Error dalam handleSubmit banner:", error);
+      alert("Gagal menyimpan banner: " + (error instanceof Error ? error.message : "Error tidak diketahui"));
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-card rounded-2xl w-full max-w-lg">
+      <div className="bg-card rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-border">
           <h2 className="text-xl font-bold text-foreground font-heading">
             {banner ? "Edit Banner" : "Tambah Banner"}
@@ -921,20 +1064,61 @@ const BannerFormModal = ({ banner, onClose, onSave }: BannerFormModalProps) => {
               className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              URL Gambar *
-            </label>
-            <input
-              type="url"
-              value={formData.image}
-              onChange={(e) =>
-                setFormData({ ...formData, image: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-              required
-            />
+
+          {/* Image Upload Section */}
+          <div className="space-y-3">
+            <label className="block text-sm font-medium">Gambar *</label>
+            
+            {/* Preview */}
+            {imagePreview && (
+              <div className="relative w-full h-40 bg-muted rounded-lg overflow-hidden">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
+            {/* Upload Options */}
+            <div className="space-y-2">
+              {/* File Upload */}
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-2">
+                  Upload Gambar Lokal
+                </label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  disabled={isUploading}
+                  className="w-full px-4 py-2 border border-border rounded-lg text-sm cursor-pointer hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+                {isUploading && (
+                  <p className="text-xs text-primary mt-1">📤 Uploading...</p>
+                )}
+              </div>
+
+              {/* URL Input */}
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-2">
+                  atau Gunakan URL Gambar
+                </label>
+                <input
+                  type="url"
+                  value={formData.image}
+                  onChange={(e) => {
+                    setFormData({ ...formData, image: e.target.value });
+                    setImagePreview(e.target.value);
+                  }}
+                  placeholder="https://example.com/image.jpg"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary text-sm"
+                />
+              </div>
+            </div>
           </div>
+
           <div>
             <label className="block text-sm font-medium mb-1">
               Link (opsional)
@@ -982,9 +1166,10 @@ const BannerFormModal = ({ banner, onClose, onSave }: BannerFormModalProps) => {
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+              disabled={isUploading}
+              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {banner ? "Simpan" : "Tambah"}
+              {isUploading ? "Uploading..." : banner ? "Simpan" : "Tambah"}
             </button>
           </div>
         </form>

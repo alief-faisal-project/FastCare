@@ -29,9 +29,28 @@ const HeroBanner = () => {
   const mobileRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
 
-  const activeBanners = heroBanners
-    .filter((b) => b.isActive)
-    .sort((a, b) => a.order - b.order);
+  // Get active banners or create 5 placeholder banners if none exist
+  const getDisplayBanners = () => {
+    const activeBanners = heroBanners
+      .filter((b) => b.isActive)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    if (activeBanners.length === 0) {
+      // Return 5 placeholder banners with gray background
+      return new Array(5).fill(null).map((_, index) => ({
+        id: `placeholder-${index}`,
+        title: `Banner ${index + 1}`,
+        subtitle: "Placeholder banner",
+        image: null,
+        link: undefined,
+        isActive: true,
+        order: index,
+      }));
+    }
+    return activeBanners;
+  };
+
+  const activeBanners = getDisplayBanners();
 
   // ================= DESKTOP =================
 
@@ -102,12 +121,21 @@ const HeroBanner = () => {
                     href={banner.link || "#"}
                     className="flex-shrink-0 w-[calc(33.333%-11px)] rounded-3xl overflow-hidden relative"
                   >
-                    <div className="aspect-[16/9] relative">
-                      <img
-                        src={banner.image}
-                        alt={banner.title}
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="aspect-[16/9] relative bg-gray-300">
+                      {banner.image ? (
+                        <img
+                          src={banner.image}
+                          alt={banner.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-400">
+                          <div className="text-center text-white/70">
+                            <i className="fa-solid fa-image text-4xl mb-2" />
+                            <p className="text-sm">No Image</p>
+                          </div>
+                        </div>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
                         <h3 className="text-white font-bold text-sm md:text-lg line-clamp-2 font-heading">
@@ -156,12 +184,21 @@ const HeroBanner = () => {
                   href={banner.link || "#"}
                   className="flex-shrink-0 w-[calc(50%-6px)] rounded-3xl overflow-hidden"
                 >
-                  <div className="aspect-[16/9] relative">
-                    <img
-                      src={banner.image}
-                      alt={banner.title}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="aspect-[16/9] relative bg-gray-300">
+                    {banner.image ? (
+                      <img
+                        src={banner.image}
+                        alt={banner.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-400">
+                        <div className="text-center text-white/70">
+                          <i className="fa-solid fa-image text-3xl mb-1" />
+                          <p className="text-xs">No Image</p>
+                        </div>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-2">
                       <h3 className="text-white font-bold text-xs line-clamp-2 font-heading">

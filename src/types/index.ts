@@ -19,9 +19,8 @@ export interface Hospital {
   operatingHours: string;
   latitude: number;
   longitude: number;
-  leMapsLink?: string;
+googleMapsLink?: string;
   distance?: number; // km from user location
-  rating?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -30,8 +29,8 @@ export interface HeroBanner {
   id: string;
   title: string;
   subtitle: string;
-  image: string;
-  link?: string;
+  image: string | null;
+  link?: string | null;
   isActive: boolean;
   order: number;
 }
