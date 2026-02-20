@@ -30,7 +30,7 @@ const FloatingContact = () => {
     <>
       {/* Floating Button - Small Pill */}
       <div
-        className={`fixed bottom-4 right-4 z-50 transition-all duration-300 ${
+        className={`fixed bottom-8 right-4 z-50 transition-all duration-300 ${
           isVisible
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-4 pointer-events-none"
@@ -38,10 +38,10 @@ const FloatingContact = () => {
       >
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-1.5 bg-primary text-primary-foreground px-3 py-2 rounded-full shadow-lg hover:bg-primary/90 transition-all duration-300 hover:shadow-xl text-xs"
+          className="flex items-center gap-1.5 bg-primary border border-primary rounded-3xl text-white px-3 py-2  shadow-lg transition-all duration-300 hover:shadow-xl text-xs"
         >
-          <i className="fa-solid fa-envelope text-xs" />
-          <span className="font-medium">Hubungi Kami</span>
+          <i className="fa-solid fa-headset text-xl" />
+  
         </button>
       </div>
 
