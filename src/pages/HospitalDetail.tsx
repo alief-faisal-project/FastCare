@@ -166,7 +166,7 @@ const HospitalDetail = () => {
             <div className="hidden md:flex flex-col gap-3">
               <a
                 href={`tel:${hospital.phone}`}
-                className="flex items-center justify-center gap-2 py-3 rounded-xl bg-green-600 border text-white font-medium transition-colors"
+                className="flex items-center justify-center gap-2 py-3 rounded-xl bg-green-700 text-white font-medium transition-colors"
               >
                 <i className="fa-solid fa-phone-volume" />
                 <span>Telepon</span>

@@ -3,10 +3,12 @@
 ## 🐛 Issues yang Dilaporkan
 
 ### Issue #1: "Gagal upload gambar: Bucket not found"
+
 **Status:** ✅ FIXED
 **Penyebab:** Bucket `banner-images` belum dibuat di Supabase Storage
 
 **Solusi:**
+
 1. Buka Supabase Dashboard
 2. Storage → Create new bucket
 3. Nama bucket: `banner-images`
@@ -14,19 +16,23 @@
 5. Test upload gambar
 
 ### Issue #2: Banner tidak tampil di website meskipun sudah aktif
+
 **Status:** 🔄 DEBUGGING
-**Gejala:** 
+**Gejala:**
+
 - Menambahkan banner di admin panel
 - Status menunjukkan "Aktif"
 - Tapi di website tidak tampil
 - Atau menampilkan "Nonaktif"
 
 **Kemungkinan Penyebab:**
+
 1. Field `is_active` tidak ter-update dengan benar saat save
 2. Data dalam AppContext tidak di-refresh
 3. Ada perbedaan antara field name di form vs Supabase
 
 ### Issue #3: Website menampilkan 5 placeholder banner
+
 **Status:** ✅ WORKING
 **Deskripsi:** Jika belum ada banner aktif, tampilkan 5 placeholder dengan gray background
 
@@ -50,16 +56,18 @@
 ### Step 2: Verify Supabase Columns
 
 Di Supabase Dashboard:
+
 ```
 SQL Editor → Run:
 
-SELECT column_name, data_type 
-FROM information_schema.columns 
-WHERE table_name = 'hero_banners' 
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'hero_banners'
 ORDER BY ordinal_position;
 ```
 
 **Expected Output:**
+
 ```
 id              → uuid
 title           → text
@@ -92,6 +100,7 @@ updated_at      → timestamp
 ### Step 4: Verify Data Saved
 
 **Di Admin Panel:**
+
 ```
 Lihat di grid banner yang baru ditambah:
 - Gambar visible? ✅
@@ -100,6 +109,7 @@ Lihat di grid banner yang baru ditambah:
 ```
 
 **Di Supabase:**
+
 ```
 1. Dashboard → editor_banners table
 2. Lihat baris terbaru:
@@ -130,18 +140,18 @@ Lihat di grid banner yang baru ditambah:
     [ ] Banner ada di list?
     [ ] Status = "Aktif"?
     [ ] Gambar ada?
-    
+
 [ ] 2. Check Supabase
     [ ] Row ada di hero_banners table?
     [ ] is_active = true?
     [ ] order = number (bukan null)?
     [ ] image = URL (bukan null)?
-    
+
 [ ] 3. Check Console (F12)
     [ ] heroBanners array ter-load?
     [ ] Ada warning/error?
     [ ] Console log: console.log(heroBanners)
-    
+
 [ ] 4. Check Network (F12 → Network)
     [ ] Request ke Supabase berhasil?
     [ ] Response data correct?
@@ -153,15 +163,15 @@ Lihat di grid banner yang baru ditambah:
 ```
 [ ] 1. Check bucket exists
     Supabase → Storage → ada "banner-images"?
-    
+
 [ ] 2. Check bucket permissions
     banner-images → Policies
     Ada policy untuk public access?
-    
+
 [ ] 3. Check upload code
     Lihat console error message
     Error message mana? (file size? type? auth?)
-    
+
 [ ] 4. Test manual upload
     Storage → banner-images → Upload file
     Bisa upload? Bisa lihat preview?
@@ -174,12 +184,12 @@ Lihat di grid banner yang baru ditambah:
     [ ] Field "Aktif" di-check? ✓
     [ ] Console: payload.is_active = true?
     [ ] Supabase: is_active = true?
-    
+
 [ ] 2. Saat edit banner
     [ ] Toggle "Aktif" berfungsi?
     [ ] Save berhasil?
     [ ] Supabase ter-update?
-    
+
 [ ] 3. Saat refresh page
     [ ] Status masih benar?
     [ ] Atau kembali ke "Nonaktif"?
@@ -193,16 +203,16 @@ Lihat di grid banner yang baru ditambah:
 
 ```javascript
 // F12 → Console → copy paste:
-console.log('heroBanners:', window.__APP_STATE__?.heroBanners || 'not found');
-console.table(heroBanners);  // if heroBanners in scope
+console.log("heroBanners:", window.__APP_STATE__?.heroBanners || "not found");
+console.table(heroBanners); // if heroBanners in scope
 ```
 
 ### Command 2: Check banner yang harusnya aktif
 
 ```javascript
 // F12 → Console:
-const activeBanners = heroBanners.filter(b => b.isActive);
-console.log('Active banners:', activeBanners);
+const activeBanners = heroBanners.filter((b) => b.isActive);
+console.log("Active banners:", activeBanners);
 ```
 
 ### Command 3: Check data types
@@ -213,7 +223,7 @@ console.log({
   isActive: banner.isActive,
   order: banner.order,
   image: banner.image,
-  link: banner.link
+  link: banner.link,
 });
 ```
 
@@ -238,6 +248,7 @@ CREATE TABLE hero_banners (
 ```
 
 **CRITICAL:** Column names MUST be snake_case:
+
 - ✅ `is_active` (correct)
 - ❌ `isActive` (wrong)
 - ✅ `order` (use quotes: `"order"`)
@@ -248,20 +259,25 @@ CREATE TABLE hero_banners (
 ## 🚀 SOLUTIONS APPLIED
 
 ### Solution 1: Bucket Upload Error
+
 **What:** Created `banner-images` bucket in Supabase Storage
 **Why:** Upload function needs valid bucket name
 **Result:** File upload now works to Supabase
 
 ### Solution 2: Admin Panel Image Rendering
+
 **What:** Added null-check for `banner.image`
-**Code:** 
+**Code:**
+
 ```typescript
 {banner.image ? <img src=... /> : <PlaceholderDiv />}
 ```
+
 **Why:** Image can be null for non-uploaded banners
 **Result:** No crash when image is null
 
 ### Solution 3: Website Placeholder Banner
+
 **What:** Show 5 gray placeholders if no active banners
 **Code:** `getDisplayBanners()` function
 **Why:** Better UX, shows carousel design even without content
@@ -312,6 +328,7 @@ DATABASE:
 ## 🔗 RELEVANT CODE FILES
 
 **Upload Function:**
+
 ```
 File: src/context/AppContext.tsx
 Function: uploadBannerImage()
@@ -319,6 +336,7 @@ Purpose: Upload file to Supabase Storage banner-images bucket
 ```
 
 **Admin Panel Display:**
+
 ```
 File: src/pages/AdminPanel.tsx
 Section: Banners Tab, Grid rendering
@@ -326,6 +344,7 @@ Purpose: Show banner cards with images, status, edit/delete buttons
 ```
 
 **Website Display:**
+
 ```
 File: src/components/HeroBanner.tsx
 Function: getDisplayBanners()
@@ -333,6 +352,7 @@ Purpose: Filter active banners or show 5 placeholders
 ```
 
 **Types:**
+
 ```
 File: src/types/index.ts
 Type: HeroBanner
@@ -343,20 +363,21 @@ Fields: id, title, subtitle, image?, link?, isActive, order
 
 ## 📞 COMMON ISSUES & SOLUTIONS
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| Bucket not found | Storage bucket doesn't exist | Create `banner-images` bucket in Supabase |
-| Upload fails | No public access | Set bucket to public |
-| Image null | User didn't upload | OK - placeholder shows instead |
-| Status always "Nonaktif" | is_active not saved as true | Check form checkbox, verify Supabase column |
-| Placeholder shows forever | No active banners | Add active banner from admin panel |
-| Carousel doesn't scroll | <5 active banners | Need 5+ for carousel (or 3+ for desktop view) |
+| Issue                     | Cause                        | Solution                                      |
+| ------------------------- | ---------------------------- | --------------------------------------------- |
+| Bucket not found          | Storage bucket doesn't exist | Create `banner-images` bucket in Supabase     |
+| Upload fails              | No public access             | Set bucket to public                          |
+| Image null                | User didn't upload           | OK - placeholder shows instead                |
+| Status always "Nonaktif"  | is_active not saved as true  | Check form checkbox, verify Supabase column   |
+| Placeholder shows forever | No active banners            | Add active banner from admin panel            |
+| Carousel doesn't scroll   | <5 active banners            | Need 5+ for carousel (or 3+ for desktop view) |
 
 ---
 
 ## ✅ VERIFICATION STEPS
 
 ### Quick Verify (2 min)
+
 ```
 1. Admin: Tambah banner baru dengan gambar
 2. Admin: Set aktif, save
@@ -366,6 +387,7 @@ Fields: id, title, subtitle, image?, link?, isActive, order
 ```
 
 ### Full Verify (10 min)
+
 ```
 1. F12 → Console
 2. console.log(heroBanners)
@@ -378,6 +400,7 @@ Fields: id, title, subtitle, image?, link?, isActive, order
 ```
 
 ### Database Verify (5 min)
+
 ```
 1. Supabase Dashboard
 2. hero_banners table
