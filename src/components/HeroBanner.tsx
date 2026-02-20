@@ -33,8 +33,6 @@ const HeroBanner = () => {
     .filter((b) => b.isActive)
     .sort((a, b) => a.order - b.order);
 
-  if (activeBanners.length === 0) return null;
-
   // ================= DESKTOP =================
 
   const maxDesktopSlide =
@@ -89,19 +87,74 @@ const HeroBanner = () => {
     <section className="py-3 md:py-4">
       <div className="relative">
         {/* ================= DESKTOP ================= */}
-        <div className="hidden md:block container mx-auto px-4">
-          <div className="relative overflow-hidden">
+        {activeBanners.length > 0 && (
+          <div className="hidden md:block container mx-auto px-4">
+            <div className="relative overflow-hidden">
+              <div
+                className="flex gap-4 transition-transform duration-500 ease-in-out"
+                style={{
+                  transform: `translateX(-${currentSlide * (100 / 3)}%)`,
+                }}
+              >
+                {activeBanners.map((banner) => (
+                  <a
+                    key={banner.id}
+                    href={banner.link || "#"}
+                    className="flex-shrink-0 w-[calc(33.333%-11px)] rounded-3xl overflow-hidden relative"
+                  >
+                    <div className="aspect-[16/9] relative">
+                      <img
+                        src={banner.image}
+                        alt={banner.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+                        <h3 className="text-white font-bold text-sm md:text-lg line-clamp-2 font-heading">
+                          {banner.title}
+                        </h3>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+
+              {activeBanners.length > 3 && (
+                <>
+                  <button
+                    onClick={goToPrevious}
+                    disabled={currentSlide === 0}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
+                  >
+                    <i className="fa-solid fa-chevron-left text-sm" />
+                  </button>
+
+                  <button
+                    onClick={goToNext}
+                    disabled={currentSlide === maxDesktopSlide}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
+                  >
+                    <i className="fa-solid fa-chevron-right text-sm" />
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ================= MOBILE ================= */}
+        {activeBanners.length > 0 && (
+          <div className="md:hidden px-4">
             <div
-              className="flex gap-4 transition-transform duration-500 ease-in-out"
-              style={{
-                transform: `translateX(-${currentSlide * (100 / 3)}%)`,
-              }}
+              ref={mobileRef}
+              className="flex gap-3 overflow-x-auto scrollbar-hide"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {activeBanners.map((banner) => (
                 <a
                   key={banner.id}
                   href={banner.link || "#"}
-                  className="flex-shrink-0 w-[calc(33.333%-11px)] rounded-3xl overflow-hidden relative"
+                  className="flex-shrink-0 w-[calc(50%-6px)] rounded-3xl overflow-hidden"
                 >
                   <div className="aspect-[16/9] relative">
                     <img
@@ -110,8 +163,8 @@ const HeroBanner = () => {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-                      <h3 className="text-white font-bold text-sm md:text-lg line-clamp-2 font-heading">
+                    <div className="absolute bottom-0 left-0 right-0 p-2">
+                      <h3 className="text-white font-bold text-xs line-clamp-2 font-heading">
                         {banner.title}
                       </h3>
                     </div>
@@ -120,69 +173,18 @@ const HeroBanner = () => {
               ))}
             </div>
 
-            {activeBanners.length > 3 && (
-              <>
-                <button
-                  onClick={goToPrevious}
-                  disabled={currentSlide === 0}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
-                >
-                  <i className="fa-solid fa-chevron-left text-sm" />
-                </button>
-
-                <button
-                  onClick={goToNext}
-                  disabled={currentSlide === maxDesktopSlide}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
-                >
-                  <i className="fa-solid fa-chevron-right text-sm" />
-                </button>
-              </>
+            {activeBanners.length > 1 && (
+              <div className="flex items-center justify-center mt-3">
+                <div className="relative w-16 h-2 rounded-full bg-muted-foreground/20 overflow-hidden">
+                  <div
+                    ref={indicatorRef}
+                    className="absolute top-0 left-0 h-2 w-4 rounded-full bg-primary will-change-transform"
+                  />
+                </div>
+              </div>
             )}
           </div>
-        </div>
-
-        {/* ================= MOBILE ================= */}
-        <div className="md:hidden px-4">
-          <div
-            ref={mobileRef}
-            className="flex gap-3 overflow-x-auto scrollbar-hide"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {activeBanners.map((banner) => (
-              <a
-                key={banner.id}
-                href={banner.link || "#"}
-                className="flex-shrink-0 w-[calc(50%-6px)] rounded-3xl overflow-hidden"
-              >
-                <div className="aspect-[16/9] relative">
-                  <img
-                    src={banner.image}
-                    alt={banner.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-2">
-                    <h3 className="text-white font-bold text-xs line-clamp-2 font-heading">
-                      {banner.title}
-                    </h3>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          {activeBanners.length > 1 && (
-            <div className="flex items-center justify-center mt-3">
-              <div className="relative w-16 h-2 rounded-full bg-muted-foreground/20 overflow-hidden">
-                <div
-                  ref={indicatorRef}
-                  className="absolute top-0 left-0 h-2 w-4 rounded-full bg-primary will-change-transform"
-                />
-              </div>
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
       {/* ================= EMERGENCY SERVICES ================= */}
