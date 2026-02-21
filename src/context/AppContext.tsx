@@ -256,7 +256,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error("Fetch Banners Error:", bannerError);
     } else if (bannerData) {
       // Map snake_case from Supabase to camelCase for frontend
-  const mappedBanners = (bannerData as any[]).map((b) => ({
+      const mappedBanners = (bannerData as any[]).map((b) => ({
         id: b.id,
         title: b.title,
         subtitle: b.subtitle,
@@ -380,163 +380,175 @@ export function AppProvider({ children }: { children: ReactNode }) {
     updatedAt: data.updated_at,
   });
 
-  const addHospital = useCallback(async (
-    hospital: Partial<Hospital>,
-  ): Promise<{ error: PostgrestError | null }> => {
-    try {
-      // if google maps link present but lat/lng missing, try to parse coords
-      const parsed = parseGoogleMapsLink(hospital.googleMapsLink || undefined);
+  const addHospital = useCallback(
+    async (
+      hospital: Partial<Hospital>,
+    ): Promise<{ error: PostgrestError | null }> => {
+      try {
+        // if google maps link present but lat/lng missing, try to parse coords
+        const parsed = parseGoogleMapsLink(
+          hospital.googleMapsLink || undefined,
+        );
 
-      const payload = cleanObject({
-        name: hospital.name,
-        type: hospital.type,
-        class: hospital.class,
-        address: hospital.address,
-        city: hospital.city,
-        district: hospital.district,
-        phone: hospital.phone,
-        email: hospital.email,
-        website: hospital.website,
-        image: hospital.image,
-        description: hospital.description,
-        has_icu: hospital.hasICU ?? false,
-        has_igd: hospital.hasIGD ?? false,
-        total_beds: hospital.totalBeds ?? 0,
-        operating_hours: hospital.operatingHours ?? "24 Jam",
-        google_maps_link: hospital.googleMapsLink ?? "",
-  // only include latitude/longitude when available (from form or parsed maps link)
-  latitude: hospital.latitude ?? (parsed ? parsed.lat : undefined),
-  longitude: hospital.longitude ?? (parsed ? parsed.lng : undefined),
-        facilities: normalizeArray(hospital.facilities),
-        services: normalizeArray(hospital.services),
-      });
+        const payload = cleanObject({
+          name: hospital.name,
+          type: hospital.type,
+          class: hospital.class,
+          address: hospital.address,
+          city: hospital.city,
+          district: hospital.district,
+          phone: hospital.phone,
+          email: hospital.email,
+          website: hospital.website,
+          image: hospital.image,
+          description: hospital.description,
+          has_icu: hospital.hasICU ?? false,
+          has_igd: hospital.hasIGD ?? false,
+          total_beds: hospital.totalBeds ?? 0,
+          operating_hours: hospital.operatingHours ?? "24 Jam",
+          google_maps_link: hospital.googleMapsLink ?? "",
+          // only include latitude/longitude when available (from form or parsed maps link)
+          latitude: hospital.latitude ?? (parsed ? parsed.lat : undefined),
+          longitude: hospital.longitude ?? (parsed ? parsed.lng : undefined),
+          facilities: normalizeArray(hospital.facilities),
+          services: normalizeArray(hospital.services),
+        });
 
-      console.log("Mengirim payload ke Supabase:", payload);
+        console.log("Mengirim payload ke Supabase:", payload);
 
-      const { data, error } = await supabase
-        .from("hospitals")
-        .insert([payload])
-        .select();
+        const { data, error } = await supabase
+          .from("hospitals")
+          .insert([payload])
+          .select();
 
-      if (error) {
-        console.error("Supabase Error - Add Hospital:", error);
-        return { error };
-      }
-
-      if (data && data.length > 0) {
-        console.log("Hospital berhasil ditambahkan:", data[0]);
-        const newHospital = mapHospital(data[0]);
-        // compute distance if we have userLocation
-        if (
-          userLocation &&
-          newHospital.latitude != null &&
-          newHospital.longitude != null
-        ) {
-          const dist = haversineDistanceKm(
-            userLocation.lat,
-            userLocation.lng,
-            Number(newHospital.latitude),
-            Number(newHospital.longitude),
-          );
-          newHospital.distance = Math.round(dist * 10) / 10;
+        if (error) {
+          console.error("Supabase Error - Add Hospital:", error);
+          return { error };
         }
-        setHospitals((prev) => [newHospital, ...prev]);
-      }
 
-      return { error: null };
-    } catch (err) {
-      console.error("Unexpected error in addHospital:", err);
-      return {
-        error: {
-          message: err instanceof Error ? err.message : "Error tidak diketahui",
-          details: "",
-          hint: "",
-          code: "ERROR",
-        } as PostgrestError,
-      };
-    }
-  }, [parseGoogleMapsLink, userLocation, haversineDistanceKm]);
-
-  const updateHospital = useCallback(async (
-    id: string,
-    hospital: Partial<Hospital>,
-  ): Promise<{ error: PostgrestError | null }> => {
-    try {
-      // try to extract coords from google maps link if provided
-      const parsed = parseGoogleMapsLink(hospital.googleMapsLink || undefined);
-
-      const updatePayload = cleanObject({
-        name: hospital.name,
-        type: hospital.type,
-        class: hospital.class,
-        address: hospital.address,
-        city: hospital.city,
-        district: hospital.district,
-        phone: hospital.phone,
-        email: hospital.email,
-        website: hospital.website,
-        image: hospital.image,
-        description: hospital.description,
-        has_icu: hospital.hasICU,
-        has_igd: hospital.hasIGD,
-        total_beds: hospital.totalBeds,
-        operating_hours: hospital.operatingHours,
-        google_maps_link: hospital.googleMapsLink,
-        latitude: hospital.latitude ?? (parsed ? parsed.lat : undefined),
-        longitude: hospital.longitude ?? (parsed ? parsed.lng : undefined),
-        facilities: hospital.facilities
-          ? normalizeArray(hospital.facilities)
-          : undefined,
-        services: hospital.services
-          ? normalizeArray(hospital.services)
-          : undefined,
-      });
-
-      console.log("🔄 Update payload untuk ID " + id + ":", updatePayload);
-
-      const { data, error } = await supabase
-        .from("hospitals")
-        .update(updatePayload)
-        .eq("id", id)
-        .select();
-
-      if (error) {
-        console.error("❌ Supabase Error - Update Hospital:", error);
-        return { error };
-      }
-
-      if (data && data.length > 0) {
-        console.log("✅ Hospital berhasil diupdate:", data[0]);
-        const updated = mapHospital(data[0]);
-        if (
-          userLocation &&
-          updated.latitude != null &&
-          updated.longitude != null
-        ) {
-          const dist = haversineDistanceKm(
-            userLocation.lat,
-            userLocation.lng,
-            Number(updated.latitude),
-            Number(updated.longitude),
-          );
-          updated.distance = Math.round(dist * 10) / 10;
+        if (data && data.length > 0) {
+          console.log("Hospital berhasil ditambahkan:", data[0]);
+          const newHospital = mapHospital(data[0]);
+          // compute distance if we have userLocation
+          if (
+            userLocation &&
+            newHospital.latitude != null &&
+            newHospital.longitude != null
+          ) {
+            const dist = haversineDistanceKm(
+              userLocation.lat,
+              userLocation.lng,
+              Number(newHospital.latitude),
+              Number(newHospital.longitude),
+            );
+            newHospital.distance = Math.round(dist * 10) / 10;
+          }
+          setHospitals((prev) => [newHospital, ...prev]);
         }
-        setHospitals((prev) => prev.map((h) => (h.id === id ? updated : h)));
-      }
 
-      return { error: null };
-    } catch (err) {
-      console.error("💥 Unexpected error in updateHospital:", err);
-      return {
-        error: {
-          message: err instanceof Error ? err.message : "Error tidak diketahui",
-          details: "",
-          hint: "",
-          code: "ERROR",
-        } as PostgrestError,
-      };
-    }
-  }, [parseGoogleMapsLink, userLocation, haversineDistanceKm]);
+        return { error: null };
+      } catch (err) {
+        console.error("Unexpected error in addHospital:", err);
+        return {
+          error: {
+            message:
+              err instanceof Error ? err.message : "Error tidak diketahui",
+            details: "",
+            hint: "",
+            code: "ERROR",
+          } as PostgrestError,
+        };
+      }
+    },
+    [parseGoogleMapsLink, userLocation, haversineDistanceKm],
+  );
+
+  const updateHospital = useCallback(
+    async (
+      id: string,
+      hospital: Partial<Hospital>,
+    ): Promise<{ error: PostgrestError | null }> => {
+      try {
+        // try to extract coords from google maps link if provided
+        const parsed = parseGoogleMapsLink(
+          hospital.googleMapsLink || undefined,
+        );
+
+        const updatePayload = cleanObject({
+          name: hospital.name,
+          type: hospital.type,
+          class: hospital.class,
+          address: hospital.address,
+          city: hospital.city,
+          district: hospital.district,
+          phone: hospital.phone,
+          email: hospital.email,
+          website: hospital.website,
+          image: hospital.image,
+          description: hospital.description,
+          has_icu: hospital.hasICU,
+          has_igd: hospital.hasIGD,
+          total_beds: hospital.totalBeds,
+          operating_hours: hospital.operatingHours,
+          google_maps_link: hospital.googleMapsLink,
+          latitude: hospital.latitude ?? (parsed ? parsed.lat : undefined),
+          longitude: hospital.longitude ?? (parsed ? parsed.lng : undefined),
+          facilities: hospital.facilities
+            ? normalizeArray(hospital.facilities)
+            : undefined,
+          services: hospital.services
+            ? normalizeArray(hospital.services)
+            : undefined,
+        });
+
+        console.log("🔄 Update payload untuk ID " + id + ":", updatePayload);
+
+        const { data, error } = await supabase
+          .from("hospitals")
+          .update(updatePayload)
+          .eq("id", id)
+          .select();
+
+        if (error) {
+          console.error("❌ Supabase Error - Update Hospital:", error);
+          return { error };
+        }
+
+        if (data && data.length > 0) {
+          console.log("✅ Hospital berhasil diupdate:", data[0]);
+          const updated = mapHospital(data[0]);
+          if (
+            userLocation &&
+            updated.latitude != null &&
+            updated.longitude != null
+          ) {
+            const dist = haversineDistanceKm(
+              userLocation.lat,
+              userLocation.lng,
+              Number(updated.latitude),
+              Number(updated.longitude),
+            );
+            updated.distance = Math.round(dist * 10) / 10;
+          }
+          setHospitals((prev) => prev.map((h) => (h.id === id ? updated : h)));
+        }
+
+        return { error: null };
+      } catch (err) {
+        console.error("💥 Unexpected error in updateHospital:", err);
+        return {
+          error: {
+            message:
+              err instanceof Error ? err.message : "Error tidak diketahui",
+            details: "",
+            hint: "",
+            code: "ERROR",
+          } as PostgrestError,
+        };
+      }
+    },
+    [parseGoogleMapsLink, userLocation, haversineDistanceKm],
+  );
 
   /* =========================================================
      Location detection and distance recomputation
@@ -547,9 +559,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       throw new Error("Geolocation not supported");
     }
 
-  // Always attempt to call getCurrentPosition. Browser will prompt when permission state is 'prompt'.
+    // Always attempt to call getCurrentPosition. Browser will prompt when permission state is 'prompt'.
 
-  return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       // call getCurrentPosition which will prompt when permission is 'prompt'
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -574,7 +586,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
               return { ...h, distance: undefined };
             });
 
-            computed.sort((a, b) => (a.distance ?? 9999) - (b.distance ?? 9999));
+            computed.sort(
+              (a, b) => (a.distance ?? 9999) - (b.distance ?? 9999),
+            );
 
             // set selectedCity to nearest-location mode
             setSelectedCity("Lokasi Terdekat");
@@ -616,120 +630,126 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
   }, [userLocation, hospitals.length, haversineDistanceKm]);
 
-  const deleteHospital = useCallback(async (
-    id: string,
-  ): Promise<{ error: PostgrestError | null }> => {
-    const { error } = await supabase.from("hospitals").delete().eq("id", id);
+  const deleteHospital = useCallback(
+    async (id: string): Promise<{ error: PostgrestError | null }> => {
+      const { error } = await supabase.from("hospitals").delete().eq("id", id);
 
-    if (!error) {
-      setHospitals((prev) => prev.filter((h) => h.id !== id));
-    }
+      if (!error) {
+        setHospitals((prev) => prev.filter((h) => h.id !== id));
+      }
 
-    return { error };
-  }, []);
+      return { error };
+    },
+    [],
+  );
 
-  const getHospitalById = useCallback((id: string): Hospital | undefined =>
-    hospitals.find((h) => h.id === id), [hospitals]);
+  const getHospitalById = useCallback(
+    (id: string): Hospital | undefined => hospitals.find((h) => h.id === id),
+    [hospitals],
+  );
 
   /* =========================================================
      HERO BANNER CRUD
      ========================================================= */
 
-  const addHeroBanner = useCallback(async (banner: Partial<HeroBanner>): Promise<void> => {
-    try {
-      console.log("📤 Menambahkan banner:", banner);
+  const addHeroBanner = useCallback(
+    async (banner: Partial<HeroBanner>): Promise<void> => {
+      try {
+        console.log("📤 Menambahkan banner:", banner);
 
-      // Map camelCase to snake_case for Supabase
-      const bannerPayload = {
-        title: banner.title,
-        subtitle: banner.subtitle,
-        image: banner.image || null,
-        link: banner.link || null,
-        is_active: banner.isActive ?? false,
-        order: banner.order ?? 0,
-      };
-
-      const { data, error } = await supabase
-        .from("hero_banners")
-        .insert([bannerPayload])
-        .select();
-
-      if (error) {
-        console.error("❌ Supabase Error - Add Banner:", error);
-        throw new Error(error.message || "Gagal menambahkan banner");
-      }
-
-      console.log("✅ Banner berhasil ditambahkan:", data);
-
-      if (data && data.length > 0) {
-        // Map snake_case response to camelCase
-        const newBanner = {
-          id: data[0].id,
-          title: data[0].title,
-          subtitle: data[0].subtitle,
-          image: data[0].image,
-          link: data[0].link,
-          isActive: data[0].is_active,
-          order: data[0].order,
+        // Map camelCase to snake_case for Supabase
+        const bannerPayload = {
+          title: banner.title,
+          subtitle: banner.subtitle,
+          image: banner.image || null,
+          link: banner.link || null,
+          is_active: banner.isActive ?? false,
+          order: banner.order ?? 0,
         };
-        setHeroBanners((prev) => [...prev, newBanner]);
+
+        const { data, error } = await supabase
+          .from("hero_banners")
+          .insert([bannerPayload])
+          .select();
+
+        if (error) {
+          console.error("❌ Supabase Error - Add Banner:", error);
+          throw new Error(error.message || "Gagal menambahkan banner");
+        }
+
+        console.log("✅ Banner berhasil ditambahkan:", data);
+
+        if (data && data.length > 0) {
+          // Map snake_case response to camelCase
+          const newBanner = {
+            id: data[0].id,
+            title: data[0].title,
+            subtitle: data[0].subtitle,
+            image: data[0].image,
+            link: data[0].link,
+            isActive: data[0].is_active,
+            order: data[0].order,
+          };
+          setHeroBanners((prev) => [...prev, newBanner]);
+        }
+      } catch (err) {
+        console.error("💥 Unexpected error in addHeroBanner:", err);
+        throw err;
       }
-    } catch (err) {
-      console.error("💥 Unexpected error in addHeroBanner:", err);
-      throw err;
-    }
-  }, []);
+    },
+    [],
+  );
 
-  const updateHeroBanner = useCallback(async (
-    id: string,
-    banner: Partial<HeroBanner>,
-  ): Promise<void> => {
-    try {
-      console.log("📤 Update banner ID " + id + ":", banner);
+  const updateHeroBanner = useCallback(
+    async (id: string, banner: Partial<HeroBanner>): Promise<void> => {
+      try {
+        console.log("📤 Update banner ID " + id + ":", banner);
 
-      // Map camelCase to snake_case for Supabase
-      const bannerPayload = {
-        title: banner.title,
-        subtitle: banner.subtitle,
-        image: banner.image || null,
-        link: banner.link || null,
-        is_active: banner.isActive ?? false,
-        order: banner.order ?? 0,
-      };
-
-      const { data, error } = await supabase
-        .from("hero_banners")
-        .update(bannerPayload)
-        .eq("id", id)
-        .select();
-
-      if (error) {
-        console.error("❌ Supabase Error - Update Banner:", error);
-        throw new Error(error.message || "Gagal mengupdate banner");
-      }
-
-      console.log("✅ Banner berhasil diupdate:", data);
-
-      if (data && data.length > 0) {
-        // Map snake_case response to camelCase
-        const updatedBanner = {
-          id: data[0].id,
-          title: data[0].title,
-          subtitle: data[0].subtitle,
-          image: data[0].image,
-          link: data[0].link,
-          isActive: data[0].is_active,
-          order: data[0].order,
+        // Map camelCase to snake_case for Supabase
+        const bannerPayload = {
+          title: banner.title,
+          subtitle: banner.subtitle,
+          image: banner.image || null,
+          link: banner.link || null,
+          is_active: banner.isActive ?? false,
+          order: banner.order ?? 0,
         };
-        setHeroBanners((prev) =>
-          prev.map((b) => (b.id === id ? updatedBanner : b)),
-        );
+
+        const { data, error } = await supabase
+          .from("hero_banners")
+          .update(bannerPayload)
+          .eq("id", id)
+          .select();
+
+        if (error) {
+          console.error("❌ Supabase Error - Update Banner:", error);
+          throw new Error(error.message || "Gagal mengupdate banner");
+        }
+
+        console.log("✅ Banner berhasil diupdate:", data);
+
+        if (data && data.length > 0) {
+          // Map snake_case response to camelCase
+          const updatedBanner = {
+            id: data[0].id,
+            title: data[0].title,
+            subtitle: data[0].subtitle,
+            image: data[0].image,
+            link: data[0].link,
+            isActive: data[0].is_active,
+            order: data[0].order,
+          };
+          setHeroBanners((prev) =>
+            prev.map((b) => (b.id === id ? updatedBanner : b)),
+          );
+        }
+      } catch (err) {
+        console.error("💥 Unexpected error in updateHeroBanner:", err);
+        throw err;
       }
-    } catch (err) {
-      console.error("💥 Unexpected error in updateHeroBanner:", err);
-      throw err;
-    }
-  }, []);
+    },
+    [],
+  );
 
   const deleteHeroBanner = useCallback(async (id: string): Promise<void> => {
     try {

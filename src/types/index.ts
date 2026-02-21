@@ -21,7 +21,7 @@ export interface Hospital {
   // when adding via admin panel (we can parse Google Maps link instead)
   latitude?: number | null;
   longitude?: number | null;
-googleMapsLink?: string;
+  googleMapsLink?: string;
   distance?: number; // km from user location
   createdAt: string;
   updatedAt: string;
@@ -42,7 +42,7 @@ export interface AdminUser {
   username: string;
   password: string; // In real app, this would be hashed
   name: string;
-  role: 'admin' | 'superadmin';
+  role: "admin" | "superadmin";
 }
 
 export interface UserLocation {
@@ -53,14 +53,14 @@ export interface UserLocation {
 }
 
 export const BANTEN_CITIES = [
-  'Kota Serang',
-  'Kota Cilegon',
-  'Kota Tangerang',
-  'Kota Tangerang Selatan',
-  'Kabupaten Serang',
-  'Kabupaten Tangerang',
-  'Kabupaten Pandeglang',
-  'Kabupaten Lebak',
+  "Kota Serang",
+  "Kota Cilegon",
+  "Kota Tangerang",
+  "Kota Tangerang Selatan",
+  "Kabupaten Serang",
+  "Kabupaten Tangerang",
+  "Kabupaten Pandeglang",
+  "Kabupaten Lebak",
 ] as const;
 
-export type BantenCity = typeof BANTEN_CITIES[number];
+export type BantenCity = (typeof BANTEN_CITIES)[number];

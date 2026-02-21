@@ -568,8 +568,8 @@ const HospitalFormModal = ({
     hasICU: boolean;
     operatingHours: string;
     googleMapsLink: string;
-  latitude: string;
-  longitude: string;
+    latitude: string;
+    longitude: string;
   };
 
   const [formData, setFormData] = useState<FormState>({
@@ -595,8 +595,8 @@ const HospitalFormModal = ({
     operatingHours: hospital?.operatingHours || "24 Jam",
     // removed website, latitude and longitude — we only keep googleMapsLink
     googleMapsLink: hospital?.googleMapsLink || "",
-  latitude: hospital?.latitude != null ? String(hospital.latitude) : "",
-  longitude: hospital?.longitude != null ? String(hospital.longitude) : "",
+    latitude: hospital?.latitude != null ? String(hospital.latitude) : "",
+    longitude: hospital?.longitude != null ? String(hospital.longitude) : "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -657,10 +657,14 @@ const HospitalFormModal = ({
       hasICU: formData.hasICU,
       operatingHours: formData.operatingHours,
       // only include googleMapsLink; website/latitude/longitude removed per request
-  googleMapsLink: formData.googleMapsLink?.trim() || "",
-  // include latitude/longitude if provided by admin (convert to number)
-  latitude: formData.latitude.trim() ? Number.parseFloat(formData.latitude.trim()) : undefined,
-  longitude: formData.longitude.trim() ? Number.parseFloat(formData.longitude.trim()) : undefined,
+      googleMapsLink: formData.googleMapsLink?.trim() || "",
+      // include latitude/longitude if provided by admin (convert to number)
+      latitude: formData.latitude.trim()
+        ? Number.parseFloat(formData.latitude.trim())
+        : undefined,
+      longitude: formData.longitude.trim()
+        ? Number.parseFloat(formData.longitude.trim())
+        : undefined,
     };
 
     // Sanitize text fields before sending
@@ -926,7 +930,9 @@ const HospitalFormModal = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Longitude</label>
+              <label className="block text-sm font-medium mb-1">
+                Longitude
+              </label>
               <input
                 type="number"
                 step="any"

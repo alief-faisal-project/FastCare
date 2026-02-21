@@ -38,13 +38,14 @@ const HospitalDetail = () => {
     );
   }
 
-  const directionsUrl = hospital.latitude && hospital.longitude
-    ? `https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`
-    : hospital.googleMapsLink
-    ? hospital.googleMapsLink
-    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-        hospital.name + ' ' + hospital.address,
-      )}`;
+  const directionsUrl =
+    hospital.latitude && hospital.longitude
+      ? `https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`
+      : hospital.googleMapsLink
+        ? hospital.googleMapsLink
+        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            hospital.name + " " + hospital.address,
+          )}`;
 
   // Determine ownership type based on hospital name
   const getOwnership = () => {
@@ -181,39 +182,51 @@ const HospitalDetail = () => {
               </div>
             </div>
 
-            {/* Action Buttons (Desktop) */}
-            <div className="flex flex-col gap-3">
+            {/* Action Buttons (Desktop - Symmetric & Perfectly Centered) */}
+            <div className="flex flex-col gap-4 w-full">
+              {/* Telepon */}
               <a
                 href={`tel:${(hospital.phone || "").replace(/\s+/g, "")}`}
-                className="flex items-center justify-center gap-2 py-3 rounded-3xl 
-               bg-gradient-to-r from-green-700 via-green-600 to-white
-               text-white border border-green-200
-               font-medium transition-all duration-300
-               hover:from-green-700 hover:via-green-500 hover:to-green-700"
+                className="w-full h-14 flex items-center justify-center gap-3
+               rounded-3xl
+               bg-gradient-to-r from-green-600 via-green-500 to-green-400
+               text-white
+               font-semibold text-sm
+               transition-all duration-300
+               hover:brightness-110"
               >
-                <i className="fa-solid fa-phone-volume" />
-                <span>Telepon</span>
+                <i className="fa-solid fa-phone-volume w-5 text-base text-center" />
+                <span className="text-center leading-none">Telepon</span>
               </a>
 
+              {/* Peta */}
               <a
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-3 rounded-3xl 
-               bg-secondary/10 text-foreground border border-border font-medium hover:bg-secondary/20 transition-colors"
+                className="w-full h-14 flex items-center justify-center gap-3
+              C"
               >
-                <i className="fa-solid fa-location-arrow" />
-                <span>Peta Lokasi</span>
+                <i className="fa-solid fa-location-arrow w-5 text-base text-center" />
+                <span className="text-center leading-none">Peta Lokasi</span>
               </a>
-              {/* Email Button (show if email exists) */}
+
+              {/* Email */}
               {hospital.email && (
                 <a
-                  href={`mailto:${encodeURIComponent(sanitizeInput(hospital.email))}`}
-                  className="flex items-center justify-center gap-2 py-3 rounded-3xl 
-               bg-secondary/10 text-foreground border border-border font-medium hover:bg-secondary/20 transition-colors"
+                  href={`mailto:${encodeURIComponent(
+                    sanitizeInput(hospital.email),
+                  )}`}
+                  className="w-full h-14 flex items-center justify-center gap-3
+                 rounded-3xl
+                 bg-card text-foreground
+                 border border-border
+                 font-semibold text-sm
+                 transition-colors duration-300
+                 hover:bg-secondary/10"
                 >
-                  <i className="fa-solid fa-envelope" />
-                  <span>Email</span>
+                  <i className="fa-solid fa-envelope w-5 text-base text-center" />
+                  <span className="text-center leading-none">Email</span>
                 </a>
               )}
             </div>
@@ -313,37 +326,47 @@ const HospitalDetail = () => {
               </div>
             </div>
 
-            {/* Phone & Maps Stack (Right 1 Column - Compact) */}
-
-            <div className="col-span-1 flex flex-col gap-2">
-              {/* Phone Button */}
+            {/* Phone, Maps, Email (Mobile Only - Symmetric) */}
+            <div className="col-span-1 flex flex-col gap-3">
+              {/* Phone */}
               <a
                 href={`tel:${hospital.phone}`}
-                className="flex flex-row items-center justify-center gap-2 p-2 rounded-lg bg-secondary/10 text-foreground border border-border hover:bg-secondary/20"
+                className="w-full h-14 flex items-center justify-center gap-2 
+               rounded-2xl border border-border bg-card
+               text-primary text-sm font-medium
+               transition-colors hover:bg-secondary/90"
               >
-                <i className="fa-solid fa-phone-volume" />
-                <span className="text-xs text-center">Telepon</span>
+                <i className="fa-solid fa-phone-volume text-base" />
+                <span className="text-center leading-none">Telepon</span>
               </a>
 
-              {/* Maps Button */}
+              {/* Maps */}
               <a
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-row items-center justify-center gap-2 p-2 rounded-lg bg-secondary/10 text-foreground border border-border hover:bg-secondary/20"
+                className="w-full h-14 flex items-center justify-center gap-2 
+               rounded-2xl border border-border bg-card
+               text-primary text-sm font-medium
+               transition-colors hover:bg-secondary/90"
               >
-                <i className="fa-solid fa-location-arrow" />
-                <span className="text-xs text-center">Peta</span>
+                <i className="fa-solid fa-location-arrow text-base" />
+                <span className="text-center leading-none">Peta</span>
               </a>
 
-              {/* Email button (mobile) */}
+              {/* Email */}
               {hospital.email && (
                 <a
-                  href={`mailto:${encodeURIComponent(sanitizeInput(hospital.email))}`}
-                  className="flex flex-row items-center justify-center gap-2 p-2 rounded-lg bg-secondary/10 text-foreground border border-border hover:bg-secondary/20"
+                  href={`mailto:${encodeURIComponent(
+                    sanitizeInput(hospital.email),
+                  )}`}
+                  className="w-full h-14 flex items-center justify-center gap-2 
+                 rounded-2xl border border-border bg-card
+                 text-primary text-sm font-medium
+                 transition-colors hover:bg-secondary/90"
                 >
-                  <i className="fa-solid fa-envelope" />
-                  <span className="text-xs">Email</span>
+                  <i className="fa-solid fa-envelope text-base" />
+                  <span className="text-center leading-none">Email</span>
                 </a>
               )}
             </div>
