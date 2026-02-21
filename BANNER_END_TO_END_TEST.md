@@ -16,14 +16,14 @@ Setelah fix RLS, pastikan semuanya bekerja dari admin panel sampai website.
 3. Go to "Hero Banner" tab
 4. Click "Tambah Banner" button
 5. Fill form:
-   
+
    Judul:        "Welcome to FastCare"
    Subtitle:     "Healthcare at your fingertips"
    Gambar:       Upload or URL
    Link:         https://fastcare.com (atau kosong)
    Aktif:        ✓ (check/enable)
    Urutan:       1
-   
+
 6. Click "Tambah" button
 7. Expected: Modal close, banner appear in list
 ```
@@ -34,11 +34,11 @@ Setelah fix RLS, pastikan semuanya bekerja dari admin panel sampai website.
 1. Press F12 (open DevTools)
 2. Go to Console tab
 3. Look for success message:
-   
+
    ✅ "Banner berhasil ditambahkan: {id: '...', title: '...'}"
    OR
    ✅ "Sending banner payload: {...}"
-   
+
 4. No ❌ error should appear
 ```
 
@@ -92,16 +92,16 @@ Expected:
 
 ## ✅ SUCCESS CRITERIA
 
-| Check | Expected | Status |
-|-------|----------|--------|
-| Add banner in admin | No error, modal close | ✅ |
-| Console logs | Show ✅ success messages | ✅ |
-| Supabase data | Row appears in table | ✅ |
-| Website display | Banner visible at home | ✅ |
-| Carousel | Can navigate between banners | ✅ |
-| Multiple banners | Add 2-5 work fine | ✅ |
-| Image display | Gambar terlihat jelas | ✅ |
-| Placeholder | Jika 0 banners, show 5 grey placeholders | ✅ |
+| Check               | Expected                                 | Status |
+| ------------------- | ---------------------------------------- | ------ |
+| Add banner in admin | No error, modal close                    | ✅     |
+| Console logs        | Show ✅ success messages                 | ✅     |
+| Supabase data       | Row appears in table                     | ✅     |
+| Website display     | Banner visible at home                   | ✅     |
+| Carousel            | Can navigate between banners             | ✅     |
+| Multiple banners    | Add 2-5 work fine                        | ✅     |
+| Image display       | Gambar terlihat jelas                    | ✅     |
+| Placeholder         | Jika 0 banners, show 5 grey placeholders | ✅     |
 
 If all ✅ → **FULLY WORKING!** 🎉
 
@@ -112,12 +112,14 @@ If all ✅ → **FULLY WORKING!** 🎉
 ### Issue: Banner tidak tampil di website
 
 **Check:**
+
 1. Is banner `is_active` = true? (Check Supabase)
 2. Is image URL valid? (Try open image URL in browser)
 3. Is HeroBanner component mounted? (Check F12 Elements)
 4. Any console errors? (Check F12 Console)
 
 **Fix:**
+
 - Edit banner, set `is_active` = true
 - Check image URL is valid
 - Clear cache: Ctrl+Shift+Del
@@ -126,11 +128,13 @@ If all ✅ → **FULLY WORKING!** 🎉
 ### Issue: Carousel not working
 
 **Check:**
+
 1. Do you have 2+ banners? (Carousel needs multiple)
 2. Are dots visible? (Check CSS/styling)
 3. Any JS errors? (Check F12 Console)
 
 **Fix:**
+
 - Add more banners (need at least 2)
 - Check CSS classes are correct
 - Refresh page
@@ -138,11 +142,13 @@ If all ✅ → **FULLY WORKING!** 🎉
 ### Issue: Placeholder (5 grey boxes) still showing after add banner
 
 **Check:**
+
 1. Are banners actually saved? (Check Supabase)
 2. Are they `is_active` = true?
 3. Did you refresh page after add?
 
 **Fix:**
+
 - Refresh browser: F5 or Ctrl+R
 - Clear cache: Ctrl+Shift+Del
 - Hard refresh: Ctrl+Shift+R
@@ -150,11 +156,13 @@ If all ✅ → **FULLY WORKING!** 🎉
 ### Issue: Error when adding banner
 
 **Check:**
+
 1. RLS still enabled? (Check Supabase → RLS tab)
 2. Are you logged in? (Check Auth)
 3. Console error message? (Check F12 Console)
 
 **Fix:**
+
 - Disable RLS again (follow SUPABASE_RLS_SOLUTION.md)
 - Login with correct user
 - Check error in console
@@ -169,11 +177,11 @@ Banner harus tampil baik di:
 ✅ Desktop (1920x1080)
    - Full width
    - Visible controls
-   
+
 ✅ Tablet (768x1024)
    - Responsive
    - Touch controls work
-   
+
 ✅ Mobile (375x667)
    - Responsive
    - Swipe works

@@ -13,11 +13,13 @@
 ### ✅ CARA 1: Melalui Dashboard (Recommended)
 
 #### Step 1: Buka Supabase Dashboard
+
 1. Go to: https://supabase.com/dashboard
 2. Login dengan akun Anda
 3. Pilih project FastCare
 
 #### Step 2: Create Storage Bucket
+
 1. Sidebar kiri → Cari **"Storage"** atau **"Buckets"**
 2. Klik **"Create a new bucket"**
 3. Isi form:
@@ -28,6 +30,7 @@
 4. Klik **"Create Bucket"**
 
 #### Step 3: Setup Public Access
+
 Jika Bucket dibuat tapi masih private:
 
 1. Klik bucket `banner-images`
@@ -40,6 +43,7 @@ Jika Bucket dibuat tapi masih private:
 8. Klik **"Save"**
 
 #### Verify Success
+
 ```
 Storage → banner-images → Buka
 ✅ Ada file? Berarti bucket siap!
@@ -88,7 +92,7 @@ USING (bucket_id = 'banner-images');
 CREATE POLICY "Allow authenticated upload" ON storage.objects
 FOR INSERT
 WITH CHECK (
-  bucket_id = 'banner-images' 
+  bucket_id = 'banner-images'
   AND auth.role() = 'authenticated'
 );
 ```
@@ -116,6 +120,7 @@ CREATE TABLE hero_banners (
 ```
 
 **TIDAK perlu kolom baru!** Kolom `image` sudah cukup untuk:
+
 - Link gambar eksternal: `https://example.com/image.jpg`
 - URL dari Supabase Storage: `https://[project].supabase.co/storage/v1/object/public/banner-images/banner-xxx.jpg`
 
@@ -126,6 +131,7 @@ CREATE TABLE hero_banners (
 ### Test Manual
 
 **Prerequisites:**
+
 1. Bucket `banner-images` sudah dibuat
 2. Bucket set ke Public
 3. RLS Policy allow public read
@@ -146,6 +152,7 @@ CREATE TABLE hero_banners (
 7. Klik "Tambah"
 
 **Expected Result:**
+
 - No error message
 - Modal tutup
 - Banner muncul di list
@@ -153,6 +160,7 @@ CREATE TABLE hero_banners (
 - Gambar terupload ke Storage
 
 **If Error "Bucket not found":**
+
 - Bucket belum dibuat → Create bucket
 - Bucket private → Set ke Public
 - RLS policy blocking → Set policy

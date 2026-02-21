@@ -3,6 +3,7 @@
 ## ⏱️ QUICK FIX (5 MENIT)
 
 ### Langkah 1: Buka Supabase Dashboard
+
 ```
 1. Go to: https://supabase.com
 2. Login
@@ -11,6 +12,7 @@
 ```
 
 ### Langkah 2: Disable RLS pada hero_banners
+
 ```
 1. Left sidebar → Find "hero_banners" table
 2. Click pada "hero_banners"
@@ -22,6 +24,7 @@
 ```
 
 ### Langkah 3: Back to App & Test
+
 ```
 1. Buka Admin Panel: http://localhost:5173/admin
 2. Navigate ke "Hero Banner" tab
@@ -32,6 +35,7 @@
 ```
 
 ### Langkah 4: Verify
+
 ```
 1. Banner muncul di list? ✅
 2. Go to website home: http://localhost:5173
@@ -77,6 +81,7 @@ RLS TAB:
 ## ✅ AFTER FIX - TESTING
 
 ### Test 1: Add Banner
+
 ```
 Admin Panel → Hero Banner tab
 1. Click "Tambah Banner"
@@ -86,6 +91,7 @@ Admin Panel → Hero Banner tab
 ```
 
 ### Test 2: Website Display
+
 ```
 Home page: http://localhost:5173
 1. Should see banner in carousel
@@ -94,6 +100,7 @@ Home page: http://localhost:5173
 ```
 
 ### Test 3: Database
+
 ```
 Supabase Dashboard → hero_banners table
 1. Rows should appear
@@ -108,6 +115,7 @@ Supabase Dashboard → hero_banners table
 ### Masih Error "RLS Policy Violated"?
 
 **Langkah:**
+
 1. Refresh browser completely: `Ctrl+Shift+R`
 2. Go back to Supabase dashboard
 3. Verify RLS toggle is OFF
@@ -116,13 +124,16 @@ Supabase Dashboard → hero_banners table
 ### RLS Toggle Tidak Ada?
 
 **Alternative - Via SQL:**
+
 1. Supabase Dashboard
 2. Left sidebar → SQL Editor
 3. New Query
 4. Copy paste:
+
 ```sql
 ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ```
+
 5. Click RUN
 6. Success message? ✅
 7. Back to app, test
@@ -130,6 +141,7 @@ ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ### Banner Still Not Showing?
 
 **Check:**
+
 1. Is banner in Supabase? (Go to hero_banners table)
 2. Is `is_active` = true? (Not false)
 3. Refresh website: `F5`
@@ -185,14 +197,14 @@ But for now, just disable RLS and test!
 
 ## 🏁 SUMMARY
 
-| Step | Action | Time |
-|------|--------|------|
-| 1 | Open Supabase | 1 min |
-| 2 | Disable RLS | 1 min |
-| 3 | Test add banner | 1 min |
-| 4 | Verify data | 1 min |
-| 5 | Check website | 1 min |
-| **TOTAL** | **FIX & TEST** | **~5 min** |
+| Step      | Action          | Time       |
+| --------- | --------------- | ---------- |
+| 1         | Open Supabase   | 1 min      |
+| 2         | Disable RLS     | 1 min      |
+| 3         | Test add banner | 1 min      |
+| 4         | Verify data     | 1 min      |
+| 5         | Check website   | 1 min      |
+| **TOTAL** | **FIX & TEST**  | **~5 min** |
 
 ---
 

@@ -15,10 +15,11 @@ Sebab: RLS (Row-Level Security) policy pada table `hero_banners` terlalu restric
 ### PALING CEPAT - Disable RLS
 
 **Via Dashboard:**
+
 1. Buka: https://supabase.com/dashboard
 2. Masuk ke project FastCare
 3. Left sidebar → Klik `hero_banners` table
-4. Tab `RLS` 
+4. Tab `RLS`
 5. Klik tombol besar "Disable RLS"
 6. Refresh browser
 7. Test tambah banner ke-2 lagi
@@ -53,18 +54,20 @@ ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ## ✅ VERIFY - Check if RLS Disabled
 
 ### Method 1: Via Dashboard
+
 1. Go to table `hero_banners`
 2. Tab `RLS`
 3. Should show "0 active policies" or "RLS disabled"
 
 ### Method 2: Via SQL
+
 1. Go to SQL Editor
 2. Run query:
 
 ```sql
 -- Check if RLS enabled
-SELECT relname, relrowsecurity 
-FROM pg_class 
+SELECT relname, relrowsecurity
+FROM pg_class
 WHERE relname = 'hero_banners';
 ```
 
@@ -142,7 +145,8 @@ A: Untuk development, aman. Untuk production, tidak - gunakan policies.
 A: Buka Admin Panel, coba tambah 2-5 banner, semuanya harus bisa tanpa error.
 
 **Q: Masih error setelah disable RLS?**
-A: 
+A:
+
 - Refresh browser (Ctrl+Shift+R)
 - Clear cache (Ctrl+Shift+Del)
 - Check console (F12) untuk error lain

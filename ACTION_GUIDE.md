@@ -3,12 +3,15 @@
 ## 📌 YOU HAVE 2 ISSUES TO SOLVE
 
 ### Issue 1: RLS Error ⚠️
+
 When adding banner 2nd time:
+
 ```
 Error: new row violates row-level security policy
 ```
 
 ### Issue 2: Feature Implementation ✅ (Already Done)
+
 - Hero banner upload (local files)
 - Hero banner with URL
 - Placeholder banners
@@ -21,6 +24,7 @@ Error: new row violates row-level security policy
 ### ACTION 1: Fix RLS Error (3 MINUTES)
 
 **Choice A: Dashboard (Easiest)**
+
 1. Open: https://supabase.com
 2. Login to FastCare project
 3. Left sidebar → Click `hero_banners` table
@@ -30,12 +34,15 @@ Error: new row violates row-level security policy
 7. Try add banner 2 → Should work ✅
 
 **Choice B: SQL (If Choice A fails)**
+
 1. Supabase Dashboard → SQL Editor
 2. Click New Query
 3. Copy-paste this:
+
 ```sql
 ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ```
+
 4. Click RUN
 5. Wait for success message
 6. Back to app, try add banner
@@ -47,6 +54,7 @@ ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ### ACTION 2: Test Hero Banner Features (15 MINUTES)
 
 **Test 1: Add Banner with Local Image**
+
 ```
 1. Admin Panel → Hero Banner tab
 2. Click "Tambah Banner"
@@ -59,6 +67,7 @@ ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ```
 
 **Test 2: Add Banner with URL**
+
 ```
 1. Click "Tambah Banner" again
 2. Fill: Judul = "Test 2"
@@ -70,6 +79,7 @@ ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ```
 
 **Test 3: Website Display**
+
 ```
 1. Go to website home: http://localhost:5173
 2. Scroll to top
@@ -81,6 +91,7 @@ ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ```
 
 **Test 4: Placeholder**
+
 ```
 1. Admin Panel → Delete all banners
 2. Go to website
@@ -93,6 +104,7 @@ ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ### ACTION 3: Verify Database (5 MINUTES)
 
 **Supabase Check**
+
 1. Go to: https://supabase.com
 2. Select FastCare project
 3. Go to: `hero_banners` table
@@ -108,6 +120,7 @@ ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ### ACTION 4: Check Storage (2 MINUTES)
 
 **If you uploaded local image**
+
 1. Supabase Dashboard
 2. Left sidebar → Storage
 3. Find bucket: `banner-images`
@@ -151,19 +164,25 @@ RESULT: READY TO DEPLOY ✅
 ## 🐛 TROUBLESHOOTING
 
 ### Problem: RLS toggle not visible
+
 **Solution:** Use SQL method instead (see ACTION 1, Choice B)
 
 ### Problem: Can't upload image
+
 **Solution:** Check storage bucket permissions
 
 ### Problem: Image not showing on website
-**Solution:** 
+
+**Solution:**
+
 - Refresh page: F5
 - Check if is_active = true
 - Check image URL is valid
 
 ### Problem: Placeholder not showing
+
 **Solution:**
+
 - Delete all banners first
 - Refresh page
 - Add new banner
@@ -197,6 +216,7 @@ TOTAL:            28-33 minutes
 ## 🎯 FINAL GOAL
 
 After completing all actions above:
+
 - ✅ No RLS errors
 - ✅ Can add unlimited banners
 - ✅ Banners display on website

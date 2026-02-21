@@ -3,6 +3,7 @@
 ## 🎯 MASALAH
 
 Ketika menambahkan banner ke-2, muncul error:
+
 ```
 "Error: new row violates row-level security policy for table hero_banners"
 ```
@@ -28,9 +29,11 @@ Ketika menambahkan banner ke-2, muncul error:
 2. Left sidebar → Click "SQL Editor"
 3. Click "New query"
 4. Copy-paste:
+
 ```sql
 ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ```
+
 5. Click "Run"
 6. Success ✅
 7. Back to app, test
@@ -56,6 +59,7 @@ ALTER TABLE "public"."hero_banners" DISABLE ROW LEVEL SECURITY;
 ## 📖 DETAILED GUIDES (OPTIONAL)
 
 Untuk penjelasan lebih detail:
+
 - `QUICK_FIX_RLS_5MIN.md` - Step-by-step dengan screenshot
 - `SUPABASE_RLS_SOLUTION.md` - Penjelasan detail + production fix
 - `BANNER_END_TO_END_TEST.md` - Cara test setelah fix
@@ -64,16 +68,17 @@ Untuk penjelasan lebih detail:
 
 ## 🎯 SUMMARY
 
-| Langkah | Action | Waktu |
-|---------|--------|-------|
-| 1 | Buka Supabase | 1 min |
-| 2 | Disable RLS | 1 min |
-| 3 | Test banner | 1 min |
+| Langkah   | Action           | Waktu      |
+| --------- | ---------------- | ---------- |
+| 1         | Buka Supabase    | 1 min      |
+| 2         | Disable RLS      | 1 min      |
+| 3         | Test banner      | 1 min      |
 | **Total** | **Fix Complete** | **~3 min** |
 
 ---
 
 **NEXT STEP:**
+
 1. Follow Cara 1 atau Cara 2 di atas
 2. Test add banner ke-2
 3. Verify banner muncul di website

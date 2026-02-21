@@ -38,7 +38,7 @@ const FloatingContact = () => {
       >
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-1.5 bg-primary border border-primary rounded-3xl text-white px-3 py-2  shadow-lg transition-all duration-300 hover:shadow-xl text-xs"
+          className="flex items-center gap-1.5 bg-primary border border-primary rounded-3xl text-white px-3 py-2  shadow-lg transition-all duration-300 hover:shadow-xl text-x"
         >
           <i className="fa-solid fa-headset text-xl" />
   

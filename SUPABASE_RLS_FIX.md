@@ -17,9 +17,11 @@ Error: new row violates row-level security policy for table "hero_banners"
 Ada 2 pilihan:
 
 ### Option 1: Disable RLS (Untuk Development/Testing)
+
 Paling cepat, cocok untuk development/testing
 
 **Steps:**
+
 1. Buka Supabase Dashboard
 2. Go to: `Authentication` → `Policies`
 3. Find table: `hero_banners`
@@ -30,9 +32,11 @@ Paling cepat, cocok untuk development/testing
 **Kekurangan:** Tidak aman untuk production
 
 ### Option 2: Fix RLS Policy (Untuk Production - RECOMMENDED)
+
 Lebih aman, allow authenticated users
 
 **Steps:**
+
 1. Buka Supabase Dashboard
 2. Go to: `Authentication` → `Policies`
 3. Find table: `hero_banners`
@@ -90,12 +94,14 @@ Test again, sekarang seharusnya bisa tambah banner ke 2, 3, 4, 5.
 ## 🔍 HOW TO CHECK
 
 **Check RLS Status:**
+
 1. Supabase Dashboard
 2. Select table `hero_banners`
 3. Check tab "RLS" - ada toggle button
 4. If green = enabled, if grey = disabled
 
 **Check Policies:**
+
 1. Go to `Authentication` → `Policies`
 2. Find table name
 3. See all policies for that table
@@ -160,22 +166,24 @@ Setelah apply fix, test:
 
 ## 📊 COMPARISON
 
-| Approach | Speed | Security | Best For |
-|----------|-------|----------|----------|
-| Disable RLS | ⚡⚡⚡ | ⚠️ Low | Development |
-| RLS Policies | ⚡ Slow | ✅ High | Production |
+| Approach     | Speed   | Security | Best For    |
+| ------------ | ------- | -------- | ----------- |
+| Disable RLS  | ⚡⚡⚡  | ⚠️ Low   | Development |
+| RLS Policies | ⚡ Slow | ✅ High  | Production  |
 
 ---
 
 ## 🚨 IF STILL ERROR AFTER FIX
 
 Check:
+
 1. Are you logged in? (Check Auth tab in Supabase)
 2. Is user authenticated? (Check Auth session)
 3. Did RLS actually disable? (Refresh browser)
 4. Try clear cache: Ctrl+Shift+Del
 
 If still error:
+
 - Screenshot the error
 - Check Supabase logs (Logs tab)
 - Verify RLS toggle is OFF

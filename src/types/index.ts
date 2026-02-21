@@ -19,7 +19,7 @@ export interface Hospital {
   operatingHours: string;
   latitude: number;
   longitude: number;
-  googleMapsLink?: string;
+googleMapsLink?: string;
   distance?: number; // km from user location
   createdAt: string;
   updatedAt: string;
@@ -29,8 +29,8 @@ export interface HeroBanner {
   id: string;
   title: string;
   subtitle: string;
-  image: string | null;
-  link?: string | null;
+  image: string;
+  link?: string;
   isActive: boolean;
   order: number;
 }
@@ -40,7 +40,7 @@ export interface AdminUser {
   username: string;
   password: string; // In real app, this would be hashed
   name: string;
-  role: "admin" | "superadmin";
+  role: 'admin' | 'superadmin';
 }
 
 export interface UserLocation {
@@ -51,14 +51,14 @@ export interface UserLocation {
 }
 
 export const BANTEN_CITIES = [
-  "Kota Serang",
-  "Kota Cilegon",
-  "Kota Tangerang",
-  "Kota Tangerang Selatan",
-  "Kabupaten Serang",
-  "Kabupaten Tangerang",
-  "Kabupaten Pandeglang",
-  "Kabupaten Lebak",
+  'Kota Serang',
+  'Kota Cilegon',
+  'Kota Tangerang',
+  'Kota Tangerang Selatan',
+  'Kabupaten Serang',
+  'Kabupaten Tangerang',
+  'Kabupaten Pandeglang',
+  'Kabupaten Lebak',
 ] as const;
 
-export type BantenCity = (typeof BANTEN_CITIES)[number];
+export type BantenCity = typeof BANTEN_CITIES[number];

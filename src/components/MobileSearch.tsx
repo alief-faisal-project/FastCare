@@ -1,9 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
-import { useApp } from '@/context/AppContext';
-import { BANTEN_CITIES, BantenCity } from '@/types';
+import { useState, useRef, useEffect } from "react";
+import { useApp } from "@/context/AppContext";
+import { BANTEN_CITIES, BantenCity } from "@/types";
 
 const MobileSearch = () => {
-  const { selectedCity, setSelectedCity, detectLocation, searchQuery, setSearchQuery } = useApp();
+  const {
+    selectedCity,
+    setSelectedCity,
+    detectLocation,
+    searchQuery,
+    setSearchQuery,
+  } = useApp();
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [isDetecting, setIsDetecting] = useState(false);
   const locationRef = useRef<HTMLDivElement>(null);
@@ -11,12 +17,15 @@ const MobileSearch = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (locationRef.current && !locationRef.current.contains(event.target as Node)) {
+      if (
+        locationRef.current &&
+        !locationRef.current.contains(event.target as Node)
+      ) {
         setIsLocationOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleDetectLocation = async () => {
@@ -25,13 +34,13 @@ const MobileSearch = () => {
       await detectLocation();
       setIsLocationOpen(false);
     } catch (error) {
-      console.error('Failed to detect location');
+      console.error("Failed to detect location", error);
     } finally {
       setIsDetecting(false);
     }
   };
 
-  const handleCitySelect = (city: BantenCity | 'Semua') => {
+  const handleCitySelect = (city: BantenCity | "Semua") => {
     setSelectedCity(city);
     setIsLocationOpen(false);
   };
@@ -101,7 +110,6 @@ const MobileSearch = () => {
                       selectedCity === city ? "bg-accent" : ""
                     }`}
                   >
-                    
                     <span className="text-sm text-foreground">{city}</span>
                   </button>
                 ))}

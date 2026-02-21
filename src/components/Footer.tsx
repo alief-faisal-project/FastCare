@@ -5,7 +5,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Left - Copyright */}
           <p className="text-xs text-white order-3 md:order-1">
-            © 2026 FastCare.id
+            © 2026 FastCare
           </p>
 
           {/* Center - Data Source */}

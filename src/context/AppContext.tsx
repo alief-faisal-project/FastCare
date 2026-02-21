@@ -106,19 +106,93 @@ export function AppProvider({ children }: { children: ReactNode }) {
      ========================================================= */
 
   useEffect(() => {
-    const channel = supabase
+    // Subscribe ke changes di hospital table
+    const hospitalChannel = supabase
       .channel("realtime-hospitals")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "hospitals" },
+        { event: "INSERT", schema: "public", table: "hospitals" },
         (payload) => {
-          fetchInitialData();
+          console.log("🔔 Hospital INSERT detected:", payload.new);
+          const newHospital = mapHospital(payload.new);
+          setHospitals((prev) => [newHospital, ...prev]);
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "hospitals" },
+        (payload) => {
+          console.log("🔔 Hospital UPDATE detected:", payload.new);
+          const updatedHospital = mapHospital(payload.new);
+          setHospitals((prev) =>
+            prev.map((h) =>
+              h.id === updatedHospital.id ? updatedHospital : h,
+            ),
+          );
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "hospitals" },
+        (payload) => {
+          console.log("🔔 Hospital DELETE detected:", payload.old);
+          setHospitals((prev) => prev.filter((h) => h.id !== payload.old.id));
+        },
+      )
+      .subscribe();
+
+    // Subscribe ke changes di hero_banners table
+    const bannerChannel = supabase
+      .channel("realtime-banners")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "hero_banners" },
+        (payload) => {
+          console.log("🔔 Banner INSERT detected:", payload.new);
+          const newBanner = {
+            id: payload.new.id,
+            title: payload.new.title,
+            subtitle: payload.new.subtitle,
+            image: payload.new.image,
+            link: payload.new.link,
+            isActive: payload.new.is_active,
+            order: payload.new.order,
+          };
+          setHeroBanners((prev) => [...prev, newBanner]);
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "hero_banners" },
+        (payload) => {
+          console.log("🔔 Banner UPDATE detected:", payload.new);
+          const updatedBanner = {
+            id: payload.new.id,
+            title: payload.new.title,
+            subtitle: payload.new.subtitle,
+            image: payload.new.image,
+            link: payload.new.link,
+            isActive: payload.new.is_active,
+            order: payload.new.order,
+          };
+          setHeroBanners((prev) =>
+            prev.map((b) => (b.id === updatedBanner.id ? updatedBanner : b)),
+          );
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "hero_banners" },
+        (payload) => {
+          console.log("🔔 Banner DELETE detected:", payload.old);
+          setHeroBanners((prev) => prev.filter((b) => b.id !== payload.old.id));
         },
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(hospitalChannel);
+      supabase.removeChannel(bannerChannel);
     };
   }, []);
 
@@ -229,9 +303,55 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   /* =========================================================
+     GEO helpers
+     ========================================================= */
+
+  const haversineDistanceKm = React.useCallback(
+    (lat1: number, lon1: number, lat2: number, lon2: number) => {
+      const deg2rad = (deg: number) => (deg * Math.PI) / 180;
+      const R = 6371; // Earth radius km
+      const dLat = deg2rad(lat2 - lat1);
+      const dLon = deg2rad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) *
+          Math.cos(deg2rad(lat2)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    },
+    [],
+  );
+
+  const parseGoogleMapsLink = React.useCallback((link?: string) => {
+    if (!link) return undefined;
+    try {
+      const atMatch = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+      if (atMatch) return { lat: Number(atMatch[1]), lng: Number(atMatch[2]) };
+
+      const qMatch = link.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+      if (qMatch) return { lat: Number(qMatch[1]), lng: Number(qMatch[2]) };
+
+      const destMatch = link.match(/destination=(-?\d+\.\d+),(-?\d+\.\d+)/);
+      if (destMatch)
+        return { lat: Number(destMatch[1]), lng: Number(destMatch[2]) };
+
+      // Fallback: look for any two consecutive decimal coordinates in the URL
+      const anyMatch = link.match(/(-?\d+\.\d+)[,|/ ]+(-?\d+\.\d+)/);
+      if (anyMatch)
+        return { lat: Number(anyMatch[1]), lng: Number(anyMatch[2]) };
+    } catch (err) {
+      console.warn("Failed to parse maps link", err);
+    }
+    return undefined;
+  }, []);
+
+  /* =========================================================
      HOSPITAL CRUD
      ========================================================= */
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapHospital = (data: any): Hospital => ({
     id: data.id,
     name: data.name,
@@ -262,6 +382,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     hospital: Partial<Hospital>,
   ): Promise<{ error: PostgrestError | null }> => {
     try {
+      // if google maps link present but lat/lng missing, try to parse coords
+      const parsed = parseGoogleMapsLink(hospital.googleMapsLink || undefined);
+
       const payload = cleanObject({
         name: hospital.name,
         type: hospital.type,
@@ -279,8 +402,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         total_beds: hospital.totalBeds ?? 0,
         operating_hours: hospital.operatingHours ?? "24 Jam",
         google_maps_link: hospital.googleMapsLink ?? "",
-        latitude: hospital.latitude ?? -6.1185,
-        longitude: hospital.longitude ?? 106.1564,
+        latitude: hospital.latitude ?? (parsed ? parsed.lat : -6.1185),
+        longitude: hospital.longitude ?? (parsed ? parsed.lng : 106.1564),
         facilities: normalizeArray(hospital.facilities),
         services: normalizeArray(hospital.services),
       });
@@ -299,7 +422,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       if (data && data.length > 0) {
         console.log("Hospital berhasil ditambahkan:", data[0]);
-        setHospitals((prev) => [mapHospital(data[0]), ...prev]);
+        const newHospital = mapHospital(data[0]);
+        // compute distance if we have userLocation
+        if (
+          userLocation &&
+          newHospital.latitude != null &&
+          newHospital.longitude != null
+        ) {
+          const dist = haversineDistanceKm(
+            userLocation.lat,
+            userLocation.lng,
+            Number(newHospital.latitude),
+            Number(newHospital.longitude),
+          );
+          newHospital.distance = Math.round(dist * 10) / 10;
+        }
+        setHospitals((prev) => [newHospital, ...prev]);
       }
 
       return { error: null };
@@ -321,7 +459,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     hospital: Partial<Hospital>,
   ): Promise<{ error: PostgrestError | null }> => {
     try {
-      const payload = cleanObject({
+      // try to extract coords from google maps link if provided
+      const parsed = parseGoogleMapsLink(hospital.googleMapsLink || undefined);
+
+      const updatePayload = cleanObject({
         name: hospital.name,
         type: hospital.type,
         class: hospital.class,
@@ -338,8 +479,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         total_beds: hospital.totalBeds,
         operating_hours: hospital.operatingHours,
         google_maps_link: hospital.googleMapsLink,
-        latitude: hospital.latitude,
-        longitude: hospital.longitude,
+        latitude: hospital.latitude ?? (parsed ? parsed.lat : undefined),
+        longitude: hospital.longitude ?? (parsed ? parsed.lng : undefined),
         facilities: hospital.facilities
           ? normalizeArray(hospital.facilities)
           : undefined,
@@ -348,29 +489,41 @@ export function AppProvider({ children }: { children: ReactNode }) {
           : undefined,
       });
 
-      console.log("Update payload untuk ID " + id + ":", payload);
+      console.log("🔄 Update payload untuk ID " + id + ":", updatePayload);
 
       const { data, error } = await supabase
         .from("hospitals")
-        .update(payload)
+        .update(updatePayload)
         .eq("id", id)
         .select();
 
       if (error) {
-        console.error("Supabase Error - Update Hospital:", error);
+        console.error("❌ Supabase Error - Update Hospital:", error);
         return { error };
       }
 
       if (data && data.length > 0) {
-        console.log("Hospital berhasil diupdate:", data[0]);
-        setHospitals((prev) =>
-          prev.map((h) => (h.id === id ? mapHospital(data[0]) : h)),
-        );
+        console.log("✅ Hospital berhasil diupdate:", data[0]);
+        const updated = mapHospital(data[0]);
+        if (
+          userLocation &&
+          updated.latitude != null &&
+          updated.longitude != null
+        ) {
+          const dist = haversineDistanceKm(
+            userLocation.lat,
+            userLocation.lng,
+            Number(updated.latitude),
+            Number(updated.longitude),
+          );
+          updated.distance = Math.round(dist * 10) / 10;
+        }
+        setHospitals((prev) => prev.map((h) => (h.id === id ? updated : h)));
       }
 
       return { error: null };
     } catch (err) {
-      console.error("Unexpected error in updateHospital:", err);
+      console.error("💥 Unexpected error in updateHospital:", err);
       return {
         error: {
           message: err instanceof Error ? err.message : "Error tidak diketahui",
@@ -381,6 +534,67 @@ export function AppProvider({ children }: { children: ReactNode }) {
       };
     }
   };
+
+  /* =========================================================
+     Location detection and distance recomputation
+     ========================================================= */
+
+  const detectLocation = async (): Promise<void> => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      throw new Error("Geolocation not supported");
+    }
+
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude: lat, longitude: lng } = pos.coords;
+          setUserLocation({ lat, lng });
+          setSelectedCity("Lokasi Terdekat");
+
+          // compute distances
+          setHospitals((prev) =>
+            prev.map((h) => {
+              if (h.latitude != null && h.longitude != null) {
+                const dist = haversineDistanceKm(
+                  lat,
+                  lng,
+                  Number(h.latitude),
+                  Number(h.longitude),
+                );
+                return { ...h, distance: Math.round(dist * 10) / 10 };
+              }
+              return { ...h, distance: undefined };
+            }),
+          );
+
+          resolve();
+        },
+        (err) => {
+          reject(err);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+      );
+    });
+  };
+
+  // recompute distances whenever hospitals or userLocation change
+  useEffect(() => {
+    if (!userLocation) return;
+    setHospitals((prev) =>
+      prev.map((h) => {
+        if (h.latitude != null && h.longitude != null) {
+          const dist = haversineDistanceKm(
+            userLocation.lat,
+            userLocation.lng,
+            Number(h.latitude),
+            Number(h.longitude),
+          );
+          return { ...h, distance: Math.round(dist * 10) / 10 };
+        }
+        return { ...h, distance: undefined };
+      }),
+    );
+  }, [userLocation, hospitals.length, haversineDistanceKm]);
 
   const deleteHospital = async (
     id: string,
@@ -452,25 +666,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   ): Promise<void> => {
     try {
       console.log("📤 Update banner ID " + id + ":", banner);
-      console.log(
-        "banner.isActive:",
-        banner.isActive,
-        "Type:",
-        typeof banner.isActive,
-      );
 
       // Map camelCase to snake_case for Supabase
-      const isActiveBool = Boolean(banner.isActive);
       const bannerPayload = {
         title: banner.title,
         subtitle: banner.subtitle,
         image: banner.image || null,
         link: banner.link || null,
-        is_active: isActiveBool,
+        is_active: banner.isActive ?? false,
         order: banner.order ?? 0,
       };
-
-      console.log("Final payload to Supabase:", bannerPayload);
 
       const { data, error } = await supabase
         .from("hero_banners")
@@ -615,7 +820,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setUserLocation,
         selectedCity,
         setSelectedCity,
-        detectLocation: async () => {},
+        detectLocation: detectLocation,
         isAuthenticated,
         currentUser,
         login,
@@ -634,6 +839,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
    CUSTOM HOOK
    ========================================================= */
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useApp() {
   const context = useContext(AppContext);
   if (!context) {

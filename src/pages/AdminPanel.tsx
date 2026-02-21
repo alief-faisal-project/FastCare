@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
+import { sanitizeInput, isValidEmail, isValidUrl } from "@/lib/security";
 import { useNavigate, Link } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { Hospital, HeroBanner, BANTEN_CITIES } from "@/types";
 import fastcareLogo from "@/assets/fastcare-logo.png";
+import { toast } from "sonner";
 
 type AdminTab = "hospitals" | "banners" | "settings";
 
@@ -322,14 +324,7 @@ const AdminPanel = () => {
                           </div>
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <h3 className="text-white font-semibold">
-                            {banner.title}
-                          </h3>
-                          <p className="text-white/80 text-sm">
-                            {banner.subtitle}
-                          </p>
-                        </div>
+                        {/* Overlay text removed per request; only image displayed */}
                         <div className="absolute top-3 right-3 flex items-center space-x-2">
                           <span
                             className={`px-2 py-1 text-xs font-medium rounded ${
@@ -471,16 +466,22 @@ const AdminPanel = () => {
                 const result = await updateHospital(editingHospital.id, data);
                 if (result?.error) {
                   console.error("Update error:", result.error);
-                  alert("Gagal mengupdate: " + result.error.message);
+                  toast.error("Gagal mengupdate: " + result.error.message);
                   return;
                 }
+                toast.success("✅ Rumah sakit berhasil diupdate!", {
+                  description: `${data.name} telah diperbarui di database`,
+                });
               } else {
                 const result = await addHospital(data as any);
                 if (result?.error) {
                   console.error("Add error:", result.error);
-                  alert("Gagal menambah: " + result.error.message);
+                  toast.error("Gagal menambah: " + result.error.message);
                   return;
                 }
+                toast.success("✅ Rumah sakit berhasil ditambahkan!", {
+                  description: `${data.name} telah ditambahkan ke database`,
+                });
               }
 
               // hanya tutup jika sukses
@@ -488,7 +489,11 @@ const AdminPanel = () => {
               setEditingHospital(null);
             } catch (error) {
               console.error("Unexpected error:", error);
-              alert("Error: " + (error instanceof Error ? error.message : "Terjadi kesalahan"));
+              const errorMsg =
+                error instanceof Error
+                  ? error.message
+                  : "Error tidak diketahui";
+              toast.error("Error: " + errorMsg);
             }
           }}
         />
@@ -506,8 +511,14 @@ const AdminPanel = () => {
             try {
               if (editingBanner) {
                 await updateHeroBanner(editingBanner.id, data);
+                toast.success("✅ Banner berhasil diupdate!", {
+                  description: "Perubahan telah disimpan ke database",
+                });
               } else {
                 await addHeroBanner(data as HeroBanner);
+                toast.success("✅ Banner berhasil ditambahkan!", {
+                  description: "Banner baru telah ditambahkan",
+                });
               }
               setShowBannerForm(false);
               setEditingBanner(null);
@@ -517,7 +528,7 @@ const AdminPanel = () => {
                 error instanceof Error
                   ? error.message
                   : "Gagal menyimpan banner";
-              alert("Error: " + errorMessage);
+              toast.error("Error: " + errorMessage);
               // Jangan tutup modal jika ada error, biarkan user retry
             }
           }}
@@ -539,7 +550,27 @@ const HospitalFormModal = ({
   onClose,
   onSave,
 }: HospitalFormModalProps) => {
-  const [formData, setFormData] = useState({
+  type FormState = {
+    name: string;
+    type: Hospital["type"];
+    class: Hospital["class"];
+    address: string;
+    city: string;
+    district: string;
+    phone: string;
+    email: string;
+    image: string;
+    description: string;
+    facilities: string;
+    services: string;
+    totalBeds: number;
+    hasIGD: boolean;
+    hasICU: boolean;
+    operatingHours: string;
+    googleMapsLink: string;
+  };
+
+  const [formData, setFormData] = useState<FormState>({
     name: hospital?.name || "",
     type: hospital?.type || "RS Umum",
     class: hospital?.class || "C",
@@ -548,7 +579,6 @@ const HospitalFormModal = ({
     district: hospital?.district || "",
     phone: hospital?.phone || "",
     email: hospital?.email || "",
-    website: hospital?.website || "",
     image: hospital?.image || "",
     description: hospital?.description || "",
     facilities: Array.isArray(hospital?.facilities)
@@ -561,8 +591,7 @@ const HospitalFormModal = ({
     hasIGD: hospital?.hasIGD ?? true,
     hasICU: hospital?.hasICU ?? true,
     operatingHours: hospital?.operatingHours || "24 Jam",
-    lat: hospital?.latitude || -6.1185,
-    lng: hospital?.longitude || 106.1564,
+    // removed website, latitude and longitude — we only keep googleMapsLink
     googleMapsLink: hospital?.googleMapsLink || "",
   });
 
@@ -578,20 +607,25 @@ const HospitalFormModal = ({
       alert("Alamat tidak boleh kosong!");
       return;
     }
+    // Telepon: allow free text (some entries include extensions or notes)
     if (!formData.phone.trim()) {
       alert("Telepon tidak boleh kosong!");
       return;
     }
-    if (!formData.image.trim()) {
-      alert("URL Gambar tidak boleh kosong!");
+    if (!formData.image.trim() || !isValidUrl(formData.image)) {
+      alert("URL Gambar tidak boleh kosong dan harus berupa URL yang valid");
       return;
     }
     if (!formData.description.trim()) {
       alert("Deskripsi tidak boleh kosong!");
       return;
     }
+    if (formData.email && !isValidEmail(formData.email)) {
+      alert("Format email tidak valid");
+      return;
+    }
 
-    // 🔥 convert string "IGD, ICU" → ["IGD", "ICU"]
+    // convert string "IGD, ICU" → ["IGD", "ICU"]
     const formattedFacilities = formData.facilities
       .split(",")
       .map((f) => f.trim())
@@ -602,32 +636,43 @@ const HospitalFormModal = ({
       .map((s) => s.trim())
       .filter(Boolean);
 
+    const dataToSave: Partial<Hospital> = {
+      name: formData.name.trim(),
+      type: formData.type,
+      class: formData.class,
+      address: formData.address.trim(),
+      city: formData.city,
+      phone: formData.phone.trim(),
+      email: formData.email.trim(),
+      image: formData.image.trim(),
+      description: formData.description.trim(),
+      facilities: formattedFacilities,
+      services: formattedServices,
+      totalBeds: formData.totalBeds || 0,
+      hasIGD: formData.hasIGD,
+      hasICU: formData.hasICU,
+      operatingHours: formData.operatingHours,
+      // only include googleMapsLink; website/latitude/longitude removed per request
+      googleMapsLink: formData.googleMapsLink?.trim() || "",
+    };
+
+    // Sanitize text fields before sending
+    if (dataToSave.name) dataToSave.name = sanitizeInput(dataToSave.name);
+    if (dataToSave.address)
+      dataToSave.address = sanitizeInput(dataToSave.address);
+    if (dataToSave.description)
+      dataToSave.description = sanitizeInput(dataToSave.description);
+
+    console.log("📝 Submitting data:", dataToSave);
+
     try {
-      await onSave({
-        name: formData.name,
-        type: formData.type,
-        class: formData.class,
-        address: formData.address,
-        city: formData.city,
-        district: formData.district,
-        phone: formData.phone,
-        email: formData.email,
-        website: formData.website,
-        image: formData.image,
-        description: formData.description,
-        facilities: formattedFacilities,
-        services: formattedServices,
-        totalBeds: formData.totalBeds,
-        hasIGD: formData.hasIGD,
-        hasICU: formData.hasICU,
-        operatingHours: formData.operatingHours,
-        latitude: formData.lat,
-        longitude: formData.lng,
-        googleMapsLink: formData.googleMapsLink,
-      });
+      await onSave(dataToSave);
     } catch (error) {
-      console.error("Error dalam handleSubmit:", error);
-      alert("Gagal menyimpan data: " + (error instanceof Error ? error.message : "Error tidak diketahui"));
+      console.error("❌ Error dalam handleSubmit:", error);
+      alert(
+        "Gagal menyimpan data: " +
+          (error instanceof Error ? error.message : "Error tidak diketahui"),
+      );
     }
   };
 
@@ -718,19 +763,7 @@ const HospitalFormModal = ({
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Kecamatan
-              </label>
-              <input
-                type="text"
-                value={formData.district}
-                onChange={(e) =>
-                  setFormData({ ...formData, district: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-              />
-            </div>
+            {/* Kecamatan removed from admin form because column removed in Supabase */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-1">Alamat *</label>
               <input
@@ -768,30 +801,36 @@ const HospitalFormModal = ({
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Website</label>
-              <input
-                type="url"
-                value={formData.website}
-                onChange={(e) =>
-                  setFormData({ ...formData, website: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-              />
-            </div>
+            {/* Website removed per request - use Google Maps link field instead */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 URL Gambar *
               </label>
-              <input
-                type="url"
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-                required
-              />
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  value={formData.image}
+                  onChange={(e) =>
+                    setFormData({ ...formData, image: e.target.value })
+                  }
+                  className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    window.open(
+                      `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(
+                        formData.name + " " + formData.city,
+                      )}`,
+                      "_blank",
+                    )
+                  }
+                  className="px-3 py-2 bg-secondary/20 rounded-lg text-sm"
+                >
+                  Ambil dari Google
+                </button>
+              </div>
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-1">
@@ -845,7 +884,7 @@ const HospitalFormModal = ({
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    totalBeds: parseInt(e.target.value),
+                    totalBeds: Number.parseInt(e.target.value) || 0,
                   })
                 }
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
@@ -863,32 +902,6 @@ const HospitalFormModal = ({
                 }
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
                 placeholder="https://maps.app.goo.gl/..."
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Latitude</label>
-              <input
-                type="number"
-                step="any"
-                value={formData.lat}
-                onChange={(e) =>
-                  setFormData({ ...formData, lat: parseFloat(e.target.value) })
-                }
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Longitude
-              </label>
-              <input
-                type="number"
-                step="any"
-                value={formData.lng}
-                onChange={(e) =>
-                  setFormData({ ...formData, lng: parseFloat(e.target.value) })
-                }
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
               />
             </div>
             <div className="flex items-center space-x-6">
@@ -977,16 +990,19 @@ const BannerFormModal = ({ banner, onClose, onSave }: BannerFormModalProps) => {
     try {
       setIsUploading(true);
       console.log("📤 Starting image upload...");
-      
+
       // Upload to Supabase
       const imageUrl = await uploadBannerImage(file);
-      
+
       setFormData({ ...formData, image: imageUrl });
       setImagePreview(imageUrl);
       console.log("✅ Image uploaded successfully:", imageUrl);
     } catch (error) {
       console.error("❌ Upload failed:", error);
-      alert("Gagal upload gambar: " + (error instanceof Error ? error.message : "Error"));
+      alert(
+        "Gagal upload gambar: " +
+          (error instanceof Error ? error.message : "Error"),
+      );
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {
@@ -1003,10 +1019,6 @@ const BannerFormModal = ({ banner, onClose, onSave }: BannerFormModalProps) => {
       alert("Judul tidak boleh kosong!");
       return;
     }
-    if (!formData.image.trim()) {
-      alert("Gambar harus diisi (URL atau upload)!");
-      return;
-    }
 
     try {
       // Buat payload dengan format internal (camelCase)
@@ -1016,16 +1028,24 @@ const BannerFormModal = ({ banner, onClose, onSave }: BannerFormModalProps) => {
         subtitle: formData.subtitle,
         image: formData.image,
         link: formData.link || null,
-        isActive: formData.isActive,  // camelCase, bukan snake_case
+        isActive: formData.isActive, // camelCase, bukan snake_case
         order: formData.order,
       };
-      
+
       console.log("Sending banner payload:", payload);
-      console.log("isActive value:", formData.isActive, "Type:", typeof formData.isActive);
+      console.log(
+        "isActive value:",
+        formData.isActive,
+        "Type:",
+        typeof formData.isActive,
+      );
       await onSave(payload as Partial<HeroBanner>);
     } catch (error) {
       console.error("Error dalam handleSubmit banner:", error);
-      alert("Gagal menyimpan banner: " + (error instanceof Error ? error.message : "Error tidak diketahui"));
+      alert(
+        "Gagal menyimpan banner: " +
+          (error instanceof Error ? error.message : "Error tidak diketahui"),
+      );
     }
   };
 
@@ -1068,7 +1088,7 @@ const BannerFormModal = ({ banner, onClose, onSave }: BannerFormModalProps) => {
           {/* Image Upload Section */}
           <div className="space-y-3">
             <label className="block text-sm font-medium">Gambar *</label>
-            
+
             {/* Preview */}
             {imagePreview && (
               <div className="relative w-full h-40 bg-muted rounded-lg overflow-hidden">
