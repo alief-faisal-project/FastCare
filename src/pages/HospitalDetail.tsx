@@ -3,7 +3,6 @@ import { sanitizeInput } from "@/lib/security";
 import { useApp } from "@/context/AppContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FloatingContact from "@/components/FloatingContact";
 
 const HospitalDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -373,7 +372,6 @@ const HospitalDetail = () => {
       </main>
 
       <Footer />
-      <FloatingContact />
     </div>
   );
 };

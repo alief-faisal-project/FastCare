@@ -11,8 +11,6 @@ const FloatingContact = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [view, setView] = useState<"menu" | "dukung">("menu");
-  const [animationData, setAnimationData] = useState<unknown | null>(null);
-  const [LottieCmp, setLottieCmp] = useState<unknown | null>(null);
 
   // Replace this with a valid Lottie JSON URL for a headset animation.
   // If you want, I can try to find a specific public Lottie URL and set it here.
@@ -38,32 +36,6 @@ const FloatingContact = () => {
   useEffect(() => {
     if (!isOpen) setView("menu");
   }, [isOpen]);
-
-  // Try to dynamically fetch a remote lottie JSON and load lottie-react dynamically.
-  useEffect(() => {
-    let mounted = true;
-    async function loadLottie() {
-      if (!HEADSET_LOTTIE_URL) return;
-      try {
-        const res = await fetch(HEADSET_LOTTIE_URL);
-        if (!res.ok) return;
-        const json = await res.json();
-        if (!mounted) return;
-        // dynamic import to avoid bundling lottie unless used
-        const mod = await import("lottie-react");
-        if (!mounted) return;
-        setLottieCmp(() => mod.default);
-        setAnimationData(json);
-      } catch (e) {
-        // ignore and fall back to SVG animation
-        console.warn("Failed to load Lottie animation", e);
-      }
-    }
-    loadLottie();
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   return (
     <>
