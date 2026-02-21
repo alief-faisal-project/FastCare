@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +11,6 @@ const FloatingContact = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [view, setView] = useState<"menu" | "dukung">("menu");
-  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,9 +32,6 @@ const FloatingContact = () => {
   useEffect(() => {
     if (!isOpen) setView("menu");
   }, [isOpen]);
-
-  // only show floating contact on hospital detail pages
-  if (!location.pathname.startsWith("/hospital/")) return null;
 
   return (
     <>
@@ -67,9 +62,12 @@ const FloatingContact = () => {
           </DialogHeader>
 
           <div className="space-y-4 pt-2">
-            <p className="text-muted-foreground text-sm">
-              Kami siap membantu Anda, silahkan pilih bantuan yg anda butuhkan :
-            </p>
+            {view === "menu" && (
+              <p className="text-muted-foreground text-sm">
+                Kami siap membantu Anda, silahkan pilih bantuan yg anda butuhkan
+                :
+              </p>
+            )}
 
             {view === "menu" ? (
               <div className="space-y-3">
@@ -121,29 +119,26 @@ const FloatingContact = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="prose text-sm text-foreground">
+                <div className="prose text-sm text-foreground text-justify leading-relaxed max-w-none">
                   <p>
-                    Terima kasih sudah menggunakan platform pencarian rumah
-                    sakit terdekat ini. Website ini dibuat untuk membantu
-                    masyarakat menemukan fasilitas kesehatan dengan cepat,
+                    Terima kasih telah menggunakan platform pencarian rumah
+                    sakit terdekat ini. Website ini gratis dan hadir untuk
+                    membantu Anda menemukan fasilitas kesehatan dengan cepat,
                     akurat, dan mudah diakses kapan pun dibutuhkan.
                   </p>
+
                   <p>
-                    Platform ini terus dikembangkan agar data rumah sakit
-                    semakin lengkap, fitur semakin akurat (termasuk deteksi
-                    lokasi dan jarak), serta pengalaman pengguna semakin nyaman.
-                    Dukungan Anda sangat berarti untuk menjaga server tetap
-                    berjalan, memperbarui data secara berkala, dan mengembangkan
-                    fitur-fitur baru yang lebih bermanfaat.
+                    Kami terus mengembangkan platform ini agar data semakin
+                    lengkap, deteksi lokasi dan jarak semakin akurat, serta
+                    pengalaman pengguna semakin nyaman. Dukungan Anda sangat
+                    berarti untuk menjaga server tetap berjalan, memperbarui
+                    informasi secara berkala, dan menghadirkan fitur-fitur baru
+                    yang lebih bermanfaat.
                   </p>
+
                   <p>
-                    Setiap kontribusi, sekecil apa pun, membantu kami
-                    menghadirkan layanan informasi kesehatan yang lebih baik
-                    untuk semua orang.
-                  </p>
-                  <p>
-                    Mari bersama-sama membangun akses informasi kesehatan yang
-                    cepat, transparan, dan dapat diandalkan.
+                    Bersama, mari membangun akses informasi kesehatan yang
+                    cepat, transparan, dan dapat diandalkan untuk semua orang.
                   </p>
                 </div>
 
@@ -159,9 +154,9 @@ const FloatingContact = () => {
                     <p className="text-sm font-medium text-foreground">
                       Nomor Rekening
                     </p>
-                    <p className="text-lg font-bold text-primary">18273328</p>
+                    <p className="text-lg font-bold text-primary">1961828503</p>
                     <p className="text-xs text-muted-foreground">
-                      a.n. (masukkan nama Anda di sini)
+                      a.n. (ALIEF FAISAL ADRIANSYAH)
                     </p>
                   </div>
                 </div>
