@@ -123,7 +123,7 @@ const HospitalDetail = () => {
                   <i className="fa-solid fa-align-left text-primary" />
                   Deskripsi
                 </h2>
-                <p className="text-foreground leading-relaxed">
+                <p className="text-foreground leading-relaxed text-justify">
                   {hospital.description}
                 </p>
               </div>
@@ -379,7 +379,7 @@ const HospitalDetail = () => {
                 <i className="fa-solid fa-align-left text-primary" />
                 Deskripsi
               </h2>
-              <p className="text-foreground leading-relaxed text-sm">
+              <p className="text-foreground leading-relaxed text-sm text-justify">
                 {hospital.description}
               </p>
             </div>

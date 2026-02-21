@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +12,7 @@ const FloatingContact = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [view, setView] = useState<"menu" | "dukung">("menu");
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +34,9 @@ const FloatingContact = () => {
   useEffect(() => {
     if (!isOpen) setView("menu");
   }, [isOpen]);
+
+  // only show floating contact on hospital detail pages
+  if (!location.pathname.startsWith("/hospital/")) return null;
 
   return (
     <>
