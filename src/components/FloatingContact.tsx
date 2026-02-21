@@ -11,6 +11,12 @@ const FloatingContact = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [view, setView] = useState<"menu" | "dukung">("menu");
+  const [animationData, setAnimationData] = useState<unknown | null>(null);
+  const [LottieCmp, setLottieCmp] = useState<unknown | null>(null);
+
+  // Replace this with a valid Lottie JSON URL for a headset animation.
+  // If you want, I can try to find a specific public Lottie URL and set it here.
+  const HEADSET_LOTTIE_URL = ""; // <-- put a lottie JSON URL here (optional)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +39,32 @@ const FloatingContact = () => {
     if (!isOpen) setView("menu");
   }, [isOpen]);
 
+  // Try to dynamically fetch a remote lottie JSON and load lottie-react dynamically.
+  useEffect(() => {
+    let mounted = true;
+    async function loadLottie() {
+      if (!HEADSET_LOTTIE_URL) return;
+      try {
+        const res = await fetch(HEADSET_LOTTIE_URL);
+        if (!res.ok) return;
+        const json = await res.json();
+        if (!mounted) return;
+        // dynamic import to avoid bundling lottie unless used
+        const mod = await import("lottie-react");
+        if (!mounted) return;
+        setLottieCmp(() => mod.default);
+        setAnimationData(json);
+      } catch (e) {
+        // ignore and fall back to SVG animation
+        console.warn("Failed to load Lottie animation", e);
+      }
+    }
+    loadLottie();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <>
       {/* Floating Button - Small Pill */}
@@ -43,12 +75,34 @@ const FloatingContact = () => {
             : "opacity-0 translate-y-4 pointer-events-none"
         }`}
       >
-        <button
-          onClick={() => setIsOpen(true)}
-          className="flex items-center gap-1.5 bg-primary border border-primary rounded-3xl text-white px-3 py-2  shadow-lg transition-all duration-300 hover:shadow-xl text-x"
-        >
-          <i className="fa-solid fa-headset text-xl" />
-        </button>
+        <div className="relative group flex items-center">
+          {/* Tooltip */}
+          <div
+            className="absolute right-12
+    opacity-0 translate-x-2
+    group-hover:opacity-100 group-hover:translate-x-0
+    transition-all duration-300
+    bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500
+    text-white text-xs
+    px-3 py-1.5 rounded-l-lg shadow-lg whitespace-nowrap"
+          >
+            Butuh Bantuan?
+          </div>
+
+          {/* Button */}
+          <button
+            onClick={() => setIsOpen(true)}
+            className="flex items-center justify-center
+    w-10 h-10
+    rounded-full
+    bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500
+    text-white
+    transition-all duration-300
+    hover:scale-105 active:scale-95"
+          >
+            <i className="fa-solid fa-headset text-xl" />
+          </button>
+        </div>
       </div>
 
       {/* Dialog */}
@@ -156,7 +210,7 @@ const FloatingContact = () => {
                     </p>
                     <p className="text-lg font-bold text-primary">1961828503</p>
                     <p className="text-xs text-muted-foreground">
-                      a.n. (ALIEF FAISAL ADRIANSYAH)
+                      a.n. ALIEF FAISAL ADRIANSYAH
                     </p>
                   </div>
                 </div>

@@ -2,7 +2,12 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -119,6 +124,19 @@ export default {
         "fade-in": "fade-in 0.5s ease-out forwards",
         "slide-in-right": "slide-in-right 0.3s ease-out",
         "scale-in": "scale-in 0.2s ease-out",
+      },
+      theme: {
+        extend: {
+          keyframes: {
+            pulseSoft: {
+              "0%, 100%": { transform: "scale(1)", opacity: "1" },
+              "50%": { transform: "scale(1.2)", opacity: "0.8" },
+            },
+          },
+          animation: {
+            "pulse-soft": "pulseSoft 1.2s ease-in-out infinite",
+          },
+        },
       },
     },
   },

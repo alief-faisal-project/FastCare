@@ -205,7 +205,12 @@ const HospitalDetail = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full h-14 flex items-center justify-center gap-3
-              C border rounded-3xl"
+  rounded-3xl
+  bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500
+  text-white
+  font-semibold text-sm
+  transition-all duration-300
+  hover:brightness-110 hover:shadow-lg"
               >
                 <i className="fa-solid fa-location-arrow w-5 text-base text-center" />
                 <span className="text-center leading-none">Peta Lokasi</span>
@@ -255,15 +260,15 @@ const HospitalDetail = () => {
             </div>
           </div>
           {/* Action Buttons Row (Mobile) - moved above Facilities) */}
-          <div className="bg-card border border-border p-4 rounded-2xl">
+          <div className="bg-card border border-border p-3 rounded-3xl">
             <div className="flex gap-3">
               {/* Phone */}
               <a
                 href={`tel:${(hospital.phone || "").replace(/\s+/g, "")}`}
                 className="flex-1 h-12 flex items-center justify-center gap-2 
-               rounded-lg border border-border bg-card
+               rounded-3xl bg-secondary
                text-primary text-sm font-medium
-               transition-colors hover:bg-secondary/90"
+               transition-colors hover:bg-secondary/60"
               >
                 <i className="fa-solid fa-phone-volume text-base" />
                 <span className="text-center leading-none">Telepon</span>
@@ -275,9 +280,9 @@ const HospitalDetail = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 h-12 flex items-center justify-center gap-2 
-               rounded-lg border border-border bg-card
+               rounded-3xl bg-secondary
                text-primary text-sm font-medium
-               transition-colors hover:bg-secondary/90"
+               transition-colors C hover:bg-secondary/60"
               >
                 <i className="fa-solid fa-location-arrow text-base" />
                 <span className="text-center leading-none">Peta</span>

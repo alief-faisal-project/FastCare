@@ -36,7 +36,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         {/* IGD Badge */}
         {hospital.hasIGD && (
           <div className="mb-2 flex items-center gap-2">
-            <span className="bg-red-600 text-white text-[9px] font-semibold px-1.5 py-0.5">
+            <span className="bg-red-600 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-lg">
               IGD 24 Jam
             </span>
             {typeof hospital.distance === "number" && (
