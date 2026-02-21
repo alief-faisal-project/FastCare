@@ -23,8 +23,9 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
           <div className="absolute top-2 right-2">
             <span className="px-2 py-0.5 bg-white/95 text-foreground text-[10px] font-medium shadow-sm flex items-center gap-2 rounded">
               <i className="fa-solid fa-location-arrow text-primary text-[8px]" />
-              <span className="whitespace-nowrap">{hospital.distance.toFixed(1)} km</span>
-              <span className="text-[9px] text-muted-foreground">dari lokasi Anda</span>
+              <span className="whitespace-nowrap">
+                {hospital.distance.toFixed(1)} km
+              </span>
             </span>
           </div>
         )}

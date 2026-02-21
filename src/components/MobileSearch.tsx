@@ -33,7 +33,7 @@ const MobileSearch = () => {
     setIsDetecting(true);
     try {
       await detectLocation();
-      toast.success("Deteksi lokasi berhasil — menampilkan rumah sakit terdekat");
+      toast.success("Lokasi Terdeteksi");
       setIsLocationOpen(false);
     } catch (error) {
       console.error("Failed to detect location", error);
