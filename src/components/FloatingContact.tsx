@@ -93,7 +93,7 @@ const FloatingContact = () => {
           <button
             onClick={() => setIsOpen(true)}
             className="flex items-center justify-center
-    w-10 h-10
+    w-14 h-14
     rounded-full
     bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500
     text-white
