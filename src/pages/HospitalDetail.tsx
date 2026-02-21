@@ -205,7 +205,7 @@ const HospitalDetail = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full h-14 flex items-center justify-center gap-3
-              C"
+              C border rounded-3xl"
               >
                 <i className="fa-solid fa-location-arrow w-5 text-base text-center" />
                 <span className="text-center leading-none">Peta Lokasi</span>
@@ -254,6 +254,36 @@ const HospitalDetail = () => {
               </h1>
             </div>
           </div>
+          {/* Action Buttons Row (Mobile) - moved above Facilities) */}
+          <div className="bg-card border border-border p-4 rounded-2xl">
+            <div className="flex gap-3">
+              {/* Phone */}
+              <a
+                href={`tel:${(hospital.phone || "").replace(/\s+/g, "")}`}
+                className="flex-1 h-12 flex items-center justify-center gap-2 
+               rounded-lg border border-border bg-card
+               text-primary text-sm font-medium
+               transition-colors hover:bg-secondary/90"
+              >
+                <i className="fa-solid fa-phone-volume text-base" />
+                <span className="text-center leading-none">Telepon</span>
+              </a>
+
+              {/* Maps */}
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 h-12 flex items-center justify-center gap-2 
+               rounded-lg border border-border bg-card
+               text-primary text-sm font-medium
+               transition-colors hover:bg-secondary/90"
+              >
+                <i className="fa-solid fa-location-arrow text-base" />
+                <span className="text-center leading-none">Peta</span>
+              </a>
+            </div>
+          </div>
 
           {/* Facilities & Services */}
           <div className="bg-card border border-border p-6 rounded-3xl">
@@ -274,10 +304,9 @@ const HospitalDetail = () => {
             </div>
           </div>
 
-          {/* Information & Actions Row (Mobile) */}
-          <div className="grid grid-cols-3 gap-3">
-            {/* Information - Wider on Mobile (Left 2 Columns) */}
-            <div className="col-span-2 bg-card border border-border p-4 rounded-2xl">
+          {/* Information (full width on mobile) */}
+          <div className="space-y-6">
+            <div className="bg-card border border-border p-4 rounded-2xl">
               <h3 className="text-base font-semibold text-foreground mb-3 font-heading flex items-center gap-2">
                 <i className="fa-solid fa-circle-info text-primary" />
                 <span>Informasi</span>
@@ -324,51 +353,6 @@ const HospitalDetail = () => {
                   </span>
                 </div>
               </div>
-            </div>
-
-            {/* Phone, Maps, Email (Mobile Only - Symmetric) */}
-            <div className="col-span-1 flex flex-col gap-3">
-              {/* Phone */}
-              <a
-                href={`tel:${hospital.phone}`}
-                className="w-full h-14 flex items-center justify-center gap-2 
-               rounded-2xl border border-border bg-card
-               text-primary text-sm font-medium
-               transition-colors hover:bg-secondary/90"
-              >
-                <i className="fa-solid fa-phone-volume text-base" />
-                <span className="text-center leading-none">Telepon</span>
-              </a>
-
-              {/* Maps */}
-              <a
-                href={directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full h-14 flex items-center justify-center gap-2 
-               rounded-2xl border border-border bg-card
-               text-primary text-sm font-medium
-               transition-colors hover:bg-secondary/90"
-              >
-                <i className="fa-solid fa-location-arrow text-base" />
-                <span className="text-center leading-none">Peta</span>
-              </a>
-
-              {/* Email */}
-              {hospital.email && (
-                <a
-                  href={`mailto:${encodeURIComponent(
-                    sanitizeInput(hospital.email),
-                  )}`}
-                  className="w-full h-14 flex items-center justify-center gap-2 
-                 rounded-2xl border border-border bg-card
-                 text-primary text-sm font-medium
-                 transition-colors hover:bg-secondary/90"
-                >
-                  <i className="fa-solid fa-envelope text-base" />
-                  <span className="text-center leading-none">Email</span>
-                </a>
-              )}
             </div>
           </div>
 

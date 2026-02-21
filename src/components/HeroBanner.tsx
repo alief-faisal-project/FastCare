@@ -28,6 +28,11 @@ const HeroBanner = () => {
 
   const mobileRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
+  const desktopIndicatorRef = useRef<HTMLDivElement>(null);
+  const desktopTrackRef = useRef<HTMLDivElement | null>(null);
+  const dragStartXRef = useRef<number | null>(null);
+  const dragDeltaRef = useRef<number>(0);
+  const isDraggingRef = useRef<boolean>(false);
 
   const activeBanners = heroBanners
     .filter((b) => b.isActive)
@@ -38,6 +43,8 @@ const HeroBanner = () => {
   const maxDesktopSlide =
     activeBanners.length > 3 ? activeBanners.length - 3 : 0;
 
+  const desktopPages = Math.max(1, Math.ceil(activeBanners.length / 3));
+
   const goToPrevious = () => {
     if (currentSlide === 0) return;
     setCurrentSlide((prev) => prev - 1);
@@ -46,6 +53,32 @@ const HeroBanner = () => {
   const goToNext = () => {
     if (currentSlide >= maxDesktopSlide) return;
     setCurrentSlide((prev) => prev + 1);
+  };
+
+  // Pointer / drag handlers for desktop carousel
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    isDraggingRef.current = true;
+    dragStartXRef.current = e.clientX;
+    dragDeltaRef.current = 0;
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current || dragStartXRef.current === null) return;
+    dragDeltaRef.current = e.clientX - dragStartXRef.current;
+  };
+
+  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    const delta = dragDeltaRef.current;
+    const threshold = 40; // pixels to trigger slide
+    if (delta > threshold) {
+      goToPrevious();
+    } else if (delta < -threshold) {
+      goToNext();
+    }
+    dragStartXRef.current = null;
+    dragDeltaRef.current = 0;
   };
 
   // ================= MOBILE ULTRA SMOOTH =================
@@ -83,6 +116,16 @@ const HeroBanner = () => {
     };
   }, []);
 
+  // move desktop indicator based on currentSlide
+  useEffect(() => {
+    const indicator = desktopIndicatorRef.current;
+    if (!indicator) return;
+
+    const maxTranslate = 64 - 16; // trackWidth 64 - dotWidth 16
+    const progress = maxDesktopSlide > 0 ? currentSlide / maxDesktopSlide : 0;
+    indicator.style.transform = `translate3d(${progress * maxTranslate}px,0,0)`;
+  }, [currentSlide, maxDesktopSlide]);
+
   return (
     <section className="py-3 md:py-4">
       <div className="relative">
@@ -91,6 +134,11 @@ const HeroBanner = () => {
           <div className="hidden md:block container mx-auto px-4">
             <div className="relative overflow-hidden">
               <div
+                ref={desktopTrackRef}
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                onPointerCancel={onPointerUp}
                 className="flex gap-4 transition-transform duration-500 ease-in-out"
                 style={{
                   transform: `translateX(-${currentSlide * (100 / 3)}%)`,
@@ -133,6 +181,18 @@ const HeroBanner = () => {
                     <i className="fa-solid fa-chevron-right text-sm" />
                   </button>
                 </>
+              )}
+
+              {/* Desktop indicator (same style as mobile) */}
+              {activeBanners.length > 1 && (
+                <div className="flex items-center justify-center mt-4">
+                  <div className="relative w-16 h-2 rounded-full bg-muted-foreground/20 overflow-hidden">
+                    <div
+                      ref={desktopIndicatorRef}
+                      className="absolute top-0 left-0 h-2 w-4 rounded-full bg-primary will-change-transform"
+                    />
+                  </div>
+                </div>
               )}
             </div>
           </div>

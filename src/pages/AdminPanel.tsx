@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { sanitizeInput, isValidEmail, isValidUrl } from "@/lib/security";
+import { sanitizeInput, isValidUrl } from "@/lib/security";
 import { useNavigate, Link } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { Hospital, HeroBanner, BANTEN_CITIES } from "@/types";
@@ -558,7 +558,6 @@ const HospitalFormModal = ({
     city: string;
     district: string;
     phone: string;
-    email: string;
     image: string;
     description: string;
     facilities: string;
@@ -580,7 +579,6 @@ const HospitalFormModal = ({
     city: hospital?.city || "Kota Serang",
     district: hospital?.district || "",
     phone: hospital?.phone || "",
-    email: hospital?.email || "",
     image: hospital?.image || "",
     description: hospital?.description || "",
     facilities: Array.isArray(hospital?.facilities)
@@ -624,10 +622,7 @@ const HospitalFormModal = ({
       alert("Deskripsi tidak boleh kosong!");
       return;
     }
-    if (formData.email && !isValidEmail(formData.email)) {
-      alert("Format email tidak valid");
-      return;
-    }
+    // email removed from admin form per request
 
     // convert string "IGD, ICU" → ["IGD", "ICU"]
     const formattedFacilities = formData.facilities
@@ -647,7 +642,6 @@ const HospitalFormModal = ({
       address: formData.address.trim(),
       city: formData.city,
       phone: formData.phone.trim(),
-      email: formData.email.trim(),
       image: formData.image.trim(),
       description: formData.description.trim(),
       facilities: formattedFacilities,
@@ -801,17 +795,7 @@ const HospitalFormModal = ({
                 required
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-              />
-            </div>
+            {/* Email field removed per admin request */}
             {/* Website removed per request - use Google Maps link field instead */}
             <div>
               <label className="block text-sm font-medium mb-1">
