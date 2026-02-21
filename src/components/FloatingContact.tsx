@@ -82,12 +82,12 @@ const FloatingContact = () => {
             className="flex items-center justify-center
     w-14 h-14
     rounded-full
-    bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500
-    text-white
+    bg-transparent
+    text-primary
     transition-all duration-300
     hover:scale-105 active:scale-95"
           >
-            <i className="fa-solid fa-headset text-4xl" />
+            <i className="fa-solid fa-headset text-5xl" />
           </button>
         </div>
       </div>

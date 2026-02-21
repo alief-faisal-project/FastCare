@@ -183,57 +183,53 @@ const HospitalDetail = () => {
             </div>
 
             {/* Action Buttons (Desktop - Symmetric & Perfectly Centered) */}
-            <div className="flex flex-col gap-4 w-full">
-              {/* Telepon */}
-              <a
-                href={`tel:${(hospital.phone || "").replace(/\s+/g, "")}`}
-                className="w-full h-14 flex items-center justify-center gap-3
-               rounded-3xl
-               bg-gradient-to-r from-green-600 via-green-500 to-green-400
-               text-white
-               font-semibold text-sm
-               transition-all duration-300
-               hover:brightness-110"
-              >
-                <i className="fa-solid fa-phone-volume w-5 text-base text-center" />
-                <span className="text-center leading-none">Telepon</span>
-              </a>
-
-              {/* Peta */}
-              <a
-                href={directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full h-14 flex items-center justify-center gap-3
-  rounded-3xl
-  bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500
-  text-white
-  font-semibold text-sm
-  transition-all duration-300
-  hover:brightness-110 hover:shadow-lg"
-              >
-                <i className="fa-solid fa-location-arrow w-5 text-base text-center" />
-                <span className="text-center leading-none">Peta Lokasi</span>
-              </a>
-
-              {/* Email */}
-              {hospital.email && (
+            <div className="bg-card border border-border p-3 rounded-3xl">
+              <div className="flex flex-col gap-4 w-full">
+                {/* Telepon */}
                 <a
-                  href={`mailto:${encodeURIComponent(
-                    sanitizeInput(hospital.email),
-                  )}`}
+                  href={`tel:${(hospital.phone || "").replace(/\s+/g, "")}`}
                   className="w-full h-14 flex items-center justify-center gap-3
+               rounded-3xl bg-secondary
+               text-primary text-sm font-medium
+               transition-colors C hover:bg-secondary/60 border"
+                >
+                  <i className="fa-solid fa-phone-volume w-5 text-base text-center" />
+                  <span className="text-center leading-none">Telepon</span>
+                </a>
+
+                {/* Peta */}
+                <a
+                  href={directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full h-14 flex items-center justify-center gap-3
+  rounded-3xl bg-secondary
+               text-primary text-sm font-medium
+               transition-colors C hover:bg-secondary/60 border"
+                >
+                  <i className="fa-solid fa-location-arrow w-5 text-base text-center" />
+                  <span className="text-center leading-none">Peta Lokasi</span>
+                </a>
+
+                {/* Email */}
+                {hospital.email && (
+                  <a
+                    href={`mailto:${encodeURIComponent(
+                      sanitizeInput(hospital.email),
+                    )}`}
+                    className="w-full h-14 flex items-center justify-center gap-3
                  rounded-3xl
                  bg-card text-foreground
                  border border-border
                  font-semibold text-sm
                  transition-colors duration-300
                  hover:bg-secondary/10"
-                >
-                  <i className="fa-solid fa-envelope w-5 text-base text-center" />
-                  <span className="text-center leading-none">Email</span>
-                </a>
-              )}
+                  >
+                    <i className="fa-solid fa-envelope w-5 text-base text-center" />
+                    <span className="text-center leading-none">Email</span>
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>
