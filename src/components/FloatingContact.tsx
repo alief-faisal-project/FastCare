@@ -161,7 +161,23 @@ const FloatingContact = () => {
                 <div className="prose text-sm text-foreground text-justify leading-relaxed max-w-none">
                   <p>
                     Terima kasih telah menggunakan platform pencarian rumah
-                    sakit terdekat ini...
+                    sakit terdekat ini. Website ini gratis dan hadir untuk
+                    membantu Anda menemukan fasilitas kesehatan dengan cepat,
+                    akurat, dan mudah diakses kapan pun dibutuhkan.
+                  </p>
+
+                  <p>
+                    Kami terus mengembangkan platform ini agar data semakin
+                    lengkap, deteksi lokasi dan jarak semakin akurat, serta
+                    pengalaman pengguna semakin nyaman. Dukungan Anda sangat
+                    berarti untuk menjaga server tetap berjalan, memperbarui
+                    informasi secara berkala, dan menghadirkan fitur-fitur baru
+                    yang lebih bermanfaat.
+                  </p>
+
+                  <p>
+                    Bersama, mari membangun akses informasi kesehatan yang
+                    cepat, transparan, dan dapat diandalkan untuk semua orang.
                   </p>
                 </div>
 
