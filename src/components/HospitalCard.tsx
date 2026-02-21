@@ -18,6 +18,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
           alt={hospital.name}
           className="w-full h-full object-cover"
         />
+        
         {/* Distance Badge - only on image */}
         {typeof hospital.distance === "number" && (
           <div className="absolute top-2 right-2">
@@ -36,14 +37,9 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         {/* IGD Badge */}
         {hospital.hasIGD && (
           <div className="mb-2 flex items-center gap-2">
-            <span className="bg-red-600 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-lg">
+            <span className="bg-red-600 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded">
               IGD 24 Jam
             </span>
-            {typeof hospital.distance === "number" && (
-              <span className="text-[10px] text-muted-foreground">
-                • {hospital.distance.toFixed(1)} km
-              </span>
-            )}
           </div>
         )}
 

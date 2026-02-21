@@ -85,7 +85,7 @@ const HospitalDetail = () => {
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <div className="flex flex-wrap gap-2 mb-3">
                   {hospital.hasIGD && (
-                    <span className="px-3 py-1 bg-red-600 text-white text-sm font-semibold">
+                    <span className="px-3 py-1 bg-red-600 text-white text-sm font-semibold rounded">
                       IGD 24 Jam
                     </span>
                   )}
@@ -183,7 +183,7 @@ const HospitalDetail = () => {
 
             {/* Action Buttons (Desktop - Symmetric & Perfectly Centered) */}
             <div className="bg-card border border-border p-3 rounded-3xl">
-              <div className="flex flex-col gap-4 w-full">
+              <div className="flex flex-col gap-3 w-full">
                 {/* Telepon */}
                 <a
                   href={`tel:${(hospital.phone || "").replace(/\s+/g, "")}`}

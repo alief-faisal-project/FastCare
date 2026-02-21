@@ -170,7 +170,7 @@ const HeroBanner = () => {
                     disabled={currentSlide === 0}
                     className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
                   >
-                    <i className="fa-solid fa-chevron-left text-sm" />
+                    <i className="fa-solid fa-chevron-left text-lg" />
                   </button>
 
                   <button
@@ -178,7 +178,7 @@ const HeroBanner = () => {
                     disabled={currentSlide === maxDesktopSlide}
                     className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
                   >
-                    <i className="fa-solid fa-chevron-right text-sm" />
+                    <i className="fa-solid fa-chevron-right text-lg" />
                   </button>
                 </>
               )}

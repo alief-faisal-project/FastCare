@@ -12,9 +12,8 @@ const FloatingContact = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [view, setView] = useState<"menu" | "dukung">("menu");
 
-  // Replace this with a valid Lottie JSON URL for a headset animation.
-  // If you want, I can try to find a specific public Lottie URL and set it here.
-  const HEADSET_LOTTIE_URL = ""; // <-- put a lottie JSON URL here (optional)
+  // ✅ STATE UNTUK ANIMASI SMOOTH
+  const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,24 +21,32 @@ const FloatingContact = () => {
       if (footer) {
         const footerRect = footer.getBoundingClientRect();
         const windowHeight = window.innerHeight;
-        // Hide when footer is visible
         setIsVisible(footerRect.top > windowHeight - 50);
       }
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Check initial state
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Reset view to menu when dialog is closed so 'dukung' doesn't persist
   useEffect(() => {
     if (!isOpen) setView("menu");
   }, [isOpen]);
 
+  // ✅ TRIGGER ANIMASI SETIAP 5 DETIK (SUPER SMOOTH)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimate(true);
+      setTimeout(() => setAnimate(false), 900);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
-      {/* Floating Button - Small Pill */}
+      {/* Floating Button */}
       <div
         className={`fixed bottom-8 right-4 z-50 transition-all duration-300 ${
           isVisible
@@ -47,22 +54,41 @@ const FloatingContact = () => {
             : "opacity-0 translate-y-4 pointer-events-none"
         }`}
       >
-        <div className="relative group flex items-center">
-          {/* Button */}
+        <div className="relative flex items-center">
           <button
             onClick={() => setIsOpen(true)}
-            className="flex items-center justify-center
-    w-14 h-14
-    rounded-full
-    bg-transparent
-    text-primary
-    transition-all duration-300
-    hover:scale-105 active:scale-95"
+            className={`flex items-center justify-center
+              w-14 h-14
+              rounded-full
+              bg-transparent
+              text-primary
+              hover:scale-105 active:scale-95
+              transition-transform duration-300
+              ${animate ? "smooth-bounce" : ""}
+            `}
           >
             <i className="fa-solid fa-headset text-4xl" />
           </button>
         </div>
       </div>
+
+      {/* ✅ CUSTOM SUPER SMOOTH KEYFRAME */}
+      <style>
+        {`
+          @keyframes smoothBounce {
+            0%   { transform: translateY(0); }
+            20%  { transform: translateY(-6px); }
+            40%  { transform: translateY(0); }
+            60%  { transform: translateY(-3px); }
+            80%  { transform: translateY(0); }
+            100% { transform: translateY(0); }
+          }
+
+          .smooth-bounce {
+            animation: smoothBounce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+          }
+        `}
+      </style>
 
       {/* Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -135,23 +161,7 @@ const FloatingContact = () => {
                 <div className="prose text-sm text-foreground text-justify leading-relaxed max-w-none">
                   <p>
                     Terima kasih telah menggunakan platform pencarian rumah
-                    sakit terdekat ini. Website ini gratis dan hadir untuk
-                    membantu Anda menemukan fasilitas kesehatan dengan cepat,
-                    akurat, dan mudah diakses kapan pun dibutuhkan.
-                  </p>
-
-                  <p>
-                    Kami terus mengembangkan platform ini agar data semakin
-                    lengkap, deteksi lokasi dan jarak semakin akurat, serta
-                    pengalaman pengguna semakin nyaman. Dukungan Anda sangat
-                    berarti untuk menjaga server tetap berjalan, memperbarui
-                    informasi secara berkala, dan menghadirkan fitur-fitur baru
-                    yang lebih bermanfaat.
-                  </p>
-
-                  <p>
-                    Bersama, mari membangun akses informasi kesehatan yang
-                    cepat, transparan, dan dapat diandalkan untuk semua orang.
+                    sakit terdekat ini...
                   </p>
                 </div>
 
