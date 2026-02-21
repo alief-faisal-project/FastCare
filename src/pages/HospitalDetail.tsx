@@ -38,7 +38,13 @@ const HospitalDetail = () => {
     );
   }
 
-  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`;
+  const directionsUrl = hospital.latitude && hospital.longitude
+    ? `https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`
+    : hospital.googleMapsLink
+    ? hospital.googleMapsLink
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        hospital.name + ' ' + hospital.address,
+      )}`;
 
   // Determine ownership type based on hospital name
   const getOwnership = () => {

@@ -17,8 +17,10 @@ export interface Hospital {
   hasIGD: boolean;
   hasICU: boolean;
   operatingHours: string;
-  latitude: number;
-  longitude: number;
+  // allow nullable coordinates because some records may not provide exact lat/lng
+  // when adding via admin panel (we can parse Google Maps link instead)
+  latitude?: number | null;
+  longitude?: number | null;
 googleMapsLink?: string;
   distance?: number; // km from user location
   createdAt: string;

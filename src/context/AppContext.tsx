@@ -4,6 +4,7 @@ import React, {
   useState,
   useEffect,
   ReactNode,
+  useMemo,
 } from "react";
 import { supabase } from "@/lib/supabase";
 import { Hospital, HeroBanner, UserLocation, BantenCity } from "@/types";
@@ -254,7 +255,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error("Fetch Banners Error:", bannerError);
     } else if (bannerData) {
       // Map snake_case from Supabase to camelCase for frontend
-      const mappedBanners = bannerData.map((b: any) => ({
+  const mappedBanners = (bannerData as any[]).map((b) => ({
         id: b.id,
         title: b.title,
         subtitle: b.subtitle,
@@ -402,8 +403,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         total_beds: hospital.totalBeds ?? 0,
         operating_hours: hospital.operatingHours ?? "24 Jam",
         google_maps_link: hospital.googleMapsLink ?? "",
-        latitude: hospital.latitude ?? (parsed ? parsed.lat : -6.1185),
-        longitude: hospital.longitude ?? (parsed ? parsed.lng : 106.1564),
+  // only include latitude/longitude when available (from form or parsed maps link)
+  latitude: hospital.latitude ?? (parsed ? parsed.lat : undefined),
+  longitude: hospital.longitude ?? (parsed ? parsed.lng : undefined),
         facilities: normalizeArray(hospital.facilities),
         services: normalizeArray(hospital.services),
       });
@@ -548,24 +550,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const { latitude: lat, longitude: lng } = pos.coords;
-          setUserLocation({ lat, lng });
-          setSelectedCity("Lokasi Terdekat");
+            setUserLocation({ lat, lng });
 
-          // compute distances
-          setHospitals((prev) =>
-            prev.map((h) => {
-              if (h.latitude != null && h.longitude != null) {
-                const dist = haversineDistanceKm(
-                  lat,
-                  lng,
-                  Number(h.latitude),
-                  Number(h.longitude),
-                );
-                return { ...h, distance: Math.round(dist * 10) / 10 };
+            // compute distances and find nearest hospital
+            let nearest: { city?: string; distance?: number } = {};
+            setHospitals((prev) => {
+              const computed = prev.map((h) => {
+                if (h.latitude != null && h.longitude != null) {
+                  const dist = haversineDistanceKm(
+                    lat,
+                    lng,
+                    Number(h.latitude),
+                    Number(h.longitude),
+                  );
+                  const rounded = Math.round(dist * 10) / 10;
+                  if (nearest.distance === undefined || rounded < nearest.distance) {
+                    nearest = { city: h.city, distance: rounded };
+                  }
+                  return { ...h, distance: rounded };
+                }
+                return { ...h, distance: undefined };
+              });
+
+              // if nearest hospital within 20 km, set selected city to that city
+              if (nearest.distance !== undefined && nearest.distance <= 20 && nearest.city) {
+                setSelectedCity(nearest.city as any);
+                setUserLocation((ul) => ({ lat: ul?.lat ?? lat, lng: ul?.lng ?? lng, city: nearest.city }));
+              } else {
+                setSelectedCity("Lokasi Terdekat");
               }
-              return { ...h, distance: undefined };
-            }),
-          );
+
+              // sort by distance so UI shows nearest first immediately
+              computed.sort((a, b) => (a.distance ?? 9999) - (b.distance ?? 9999));
+              return computed;
+            });
 
           resolve();
         },
@@ -803,36 +821,56 @@ export function AppProvider({ children }: { children: ReactNode }) {
      PROVIDER VALUE
      ========================================================= */
 
-  return (
-    <AppContext.Provider
-      value={{
-        hospitals,
-        addHospital,
-        updateHospital,
-        deleteHospital,
-        getHospitalById,
-        heroBanners,
-        addHeroBanner,
-        updateHeroBanner,
-        deleteHeroBanner,
-        uploadBannerImage,
-        userLocation,
-        setUserLocation,
-        selectedCity,
-        setSelectedCity,
-        detectLocation: detectLocation,
-        isAuthenticated,
-        currentUser,
-        login,
-        logout,
-        isLoading,
-        searchQuery,
-        setSearchQuery,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+  const value = useMemo(
+    () => ({
+      hospitals,
+      addHospital,
+      updateHospital,
+      deleteHospital,
+      getHospitalById,
+      heroBanners,
+      addHeroBanner,
+      updateHeroBanner,
+      deleteHeroBanner,
+      uploadBannerImage,
+      userLocation,
+      setUserLocation,
+      selectedCity,
+      setSelectedCity,
+      detectLocation: detectLocation,
+      isAuthenticated,
+      currentUser,
+      login,
+      logout,
+      isLoading,
+      searchQuery,
+      setSearchQuery,
+    }),
+    [
+      hospitals,
+      heroBanners,
+      userLocation,
+      selectedCity,
+      isAuthenticated,
+      currentUser,
+      isLoading,
+      searchQuery,
+      addHospital,
+      updateHospital,
+      deleteHospital,
+      getHospitalById,
+      addHeroBanner,
+      updateHeroBanner,
+      deleteHeroBanner,
+      uploadBannerImage,
+      detectLocation,
+      setUserLocation,
+      setSelectedCity,
+      setSearchQuery,
+    ],
   );
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 
 /* =========================================================

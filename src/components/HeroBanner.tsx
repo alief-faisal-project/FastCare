@@ -159,11 +159,7 @@ const HeroBanner = () => {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-2">
-                      <h3 className="text-white font-bold text-xs line-clamp-2 font-heading">
-                        {banner.title}
-                      </h3>
-                    </div>
+                    {/* mobile: do not show overlay text to match desktop */}
                   </div>
                 </a>
               ))}
