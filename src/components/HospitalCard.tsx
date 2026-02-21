@@ -19,11 +19,12 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
           className="w-full h-full object-cover"
         />
         {/* Distance Badge - only on image */}
-        {hospital.distance !== undefined && (
+        {typeof hospital.distance === "number" && (
           <div className="absolute top-2 right-2">
-            <span className="px-2 py-0.5 bg-white/95 text-foreground text-[9px] font-medium shadow-sm flex items-center gap-1 rounded">
-              <i className="fa-solid fa-location-arrow text-primary text-[7px]" />
-              {hospital.distance.toFixed(1)} km
+            <span className="px-2 py-0.5 bg-white/95 text-foreground text-[10px] font-medium shadow-sm flex items-center gap-2 rounded">
+              <i className="fa-solid fa-location-arrow text-primary text-[8px]" />
+              <span className="whitespace-nowrap">{hospital.distance.toFixed(1)} km</span>
+              <span className="text-[9px] text-muted-foreground">dari lokasi Anda</span>
             </span>
           </div>
         )}
@@ -33,10 +34,15 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
       <div className="p-3">
         {/* IGD Badge */}
         {hospital.hasIGD && (
-          <div className="mb-2">
+          <div className="mb-2 flex items-center gap-2">
             <span className="bg-red-600 text-white text-[9px] font-semibold px-1.5 py-0.5">
               IGD 24 Jam
             </span>
+            {typeof hospital.distance === "number" && (
+              <span className="text-[10px] text-muted-foreground">
+                • {hospital.distance.toFixed(1)} km
+              </span>
+            )}
           </div>
         )}
 

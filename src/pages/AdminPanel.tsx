@@ -568,6 +568,8 @@ const HospitalFormModal = ({
     hasICU: boolean;
     operatingHours: string;
     googleMapsLink: string;
+  latitude: string;
+  longitude: string;
   };
 
   const [formData, setFormData] = useState<FormState>({
@@ -593,6 +595,8 @@ const HospitalFormModal = ({
     operatingHours: hospital?.operatingHours || "24 Jam",
     // removed website, latitude and longitude — we only keep googleMapsLink
     googleMapsLink: hospital?.googleMapsLink || "",
+  latitude: hospital?.latitude != null ? String(hospital.latitude) : "",
+  longitude: hospital?.longitude != null ? String(hospital.longitude) : "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -653,7 +657,10 @@ const HospitalFormModal = ({
       hasICU: formData.hasICU,
       operatingHours: formData.operatingHours,
       // only include googleMapsLink; website/latitude/longitude removed per request
-      googleMapsLink: formData.googleMapsLink?.trim() || "",
+  googleMapsLink: formData.googleMapsLink?.trim() || "",
+  // include latitude/longitude if provided by admin (convert to number)
+  latitude: formData.latitude.trim() ? Number.parseFloat(formData.latitude.trim()) : undefined,
+  longitude: formData.longitude.trim() ? Number.parseFloat(formData.longitude.trim()) : undefined,
     };
 
     // Sanitize text fields before sending
@@ -902,6 +909,33 @@ const HospitalFormModal = ({
                 }
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
                 placeholder="https://maps.app.goo.gl/..."
+              />
+            </div>
+            {/* Latitude & Longitude (float8) */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Latitude</label>
+              <input
+                type="number"
+                step="any"
+                value={formData.latitude}
+                onChange={(e) =>
+                  setFormData({ ...formData, latitude: e.target.value })
+                }
+                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                placeholder="-6.123456"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Longitude</label>
+              <input
+                type="number"
+                step="any"
+                value={formData.longitude}
+                onChange={(e) =>
+                  setFormData({ ...formData, longitude: e.target.value })
+                }
+                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                placeholder="106.123456"
               />
             </div>
             <div className="flex items-center space-x-6">

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { BANTEN_CITIES, BantenCity } from "@/types";
 import fastcareLogo from "@/assets/fastcare-logo.png";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const {
@@ -38,9 +39,15 @@ const Navbar = () => {
     setIsDetecting(true);
     try {
       await detectLocation();
+      toast.success("Deteksi lokasi berhasil — menampilkan rumah sakit terdekat");
       setIsLocationOpen(false);
     } catch (error) {
       console.error("Failed to detect location", error);
+      toast.error(
+        error instanceof Error && error.message === "Permission denied"
+          ? "Izin lokasi ditolak. Aktifkan izin lokasi di pengaturan browser."
+          : "Gagal mendeteksi lokasi. Coba lagi.",
+      );
     } finally {
       setIsDetecting(false);
     }

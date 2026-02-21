@@ -5,6 +5,7 @@ import React, {
   useEffect,
   ReactNode,
   useMemo,
+  useCallback,
 } from "react";
 import { supabase } from "@/lib/supabase";
 import { Hospital, HeroBanner, UserLocation, BantenCity } from "@/types";
@@ -379,7 +380,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     updatedAt: data.updated_at,
   });
 
-  const addHospital = async (
+  const addHospital = useCallback(async (
     hospital: Partial<Hospital>,
   ): Promise<{ error: PostgrestError | null }> => {
     try {
@@ -454,9 +455,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } as PostgrestError,
       };
     }
-  };
+  }, [parseGoogleMapsLink, userLocation, haversineDistanceKm]);
 
-  const updateHospital = async (
+  const updateHospital = useCallback(async (
     id: string,
     hospital: Partial<Hospital>,
   ): Promise<{ error: PostgrestError | null }> => {
@@ -535,65 +536,66 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } as PostgrestError,
       };
     }
-  };
+  }, [parseGoogleMapsLink, userLocation, haversineDistanceKm]);
 
   /* =========================================================
      Location detection and distance recomputation
      ========================================================= */
 
-  const detectLocation = async (): Promise<void> => {
+  const detectLocation = useCallback(async (): Promise<void> => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
       throw new Error("Geolocation not supported");
     }
 
-    return new Promise((resolve, reject) => {
+  // Always attempt to call getCurrentPosition. Browser will prompt when permission state is 'prompt'.
+
+  return new Promise((resolve, reject) => {
+      // call getCurrentPosition which will prompt when permission is 'prompt'
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const { latitude: lat, longitude: lng } = pos.coords;
-            setUserLocation({ lat, lng });
 
-            // compute distances and find nearest hospital
-            let nearest: { city?: string; distance?: number } = {};
-            setHospitals((prev) => {
-              const computed = prev.map((h) => {
-                if (h.latitude != null && h.longitude != null) {
-                  const dist = haversineDistanceKm(
-                    lat,
-                    lng,
-                    Number(h.latitude),
-                    Number(h.longitude),
-                  );
-                  const rounded = Math.round(dist * 10) / 10;
-                  if (nearest.distance === undefined || rounded < nearest.distance) {
-                    nearest = { city: h.city, distance: rounded };
-                  }
-                  return { ...h, distance: rounded };
-                }
-                return { ...h, distance: undefined };
-              });
+          // set user location immediately so components can show a detecting state
+          setUserLocation({ lat, lng });
 
-              // if nearest hospital within 20 km, set selected city to that city
-              if (nearest.distance !== undefined && nearest.distance <= 20 && nearest.city) {
-                setSelectedCity(nearest.city as any);
-                setUserLocation((ul) => ({ lat: ul?.lat ?? lat, lng: ul?.lng ?? lng, city: nearest.city }));
-              } else {
-                setSelectedCity("Lokasi Terdekat");
+          // compute distances and sort by distance; always set mode to 'Lokasi Terdekat'
+          setHospitals((prev) => {
+            const computed = prev.map((h) => {
+              if (h.latitude != null && h.longitude != null) {
+                const dist = haversineDistanceKm(
+                  lat,
+                  lng,
+                  Number(h.latitude),
+                  Number(h.longitude),
+                );
+                const rounded = Math.round(dist * 10) / 10;
+                return { ...h, distance: rounded };
               }
-
-              // sort by distance so UI shows nearest first immediately
-              computed.sort((a, b) => (a.distance ?? 9999) - (b.distance ?? 9999));
-              return computed;
+              return { ...h, distance: undefined };
             });
+
+            computed.sort((a, b) => (a.distance ?? 9999) - (b.distance ?? 9999));
+
+            // set selectedCity to nearest-location mode
+            setSelectedCity("Lokasi Terdekat");
+
+            return computed;
+          });
 
           resolve();
         },
         (err) => {
+          // normalize permission denied error message
+          if (err && (err.code === 1 || err.message === "Permission denied")) {
+            reject(new Error("Permission denied"));
+            return;
+          }
           reject(err);
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
       );
     });
-  };
+  }, [haversineDistanceKm]);
 
   // recompute distances whenever hospitals or userLocation change
   useEffect(() => {
@@ -614,7 +616,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
   }, [userLocation, hospitals.length, haversineDistanceKm]);
 
-  const deleteHospital = async (
+  const deleteHospital = useCallback(async (
     id: string,
   ): Promise<{ error: PostgrestError | null }> => {
     const { error } = await supabase.from("hospitals").delete().eq("id", id);
@@ -624,16 +626,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     return { error };
-  };
+  }, []);
 
-  const getHospitalById = (id: string): Hospital | undefined =>
-    hospitals.find((h) => h.id === id);
+  const getHospitalById = useCallback((id: string): Hospital | undefined =>
+    hospitals.find((h) => h.id === id), [hospitals]);
 
   /* =========================================================
      HERO BANNER CRUD
      ========================================================= */
 
-  const addHeroBanner = async (banner: Partial<HeroBanner>): Promise<void> => {
+  const addHeroBanner = useCallback(async (banner: Partial<HeroBanner>): Promise<void> => {
     try {
       console.log("📤 Menambahkan banner:", banner);
 
@@ -676,9 +678,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error("💥 Unexpected error in addHeroBanner:", err);
       throw err;
     }
-  };
+  }, []);
 
-  const updateHeroBanner = async (
+  const updateHeroBanner = useCallback(async (
     id: string,
     banner: Partial<HeroBanner>,
   ): Promise<void> => {
@@ -727,9 +729,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error("💥 Unexpected error in updateHeroBanner:", err);
       throw err;
     }
-  };
+  }, []);
 
-  const deleteHeroBanner = async (id: string): Promise<void> => {
+  const deleteHeroBanner = useCallback(async (id: string): Promise<void> => {
     try {
       console.log("Menghapus banner ID:", id);
 
@@ -750,13 +752,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error("Unexpected error in deleteHeroBanner:", err);
       throw err;
     }
-  };
+  }, []);
 
   /* =========================================================
      IMAGE UPLOAD FUNCTIONS
      ========================================================= */
 
-  const uploadBannerImage = async (file: File): Promise<string> => {
+  const uploadBannerImage = useCallback(async (file: File): Promise<string> => {
     try {
       console.log("📤 Uploading banner image:", file.name);
 
@@ -792,7 +794,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error("💥 Unexpected error in uploadBannerImage:", err);
       throw err;
     }
-  };
+  }, []);
 
   /* =========================================================
      AUTH FUNCTIONS
