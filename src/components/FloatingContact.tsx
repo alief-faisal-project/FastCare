@@ -76,19 +76,6 @@ const FloatingContact = () => {
         }`}
       >
         <div className="relative group flex items-center">
-          {/* Tooltip */}
-          <div
-            className="absolute right-12
-    opacity-0 translate-x-2
-    group-hover:opacity-100 group-hover:translate-x-0
-    transition-all duration-300
-    bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500
-    text-white text-xs
-    px-3 py-1.5 rounded-l-lg shadow-lg whitespace-nowrap"
-          >
-            Butuh Bantuan?
-          </div>
-
           {/* Button */}
           <button
             onClick={() => setIsOpen(true)}
@@ -100,7 +87,7 @@ const FloatingContact = () => {
     transition-all duration-300
     hover:scale-105 active:scale-95"
           >
-            <i className="fa-solid fa-headset text-xl" />
+            <i className="fa-solid fa-headset text-4xl" />
           </button>
         </div>
       </div>
