@@ -59,7 +59,7 @@ const FloatingContact = () => {
     transition-all duration-300
     hover:scale-105 active:scale-95"
           >
-            <i className="fa-solid fa-headset text-5xl" />
+            <i className="fa-solid fa-headset text-4xl" />
           </button>
         </div>
       </div>
@@ -85,7 +85,7 @@ const FloatingContact = () => {
             {view === "menu" ? (
               <div className="space-y-3">
                 <a
-                  href="https://wa.me/6281234567890"
+                  href="https://wa.me/6285692985927"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 border border-border rounded-xl hover:border-primary hover:bg-accent transition-colors"
@@ -109,7 +109,7 @@ const FloatingContact = () => {
                   <div>
                     <p className="font-medium text-foreground text-sm">Email</p>
                     <p className="text-xs text-muted-foreground">
-                      help@fastcare.id
+                      helpfastcare@gmail.com
                     </p>
                   </div>
                 </a>
