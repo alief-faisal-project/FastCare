@@ -168,7 +168,7 @@ const Navbar = () => {
                   to="/admin"
                   className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                 >
-                  <i className="fa-solid fa-gauge-high" />
+                  <i className="fa-solid fa-sliders"></i>
                   <span>Dashboard</span>
                 </Link>
                 <button
@@ -230,7 +230,7 @@ const Navbar = () => {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center space-x-3 px-4 py-3 bg-primary text-primary-foreground rounded-lg"
                   >
-                    <i className="fa-solid fa-gauge-high" />
+                    <i className="fa-solid fa-sliders"></i>
                     <span className="font-medium">Dashboard Admin</span>
                   </Link>
                   <button

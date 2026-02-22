@@ -231,7 +231,7 @@ const HeroBanner = () => {
           </div>
         )}
 
-        {/* ================= MOBILE ================= */}
+        {/* Mobile Section */}
         {activeBanners.length > 0 && (
           <div className="md:hidden px-4">
             <div

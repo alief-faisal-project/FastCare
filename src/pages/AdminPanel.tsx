@@ -197,7 +197,7 @@ const AdminPanel = () => {
                             Bed
                           </th>
                           <th className="text-right px-4 py-3 text-sm font-semibold text-foreground">
-                            Aksi
+                            Edit | Hapus
                           </th>
                         </tr>
                       </thead>
@@ -247,7 +247,7 @@ const AdminPanel = () => {
                                     setEditingHospital(hospital);
                                     setShowHospitalForm(true);
                                   }}
-                                  className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                  className="p-2 text-primary rounded-lg transition-colors"
                                   title="Edit"
                                 >
                                   <i className="fa-solid fa-pen-to-square" />
@@ -256,7 +256,7 @@ const AdminPanel = () => {
                                   onClick={() =>
                                     handleDeleteHospital(hospital.id)
                                   }
-                                  className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                                  className="p-2 text-destructive rounded-lg transition-colors"
                                   title="Hapus"
                                 >
                                   <i className="fa-solid fa-trash" />
