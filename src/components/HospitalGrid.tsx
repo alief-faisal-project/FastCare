@@ -34,7 +34,7 @@ const HospitalGrid = () => {
     return result;
   }, [hospitals, selectedCity, searchQuery, userLocation]);
 
-  // 🔥 Ambil ID rumah sakit paling dekat (index 0 setelah sort)
+  // Ambil ID rumah sakit paling dekat (index 0 setelah sort)
   const nearestHospitalId =
     selectedCity === "Lokasi Terdekat" &&
     userLocation &&
@@ -79,7 +79,7 @@ const HospitalGrid = () => {
                                 opacity-0 group-hover:opacity-100 
                                 transition-opacity duration-300 whitespace-nowrap"
                 >
-                  Rumah sakit terdekat dari lokasi anda
+                  Rumah sakit terdekat dari lokasi kamu
                 </div>
               )}
             </div>

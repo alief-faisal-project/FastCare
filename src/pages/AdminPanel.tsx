@@ -839,6 +839,7 @@ const HospitalFormModal = ({
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
                 rows={3}
                 required
+                placeholder="Isi deskripsi rumah sakit.."
               />
             </div>
             <div className="md:col-span-2">
@@ -853,20 +854,6 @@ const HospitalFormModal = ({
                 }
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
                 placeholder="IGD 24 Jam, ICU, Laboratorium, ..."
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-1">
-                Layanan (pisahkan dengan koma)
-              </label>
-              <input
-                type="text"
-                value={formData.services}
-                onChange={(e) =>
-                  setFormData({ ...formData, services: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-                placeholder="Rawat Inap, Rawat Jalan, Bedah, ..."
               />
             </div>
             <div>

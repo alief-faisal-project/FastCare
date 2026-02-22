@@ -86,7 +86,7 @@ const Navbar = () => {
                     : selectedCity}
                 </span>
                 <i
-                  className={`fa-solid fa-chevron-down text-primary text-muted-foreground transition-transform ${isLocationOpen ? "rotate-180" : ""}`}
+                  className={`fa-solid fa-chevron-down text-primary text-muted-foreground transition-transform duration-700 ${isLocationOpen ? "rotate-180" : ""}`}
                 />
               </button>
 

@@ -15,6 +15,15 @@ const FloatingContact = () => {
   // ✅ STATE UNTUK ANIMASI SMOOTH
   const [animate, setAnimate] = useState(false);
 
+  // ✅ STATE UNTUK SHOW / HIDE NOMOR REKENING
+  const [showRek, setShowRek] = useState(false);
+
+  // Nomor rekening asli
+  const noRek = "1961828503";
+
+  // Sembunyikan 3 digit terakhir
+  const maskedRek = noRek.slice(0, -3) + "***";
+
   useEffect(() => {
     const handleScroll = () => {
       const footer = document.querySelector("footer");
@@ -31,10 +40,12 @@ const FloatingContact = () => {
   }, []);
 
   useEffect(() => {
-    if (!isOpen) setView("menu");
+    if (!isOpen) {
+      setView("menu");
+      setShowRek(false);
+    }
   }, [isOpen]);
 
-  // ✅ TRIGGER ANIMASI SETIAP 5 DETIK (SUPER SMOOTH)
   useEffect(() => {
     const interval = setInterval(() => {
       setAnimate(true);
@@ -72,7 +83,7 @@ const FloatingContact = () => {
         </div>
       </div>
 
-      {/* ✅ CUSTOM SUPER SMOOTH KEYFRAME */}
+      {/* Animasi */}
       <style>
         {`
           @keyframes smoothBounce {
@@ -96,7 +107,9 @@ const FloatingContact = () => {
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-heading flex items-center gap-2">
               <i className="fa-solid fa-headset text-primary" />
-              Butuh Bantuan?
+              {view === "menu"
+                ? "Butuh Bantuan?"
+                : "Mari ikut berkontribusi dalam pengembangan platform ini"}
             </DialogTitle>
           </DialogHeader>
 
@@ -161,7 +174,7 @@ const FloatingContact = () => {
                 <div className="prose text-sm text-foreground text-justify leading-relaxed max-w-none">
                   <p>
                     Terima kasih telah menggunakan platform pencarian rumah
-                    sakit terdekat ini. Website ini gratis dan hadir untuk
+                    sakit terdekat. Website ini 100% gratis dan hadir untuk
                     membantu Anda menemukan fasilitas kesehatan dengan cepat,
                     akurat, dan mudah diakses kapan pun dibutuhkan.
                   </p>
@@ -172,7 +185,7 @@ const FloatingContact = () => {
                     pengalaman pengguna semakin nyaman. Dukungan Anda sangat
                     berarti untuk menjaga server tetap berjalan, memperbarui
                     informasi secara berkala, dan menghadirkan fitur-fitur baru
-                    yanng lebih bermanfaat.
+                    yang lebih bermanfaat.
                   </p>
 
                   <p>
@@ -189,11 +202,30 @@ const FloatingContact = () => {
                       className="w-full h-full object-contain p-2"
                     />
                   </div>
+
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       Nomor Rekening
                     </p>
-                    <p className="text-lg font-bold text-primary">1961828503</p>
+
+                    <div className="flex items-center gap-2">
+                      <p className="text-lg font-bold text-primary tracking-wide">
+                        {showRek ? noRek : maskedRek}
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowRek(!showRek)}
+                        className="text-primary hover:scale-110 transition-transform"
+                      >
+                        <i
+                          className={`fa-solid ${
+                            showRek ? "fa-eye-slash" : "fa-eye"
+                          }`}
+                        />
+                      </button>
+                    </div>
+
                     <p className="text-xs text-muted-foreground">
                       a.n. ALIEF FAISAL ADRIANSYAH
                     </p>
