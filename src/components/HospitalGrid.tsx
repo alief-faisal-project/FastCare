@@ -63,7 +63,7 @@ const HospitalGrid = () => {
               key={hospital.id}
               className={`fade-in relative group ${
                 hospital.id === nearestHospitalId
-                  ? "border border-primary rounded-lg shadow-lg"
+                  ? "border border-yellow-400 rounded-lg shadow-lg"
                   : ""
               }`}
               style={{ animationDelay: `${index * 30}ms` }}
@@ -74,7 +74,7 @@ const HospitalGrid = () => {
               {hospital.id === nearestHospitalId && (
                 <div
                   className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full 
-                                bg-primary text-white text-xs font-semibold 
+                                bg-yellow-400 text-primary text-xs font-semibold 
                                 px-3 py-1 rounded-md shadow-md 
                                 opacity-0 group-hover:opacity-100 
                                 transition-opacity duration-300 whitespace-nowrap"
