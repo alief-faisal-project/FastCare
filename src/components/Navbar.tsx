@@ -67,7 +67,7 @@ const Navbar = () => {
             <img
               src={fastcareLogo}
               alt="FastCare.id"
-              className="h-16 md:h-24 w-auto object-contain"
+              className="h-14 md:h-20 w-auto object-contain"
             />
           </Link>
 
@@ -252,7 +252,7 @@ const Navbar = () => {
                   className="flex items-center justify-center space-x-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-medium"
                 >
                   <i className="fa-solid fa-arrow-right-to-bracket"></i>
-                  <span>Masuk</span>
+                  <span>Login</span>
                 </Link>
               )}
             </div>

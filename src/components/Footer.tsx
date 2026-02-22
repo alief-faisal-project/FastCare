@@ -21,14 +21,6 @@ const Footer = () => {
           {/* Right - Social Icons */}
           <div className="flex items-center gap-4 order-1 md:order-3">
             <a
-              href="https://instagram.com/fastcare.id"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white hover:text-yellow-400 transition-colors"
-            >
-              <i className="fa-brands fa-instagram text-base" />
-            </a>
-            <a
               href="mailto:info@fastcare.id"
               className="text-white hover:text-yellow-400 transition-colors"
             >

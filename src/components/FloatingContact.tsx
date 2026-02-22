@@ -172,7 +172,7 @@ const FloatingContact = () => {
                     pengalaman pengguna semakin nyaman. Dukungan Anda sangat
                     berarti untuk menjaga server tetap berjalan, memperbarui
                     informasi secara berkala, dan menghadirkan fitur-fitur baru
-                    yang lebih bermanfaat.
+                    yanng lebih bermanfaat.
                   </p>
 
                   <p>
