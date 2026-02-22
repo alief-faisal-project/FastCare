@@ -245,13 +245,13 @@ const HeroBanner = () => {
                   href={banner.link || "#"}
                   className="flex-shrink-0 w-[calc(50%-6px)] rounded-3xl overflow-hidden"
                 >
-                  <div className="aspect-[16/9] relative">
+                  <div className="aspect-[2/1] relative">
                     <img
                       src={banner.image}
                       alt={banner.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                    <div className="absolute inset-0 " />
                   </div>
                 </a>
               ))}
