@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import bniLogo from "@/assets/bni-logo.png";
+import bniLogo from "@/assets/bni-logo.webp";
 
 const FloatingContact = () => {
   const [isOpen, setIsOpen] = useState(false);

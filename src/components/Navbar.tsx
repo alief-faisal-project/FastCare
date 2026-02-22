@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { BANTEN_CITIES, BantenCity } from "@/types";
-import fastcareLogo from "@/assets/fastcare-logo.png";
+import fastcareLogo from "@/assets/fastcare-logo.webp";
 import { toast } from "sonner";
 
 const Navbar = () => {
