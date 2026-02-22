@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import fastcareLogo from '@/assets/fastcare-logo.png';
+import fastcareLogo from '@/assets/fastcare-logo.webp';
 
 interface LoadingScreenProps {
   onLoadComplete?: () => void;

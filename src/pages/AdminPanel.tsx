@@ -3,7 +3,7 @@ import { sanitizeInput, isValidUrl } from "@/lib/security";
 import { useNavigate, Link } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { Hospital, HeroBanner, BANTEN_CITIES } from "@/types";
-import fastcareLogo from "@/assets/fastcare-logo.png";
+import fastcareLogo from "@/assets/fastcare-logo.webp";
 import { toast } from "sonner";
 
 type AdminTab = "hospitals" | "banners" | "settings";

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
+import { spawn } from "child_process";
 
 const emergencyServices = [
   { icon: "fa-solid fa-truck-medical", label: "Ambulan", number: "119" },
@@ -19,43 +20,63 @@ const emergencyServices = [
     number: "129",
   },
   { icon: "fa-solid fa-building-shield", label: "Polisi", number: "110" },
+  {
+    icon: "fa-solid fa-person-shelter",
+    label: (
+      <>
+        Kekerasan Perempuan
+        <br />
+        dan Anak
+      </>
+    ),
+    number: "129",
+  },
 ];
 
 const HeroBanner = () => {
   const { heroBanners } = useApp();
 
+  // ================= STATE =================
+  // Menyimpan index slide aktif
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // ================= REF =================
   const mobileRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const desktopIndicatorRef = useRef<HTMLDivElement>(null);
   const desktopTrackRef = useRef<HTMLDivElement | null>(null);
+
+  // Ref untuk drag desktop
   const dragStartXRef = useRef<number | null>(null);
   const dragDeltaRef = useRef<number>(0);
   const isDraggingRef = useRef<boolean>(false);
 
+  // ================= FILTER BANNER =================
+  // Ambil banner aktif lalu urutkan berdasarkan order
   const activeBanners = heroBanners
     .filter((b) => b.isActive)
     .sort((a, b) => a.order - b.order);
 
-  // ================= DESKTOP =================
+  // ================= DESKTOP LOGIC =================
 
+  // Hitung maksimal slide desktop (karena tampil 3 banner)
   const maxDesktopSlide =
     activeBanners.length > 3 ? activeBanners.length - 3 : 0;
 
-  const desktopPages = Math.max(1, Math.ceil(activeBanners.length / 3));
-
+  // Pindah ke slide sebelumnya
   const goToPrevious = () => {
     if (currentSlide === 0) return;
     setCurrentSlide((prev) => prev - 1);
   };
 
+  // Pindah ke slide berikutnya
   const goToNext = () => {
     if (currentSlide >= maxDesktopSlide) return;
     setCurrentSlide((prev) => prev + 1);
   };
 
-  // Pointer / drag handlers for desktop carousel
+  // ================= DRAG DESKTOP =================
+
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     isDraggingRef.current = true;
     dragStartXRef.current = e.clientX;
@@ -67,21 +88,24 @@ const HeroBanner = () => {
     dragDeltaRef.current = e.clientX - dragStartXRef.current;
   };
 
-  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+  const onPointerUp = () => {
     if (!isDraggingRef.current) return;
     isDraggingRef.current = false;
+
     const delta = dragDeltaRef.current;
-    const threshold = 40; // pixels to trigger slide
+    const threshold = 40; // batas geser minimal
+
     if (delta > threshold) {
       goToPrevious();
     } else if (delta < -threshold) {
       goToNext();
     }
+
     dragStartXRef.current = null;
     dragDeltaRef.current = 0;
   };
 
-  // ================= MOBILE ULTRA SMOOTH =================
+  // ================= MOBILE INDICATOR (ULTRA SMOOTH) =================
 
   useEffect(() => {
     const container = mobileRef.current;
@@ -94,8 +118,8 @@ const HeroBanner = () => {
       const maxScroll = container.scrollWidth - container.clientWidth;
       const progress = maxScroll > 0 ? container.scrollLeft / maxScroll : 0;
 
-      const trackWidth = 64;
-      const dotWidth = 16;
+      const trackWidth = 64; // w-16 = 64px
+      const dotWidth = 16; // w-4 = 16px
       const maxTranslate = trackWidth - dotWidth;
 
       indicator.style.transform = `translate3d(${progress * maxTranslate}px,0,0)`;
@@ -116,13 +140,18 @@ const HeroBanner = () => {
     };
   }, []);
 
-  // move desktop indicator based on currentSlide
+  // ================= DESKTOP INDICATOR (SMOOTH SEPERTI MOBILE) =================
+
   useEffect(() => {
     const indicator = desktopIndicatorRef.current;
     if (!indicator) return;
 
-    const maxTranslate = 64 - 16; // trackWidth 64 - dotWidth 16
     const progress = maxDesktopSlide > 0 ? currentSlide / maxDesktopSlide : 0;
+
+    const trackWidth = 64; // w-16
+    const dotWidth = 28; // w-7
+    const maxTranslate = trackWidth - dotWidth; // 36px
+
     indicator.style.transform = `translate3d(${progress * maxTranslate}px,0,0)`;
   }, [currentSlide, maxDesktopSlide]);
 
@@ -132,64 +161,68 @@ const HeroBanner = () => {
         {/* ================= DESKTOP ================= */}
         {activeBanners.length > 0 && (
           <div className="hidden md:block container mx-auto px-4">
-            <div className="relative overflow-hidden">
-              <div
-                ref={desktopTrackRef}
-                onPointerDown={onPointerDown}
-                onPointerMove={onPointerMove}
-                onPointerUp={onPointerUp}
-                onPointerCancel={onPointerUp}
-                className="flex gap-4 transition-transform duration-500 ease-in-out"
-                style={{
-                  transform: `translateX(-${currentSlide * (100 / 3)}%)`,
-                }}
-              >
-                {activeBanners.map((banner) => (
-                  <a
-                    key={banner.id}
-                    href={banner.link || "#"}
-                    className="flex-shrink-0 w-[calc(33.333%-11px)] rounded-3xl overflow-hidden relative"
-                  >
-                    <div className="aspect-[16/9] relative">
-                      <img
-                        src={banner.image}
-                        alt={banner.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                      {/* Overlay removed per request: only show image for SEO/visual simplicity */}
-                    </div>
-                  </a>
-                ))}
+            {/* Wrapper utama desktop */}
+            <div className="relative">
+              {/* Wrapper banner agar arrow benar-benar di tengah */}
+              <div className="relative overflow-hidden">
+                {/* Track banner */}
+                <div
+                  ref={desktopTrackRef}
+                  onPointerDown={onPointerDown}
+                  onPointerMove={onPointerMove}
+                  onPointerUp={onPointerUp}
+                  onPointerCancel={onPointerUp}
+                  className="flex gap-4 transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentSlide * (100 / 3)}%)`,
+                  }}
+                >
+                  {activeBanners.map((banner) => (
+                    <a
+                      key={banner.id}
+                      href={banner.link || "#"}
+                      className="flex-shrink-0 w-[calc(33.333%-11px)] rounded-3xl overflow-hidden relative"
+                    >
+                      <div className="aspect-[2/1] relative">
+                        <img
+                          src={banner.image}
+                          alt={banner.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+
+                {/* Arrow navigation desktop */}
+                {activeBanners.length > 3 && (
+                  <>
+                    <button
+                      onClick={goToPrevious}
+                      disabled={currentSlide === 0}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
+                    >
+                      <i className="fa-solid fa-chevron-left text-lg" />
+                    </button>
+
+                    <button
+                      onClick={goToNext}
+                      disabled={currentSlide === maxDesktopSlide}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
+                    >
+                      <i className="fa-solid fa-chevron-right text-lg" />
+                    </button>
+                  </>
+                )}
               </div>
 
-              {activeBanners.length > 3 && (
-                <>
-                  <button
-                    onClick={goToPrevious}
-                    disabled={currentSlide === 0}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
-                  >
-                    <i className="fa-solid fa-chevron-left text-lg" />
-                  </button>
-
-                  <button
-                    onClick={goToNext}
-                    disabled={currentSlide === maxDesktopSlide}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-40"
-                  >
-                    <i className="fa-solid fa-chevron-right text-lg" />
-                  </button>
-                </>
-              )}
-
-              {/* Desktop indicator (same style as mobile) */}
+              {/* Indicator desktop (di luar wrapper banner agar arrow tetap center) */}
               {activeBanners.length > 1 && (
                 <div className="flex items-center justify-center mt-4">
-                  <div className="relative w-16 h-2 rounded-full bg-muted-foreground/20 overflow-hidden">
+                  <div className="relative w-16 h-5 rounded-full bg-muted-foreground/20 overflow-hidden">
                     <div
                       ref={desktopIndicatorRef}
-                      className="absolute top-0 left-0 h-2 w-4 rounded-full bg-primary will-change-transform"
+                      className="absolute top-0 left-0 h-5 w-7 rounded-full bg-primary will-change-transform"
                     />
                   </div>
                 </div>
@@ -219,7 +252,6 @@ const HeroBanner = () => {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                    {/* mobile: do not show overlay text to match desktop */}
                   </div>
                 </a>
               ))}
@@ -240,16 +272,18 @@ const HeroBanner = () => {
       </div>
 
       {/* ================= EMERGENCY SERVICES ================= */}
+
       <div className="container mx-auto px-4 mt-4">
-        <div className="hidden md:flex items-start justify-between w-full max-w-xl mx-auto">
+        {/* Desktop emergency */}
+        <div className="hidden md:flex items-start justify-center gap-6 w-full max-w-4xl mx-auto">
           {emergencyServices.map((service, index) => (
-            <div key={index} className="flex flex-col items-center gap-1.5">
+            <div key={index} className="flex flex-col items-center gap-2">
               <a
                 href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-2xl min-w-[90px]"
+                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border rounded-2xl w-24"
               >
                 <i className={`${service.icon} text-primary text-lg`} />
-                <span className="text-xs font-bold text-primary">
+                <span className="text-xs font-bold text-primary text-center">
                   {service.number}
                 </span>
               </a>
@@ -260,6 +294,7 @@ const HeroBanner = () => {
           ))}
         </div>
 
+        {/* Mobile emergency */}
         <div
           className="md:hidden flex gap-3 overflow-x-auto scrollbar-hide"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}

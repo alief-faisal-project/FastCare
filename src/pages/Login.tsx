@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
-import fastcareLogo from "@/assets/fastcare-logo.png";
+import fastcareLogo from "@/assets/fastcare-logo.webp";
 
 const Login = () => {
   const [email, setEmail] = useState("");
