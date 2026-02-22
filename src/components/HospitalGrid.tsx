@@ -57,13 +57,13 @@ const HospitalGrid = () => {
 
       {/* Grid Rumah Sakit - 5 columns di desktop, 2-3 di mobile/tablet */}
       {filteredHospitals.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols- lg:grid-cols-5 gap-3 md:gap-4">
           {filteredHospitals.map((hospital, index) => (
             <div
               key={hospital.id}
               className={`fade-in relative group ${
                 hospital.id === nearestHospitalId
-                  ? "border border-yellow-400 rounded-xl shadow-md"
+                  ? "border border-yellow-400 rounded-lg shadow-lg"
                   : ""
               }`}
               style={{ animationDelay: `${index * 30}ms` }}
