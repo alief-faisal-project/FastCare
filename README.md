@@ -104,4 +104,3 @@ services:
 React 18, TypeScript, Vite, Tailwind CSS, Font Awesome 6
 
 ---
-Made with ❤️ for Provinsi Banten
