@@ -714,6 +714,7 @@ const HospitalFormModal = ({
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
               >
                 <option value="RS Umum">RS Umum</option>
+                <option value="RS Swasta">RS Swasta</option>
                 <option value="RS Khusus">RS Khusus</option>
                 <option value="RS Ibu & Anak">RS Ibu & Anak</option>
                 <option value="RS Jiwa">RS Jiwa</option>

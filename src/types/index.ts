@@ -1,7 +1,7 @@
 export interface Hospital {
   id: string;
   name: string;
-  type: "RS Umum" | "RS Khusus" | "RS Ibu & Anak" | "RS Jiwa" | "Klinik";
+  type: "RS Umum" | "RS Swasta" | "RS Khusus" | "RS Ibu & Anak" | "RS Jiwa" | "Klinik";
   class: "A" | "B" | "C" | "D" | "Tidak Berkelas";
   address: string;
   city: string; // Kabupaten/Kota
