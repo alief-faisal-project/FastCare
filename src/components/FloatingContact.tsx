@@ -12,18 +12,22 @@ const FloatingContact = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [view, setView] = useState<"menu" | "dukung">("menu");
 
-  // ✅ STATE UNTUK ANIMASI SMOOTH
+  // State untuk animasi bounce icon
   const [animate, setAnimate] = useState(false);
 
-  // ✅ STATE UNTUK SHOW / HIDE NOMOR REKENING
+  // State untuk show / hide nomor rekening
   const [showRek, setShowRek] = useState(false);
+
+  // State untuk tooltip bantuan
+  const [showTooltip, setShowTooltip] = useState(false);
 
   // Nomor rekening asli
   const noRek = "1961828503";
 
-  // Sembunyikan 3 digit terakhir
+  // Mask 3 digit terakhir
   const maskedRek = noRek.slice(0, -3) + "***";
 
+  // Kontrol visibility saat scroll mendekati footer
   useEffect(() => {
     const handleScroll = () => {
       const footer = document.querySelector("footer");
@@ -39,6 +43,7 @@ const FloatingContact = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Reset view saat dialog ditutup
   useEffect(() => {
     if (!isOpen) {
       setView("menu");
@@ -46,6 +51,7 @@ const FloatingContact = () => {
     }
   }, [isOpen]);
 
+  // Animasi bounce setiap 3 detik
   useEffect(() => {
     const interval = setInterval(() => {
       setAnimate(true);
@@ -53,6 +59,22 @@ const FloatingContact = () => {
     }, 3000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  // Tooltip otomatis muncul saat pertama render
+  // Akan muncul lagi jika halaman direfresh
+  useEffect(() => {
+    const showTimer = setTimeout(() => {
+      setShowTooltip(true);
+
+      const hideTimer = setTimeout(() => {
+        setShowTooltip(false);
+      }, 3000);
+
+      return () => clearTimeout(hideTimer);
+    }, 800);
+
+    return () => clearTimeout(showTimer);
   }, []);
 
   return (
@@ -66,6 +88,19 @@ const FloatingContact = () => {
         }`}
       >
         <div className="relative flex items-center">
+          {/* Tooltip bantuan */}
+          <div
+            className={`absolute right-16 transition-all duration-500 ${
+              showTooltip
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 translate-x-4 pointer-events-none"
+            }`}
+          >
+            <div className="bg-white text-gray-800 text-sm font-medium px-4 py-2 rounded-full shadow-lg border border-gray-200 whitespace-nowrap">
+              Ada yg bisa dibantu?
+            </div>
+          </div>
+
           <button
             onClick={() => setIsOpen(true)}
             className={`flex items-center justify-center
@@ -83,7 +118,7 @@ const FloatingContact = () => {
         </div>
       </div>
 
-      {/* Animasi */}
+      {/* Animasi bounce icon */}
       <style>
         {`
           @keyframes smoothBounce {
@@ -101,15 +136,13 @@ const FloatingContact = () => {
         `}
       </style>
 
-      {/* Dialog */}
+      {/* Dialog bantuan */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-heading flex items-center gap-2">
               <i className="fa-solid fa-headset text-primary" />
-              {view === "menu"
-                ? "Butuh Bantuan?"
-                : "Ingin Berkontribusi?"}
+              {view === "menu" ? "Butuh Bantuan?" : "Ingin Berkontribusi?"}
             </DialogTitle>
           </DialogHeader>
 
@@ -182,10 +215,7 @@ const FloatingContact = () => {
                   <p>
                     Kami terus mengembangkan platform ini agar data semakin
                     lengkap, deteksi lokasi dan jarak semakin akurat, serta
-                    pengalaman pengguna semakin nyaman. Dukungan Anda sangat
-                    berarti untuk menjaga server tetap berjalan, memperbarui
-                    informasi secara berkala, dan menghadirkan fitur-fitur baru
-                    yang lebih bermanfaat.
+                    pengalaman pengguna semakin nyaman.
                   </p>
 
                   <p>
