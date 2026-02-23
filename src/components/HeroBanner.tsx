@@ -280,7 +280,7 @@ const HeroBanner = () => {
             <div key={index} className="flex flex-col items-center gap-2">
               <a
                 href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border shadow rounded-2xl w-24"
+                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border shadow-inner rounded-2xl w-24"
               >
                 <i className={`${service.icon} text-primary text-lg`} />
                 <span className="text-xs font-bold text-primary text-center">
