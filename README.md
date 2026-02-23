@@ -1,106 +1,79 @@
-# FastCare.id - Pencarian Rumah Sakit Terdekat di Banten
 
-Platform pencarian rumah sakit terdekat di Provinsi Banten dengan informasi lengkap fasilitas kesehatan.
-
-## 🏥 Fitur Utama
-
-- **Pencarian Rumah Sakit** - Cari berdasarkan nama, lokasi, atau fasilitas
-- **Deteksi Lokasi** - Temukan RS terdekat berdasarkan lokasi perangkat
-- **Filter Wilayah** - Filter berdasarkan kabupaten/kota di Banten
-- **Informasi Lengkap** - Detail RS: fasilitas, layanan, kamar, IGD, ICU
-- **Integrasi Google Maps** - Lihat lokasi dan petunjuk arah
-- **Admin Panel** - Kelola data RS dengan CRUD lengkap
-
-## 🚀 Quick Start
-
-```bash
-npm install
-npm run dev
-```
-
-## 🔐 Login
-
-- **Admin:** admin / admin123
-- **Operator:** operator / operator123
-
-## 💾 Koneksi MySQL (Production)
-
-### 1. Buat Database
-
-```sql
-CREATE DATABASE fastcare_db;
-
-CREATE TABLE hospitals (
-  id VARCHAR(36) PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  type ENUM('RS Umum', 'RS Khusus', 'RS Ibu & Anak', 'RS Jiwa', 'Klinik'),
-  class ENUM('A', 'B', 'C', 'D', 'Tidak Berkelas'),
-  address TEXT, city VARCHAR(100), phone VARCHAR(50),
-  facilities JSON, services JSON,
-  total_beds INT, available_beds INT,
-  has_igd BOOLEAN, has_icu BOOLEAN,
-  latitude DECIMAL(10,8), longitude DECIMAL(11,8),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE hero_banners (
-  id VARCHAR(36) PRIMARY KEY,
-  title VARCHAR(255), subtitle VARCHAR(500),
-  image TEXT, is_active BOOLEAN, sort_order INT
-);
-
-CREATE TABLE admin_users (
-  id VARCHAR(36) PRIMARY KEY,
-  username VARCHAR(50) UNIQUE,
-  password_hash VARCHAR(255),
-  name VARCHAR(255), role ENUM('admin', 'superadmin')
-);
-```
-
-### 2. Backend API (Express.js)
-
-```bash
-mkdir backend && cd backend
-npm init -y
-npm install express mysql2 cors dotenv bcryptjs jsonwebtoken
-```
-
-Buat file `backend/index.js` dengan REST API endpoints untuk CRUD hospitals, banners, dan auth.
-
-### 3. Update Frontend
-
-Modifikasi `AppContext.tsx` untuk fetch dari API alih-alih localStorage.
-
-## ☁️ Deploy ke Cloud Sendiri
-
-### VPS (DigitalOcean/Vultr)
-```bash
-npm run build
-# Serve dist/ dengan Nginx
-# Jalankan backend dengan PM2
-```
-
-### Docker
-```yaml
-version: '3.8'
-services:
-  frontend:
-    build: .
-    ports: ["80:80"]
-  api:
-    build: ./backend
-    ports: ["3001:3001"]
-  db:
-    image: mysql:8
-```
-
-## 📊 Sumber Data
-
-- [SIRS Kemkes RI](https://sirs.kemkes.go.id/fo/home/dashboard_rs)
-- [BPS API](https://webapi.bps.go.id)
-
-## 📝 Tech Stack
-
-React 18, TypeScript, Vite, Tailwind CSS, Font Awesome 6
 
 ---
+
+# FastCare.id
+
+Platform Pencarian Rumah Sakit Terdekat di Provinsi Banten
+
+FastCare.id adalah aplikasi web yang membantu masyarakat menemukan rumah sakit terdekat di wilayah Banten secara cepat dan akurat. Aplikasi ini menyediakan informasi lengkap mengenai fasilitas kesehatan untuk membantu pengguna mengambil keputusan dengan lebih mudah, terutama dalam situasi mendesak.
+
+## Tujuan Aplikasi
+
+FastCare.id dibuat untuk:
+
+* Memudahkan masyarakat mencari rumah sakit terdekat
+* Menyediakan informasi fasilitas dan layanan secara transparan
+* Membantu akses cepat ke lokasi rumah sakit melalui peta
+* Mendukung digitalisasi informasi kesehatan regional
+
+---
+
+## Fitur Utama
+
+### Pencarian Rumah Sakit
+
+Pengguna dapat mencari rumah sakit berdasarkan nama, lokasi, atau fasilitas tertentu.
+
+### Deteksi Lokasi Otomatis
+
+Aplikasi dapat menggunakan lokasi perangkat untuk menampilkan rumah sakit terdekat dari posisi pengguna.
+
+### Filter Wilayah
+
+Data dapat difilter berdasarkan kabupaten atau kota di Provinsi Banten.
+
+### Informasi Detail
+
+Setiap rumah sakit menampilkan informasi seperti:
+
+* Jenis dan kelas rumah sakit
+* Alamat dan nomor telepon
+* Fasilitas dan layanan medis
+* Ketersediaan IGD dan ICU
+* Total dan ketersediaan tempat tidur
+
+### Integrasi Peta
+
+Pengguna dapat melihat lokasi rumah sakit secara langsung dan membuka petunjuk arah.
+
+### Panel Admin
+
+Tersedia halaman khusus untuk pengelolaan data rumah sakit dan banner informasi.
+
+---
+
+## Target Pengguna
+
+* Masyarakat umum yang membutuhkan layanan kesehatan
+* Keluarga pasien yang mencari rumah sakit terdekat
+* Operator atau admin yang mengelola data fasilitas kesehatan
+
+---
+
+## Cakupan Wilayah
+
+Aplikasi ini berfokus pada wilayah Provinsi Banten, mencakup seluruh kabupaten dan kota di dalamnya.
+
+---
+
+## Teknologi yang Digunakan
+
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+
+---
+
+FastCare.id dirancang sebagai platform sederhana, cepat, dan informatif yang dapat terus dikembangkan sesuai kebutuhan sistem informasi kesehatan di masa depan.
