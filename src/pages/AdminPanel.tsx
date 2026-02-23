@@ -71,10 +71,6 @@ const AdminPanel = () => {
             <span className="font-semibold text-foreground">Admin Panel</span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground hidden md:block">
-              <i className="fa-solid fa-user mr-2" />
-              {currentUser?.email}
-            </span>
             <button
               onClick={() => {
                 logout();
