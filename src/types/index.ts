@@ -12,7 +12,6 @@ export interface Hospital {
   image: string;
   description: string;
   facilities: string[];
-  services: string[];
   totalBeds: number;
   hasIGD: boolean;
   hasICU: boolean;

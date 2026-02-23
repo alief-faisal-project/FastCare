@@ -21,8 +21,7 @@ const HospitalGrid = () => {
           h.name.toLowerCase().includes(query) ||
           h.address.toLowerCase().includes(query) ||
           h.city.toLowerCase().includes(query) ||
-          h.facilities.some((f) => f.toLowerCase().includes(query)) ||
-          h.services.some((s) => s.toLowerCase().includes(query)),
+          h.facilities.some((f) => f.toLowerCase().includes(query)),
       );
     }
 

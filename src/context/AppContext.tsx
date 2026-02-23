@@ -238,7 +238,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         operatingHours: h.operating_hours,
         googleMapsLink: h.google_maps_link,
         facilities: Array.isArray(h.facilities) ? h.facilities : [],
-        services: Array.isArray(h.services) ? h.services : [],
         createdAt: h.created_at,
         updatedAt: h.updated_at,
       }));
@@ -375,7 +374,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     operatingHours: data.operating_hours,
     googleMapsLink: data.google_maps_link,
     facilities: Array.isArray(data.facilities) ? data.facilities : [],
-    services: Array.isArray(data.services) ? data.services : [],
     createdAt: data.created_at,
     updatedAt: data.updated_at,
   });
@@ -411,7 +409,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           latitude: hospital.latitude ?? (parsed ? parsed.lat : undefined),
           longitude: hospital.longitude ?? (parsed ? parsed.lng : undefined),
           facilities: normalizeArray(hospital.facilities),
-          services: normalizeArray(hospital.services),
         });
 
         console.log("Mengirim payload ke Supabase:", payload);
@@ -495,9 +492,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           longitude: hospital.longitude ?? (parsed ? parsed.lng : undefined),
           facilities: hospital.facilities
             ? normalizeArray(hospital.facilities)
-            : undefined,
-          services: hospital.services
-            ? normalizeArray(hospital.services)
             : undefined,
         });
 

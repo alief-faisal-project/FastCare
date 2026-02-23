@@ -21,7 +21,6 @@ vi.mock("@/lib/supabase", () => ({
                   has_igd: true,
                   total_beds: 100,
                   facilities: ["IGD", "ICU"],
-                  services: ["Rawat Inap"],
                 },
               ]
             : [],
@@ -64,7 +63,6 @@ describe("Admin Panel - Supabase Integration", () => {
             has_igd: true,
             total_beds: 100,
             facilities: ["IGD", "ICU"],
-            services: ["Rawat Inap"],
             created_at: "2026-02-20T00:00:00Z",
             updated_at: "2026-02-20T00:00:00Z",
           },
@@ -95,7 +93,6 @@ describe("Admin Panel - Supabase Integration", () => {
         latitude: -6.1185,
         longitude: 106.1564,
         facilities: ["IGD", "ICU"],
-        services: ["Rawat Inap"],
       };
 
       // Verify payload structure
@@ -105,7 +102,6 @@ describe("Admin Panel - Supabase Integration", () => {
       expect(expectedPayload).toHaveProperty("has_icu");
       expect(expectedPayload).toHaveProperty("has_igd");
       expect(Array.isArray(expectedPayload.facilities)).toBe(true);
-      expect(Array.isArray(expectedPayload.services)).toBe(true);
     });
 
     it("should handle validation errors properly", async () => {
@@ -301,7 +297,6 @@ describe("Data Flow Validation", () => {
       operating_hours: "24 Jam",
       google_maps_link: "https://maps.app.goo.gl/test",
       facilities: ["IGD", "ICU"],
-      services: ["Rawat Inap"],
       created_at: "2026-02-20T00:00:00Z",
       updated_at: "2026-02-20T00:00:00Z",
     };
@@ -319,7 +314,6 @@ describe("Data Flow Validation", () => {
       operatingHours: supabaseData.operating_hours,
       googleMapsLink: supabaseData.google_maps_link,
       facilities: supabaseData.facilities,
-      services: supabaseData.services,
     };
 
     expect(mapped.id).toBe(supabaseData.id);

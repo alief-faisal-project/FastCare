@@ -561,7 +561,6 @@ const HospitalFormModal = ({
     image: string;
     description: string;
     facilities: string;
-    services: string;
     totalBeds: number;
     hasIGD: boolean;
     hasICU: boolean;
@@ -583,9 +582,6 @@ const HospitalFormModal = ({
     description: hospital?.description || "",
     facilities: Array.isArray(hospital?.facilities)
       ? hospital!.facilities.join(", ")
-      : "",
-    services: Array.isArray(hospital?.services)
-      ? hospital!.services.join(", ")
       : "",
     totalBeds: hospital?.totalBeds || 100,
     hasIGD: hospital?.hasIGD ?? true,
@@ -630,11 +626,6 @@ const HospitalFormModal = ({
       .map((f) => f.trim())
       .filter(Boolean);
 
-    const formattedServices = formData.services
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
     const dataToSave: Partial<Hospital> = {
       name: formData.name.trim(),
       type: formData.type,
@@ -645,7 +636,6 @@ const HospitalFormModal = ({
       image: formData.image.trim(),
       description: formData.description.trim(),
       facilities: formattedFacilities,
-      services: formattedServices,
       totalBeds: formData.totalBeds || 0,
       hasIGD: formData.hasIGD,
       hasICU: formData.hasICU,
