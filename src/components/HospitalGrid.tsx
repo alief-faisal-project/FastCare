@@ -78,7 +78,7 @@ const HospitalGrid = () => {
                                 opacity-0 group-hover:opacity-100 
                                 transition-opacity duration-300 whitespace-nowrap"
                 >
-                  Rumah sakit terdekat dari lokasi kamu
+                  Rumah sakit terdekat dari lokasi anda
                 </div>
               )}
             </div>

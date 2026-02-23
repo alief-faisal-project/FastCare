@@ -239,14 +239,14 @@ const FloatingContact = () => {
                     </p>
 
                     <div className="flex items-center gap-2">
-                      <p className="text-lg font-bold text-primary tracking-wide">
+                      <p className="text-lg font-bold text-red-500 tracking-wide">
                         {showRek ? noRek : maskedRek}
                       </p>
 
                       <button
                         type="button"
                         onClick={() => setShowRek(!showRek)}
-                        className="text-primary hover:scale-110 transition-transform"
+                        className="text-xs hover:scale-110 transition-transform"
                       >
                         <i
                           className={`fa-solid ${
