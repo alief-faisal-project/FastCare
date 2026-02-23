@@ -109,7 +109,7 @@ const FloatingContact = () => {
               <i className="fa-solid fa-headset text-primary" />
               {view === "menu"
                 ? "Butuh Bantuan?"
-                : "Mari ikut berkontribusi dalam pengembangan platform ini"}
+                : "Ingin Berkontribusi?"}
             </DialogTitle>
           </DialogHeader>
 
