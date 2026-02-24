@@ -465,7 +465,7 @@ const AdminPanel = () => {
                   toast.error("Gagal mengupdate: " + result.error.message);
                   return;
                 }
-                toast.success("✅ Rumah sakit berhasil diupdate!", {
+                toast.success("Rumah sakit berhasil diupdate!", {
                   description: `${data.name} telah diperbarui di database`,
                 });
               } else {
@@ -475,7 +475,7 @@ const AdminPanel = () => {
                   toast.error("Gagal menambah: " + result.error.message);
                   return;
                 }
-                toast.success("✅ Rumah sakit berhasil ditambahkan!", {
+                toast.success("Rumah sakit berhasil ditambahkan!", {
                   description: `${data.name} telah ditambahkan ke database`,
                 });
               }
