@@ -32,21 +32,19 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         )}
       </div>
 
-      {/* IGD Badge */}
-      {hospital.hasIGD && (
-        <div className="relative -mt-1 -ml-1">
-          <span
-            className="inline-block px-4 py-1 bg-primary text-white text-[10px] font-bold"
-            style={{ transform: "skewX(-15deg)" }}
-          >
-            <span
-              style={{ display: "inline-block", transform: "skewX(15deg)" }}
-            >
-              IGD Tersedia 24 Jam
-            </span>
+      {/* IGD Badge (always rendered to keep grid height consistent) */}
+      <div className="relative -mt-1 -ml-1 h-[22px]">
+        <span
+          className={`inline-block px-4 py-1 text-[10px] font-bold text-white ${
+            hospital.hasIGD ? "bg-primary" : "bg-yellow-600"
+          }`}
+          style={{ transform: "skewX(-15deg)" }}
+        >
+          <span style={{ display: "inline-block", transform: "skewX(15deg)" }}>
+            {hospital.hasIGD ? "IGD Tersedia 24 Jam" : "IGD Sesuai Jam Operasional"}
           </span>
-        </div>
-      )}
+        </span>
+      </div>
 
       {/* Content */}
       <div className="p-3">
@@ -74,12 +72,14 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
             <i className="fa-solid fa-bed" />
             {hospital.totalBeds} Kamar
           </span>
+
           {hospital.hasICU && (
             <span className="flex items-center gap-1">
               <i className="fa-solid fa-heart-pulse" />
               ICU
             </span>
           )}
+
           <span className="flex items-center gap-1">
             Kelas {hospital.class}
           </span>
