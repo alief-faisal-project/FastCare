@@ -75,26 +75,36 @@ const HospitalDetail = () => {
           {/* Left Column - Main Info (Desktop) */}
           <div className="lg:col-span-2 space-y-6">
             {/* Hero Image */}
-            <div className="relative aspect-video overflow-hidden rounded-3xl">
-              <img
-                src={hospital.image}
-                alt={hospital.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {hospital.hasIGD && (
-                    <span className="px-3 py-1 bg-red-600 text-white text-sm font-semibold rounded">
-                      IGD 24 Jam
+            {hospital && (
+              <div className="relative aspect-video overflow-hidden rounded-3xl">
+                <img
+                  src={hospital.image}
+                  alt={hospital.name}
+                  className="w-full h-full object-cover"
+                />
+
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+                {/* IGD Badge - Atas Kiri (Clean) */}
+                {hospital.hasIGD && (
+                  <div className="absolute top-0 left-0 z-10">
+                    <span className="inline-flex bg-primary text-white text-sm font-semibold px-5 py-2 shadow-md -skew-x-12">
+                      <span className="inline-block skew-x-12">
+                        IGD Tersedia 24 Jam
+                      </span>
                     </span>
-                  )}
+                  </div>
+                )}
+
+                {/* Bottom Content */}
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <h1 className="text-2xl font-bold text-white font-heading">
+                    {hospital.name}
+                  </h1>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-white font-heading">
-                  {hospital.name}
-                </h1>
               </div>
-            </div>
+            )}
 
             {/* Facilities & Services */}
             <div className="bg-card border border-border p-6 rounded-3xl">
@@ -236,25 +246,19 @@ const HospitalDetail = () => {
           {/* Hero Image */}
           <div className="relative aspect-video overflow-hidden rounded-3xl">
             <img
-              src={hospital.image}
-              alt={hospital.name}
+              src={hospital?.image ?? ""}
+              alt={hospital?.name ?? "Hospital"}
               className="w-full h-full object-cover"
             />
 
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-            {/* IGD Badge - Top Left */}
-            {hospital.hasIGD && (
-              <div className="absolute top-1 left-0 z-10">
-                <span
-                  className="inline-block bg-red-600 text-white text-xs font-bold px-4 py-1 shadow-md"
-                  style={{ transform: "skewX(-15deg)" }}
-                >
-                  <span
-                    className="inline-block"
-                    style={{ transform: "skewX(15deg)" }}
-                  >
+            {/* IGD Badge - Atas Kiri */}
+            {hospital?.hasIGD && (
+              <div className="absolute top-0 left-0 z-10">
+                <span className="inline-flex bg-red-600 text-white text-sm font-semibold px-5 py-2 shadow-md -skew-x-12">
+                  <span className="inline-block skew-x-12">
                     IGD Tersedia 24 Jam
                   </span>
                 </span>
@@ -262,11 +266,13 @@ const HospitalDetail = () => {
             )}
 
             {/* Bottom Content */}
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <h1 className="text-2xl font-bold text-white font-heading">
-                {hospital.name}
-              </h1>
-            </div>
+            {hospital?.name && (
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <h1 className="text-2xl font-bold text-white font-heading">
+                  {hospital.name}
+                </h1>
+              </div>
+            )}
           </div>
           {/* Action Buttons Row (Mobile) - moved above Facilities) */}
           <div className="bg-card border border-border p-3 rounded-3xl">
@@ -296,7 +302,6 @@ const HospitalDetail = () => {
                 <i className="fa-solid fa-phone-volume text-base" />
                 <span className="text-center leading-none">Telepon</span>
               </a>
-              
             </div>
           </div>
 
