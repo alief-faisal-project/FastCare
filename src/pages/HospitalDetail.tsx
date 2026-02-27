@@ -271,18 +271,6 @@ const HospitalDetail = () => {
           {/* Action Buttons Row (Mobile) - moved above Facilities) */}
           <div className="bg-card border border-border p-3 rounded-3xl">
             <div className="flex gap-3">
-              {/* Phone */}
-              <a
-                href={`tel:${(hospital.phone || "").replace(/\s+/g, "")}`}
-                className="flex-1 h-12 flex items-center justify-center gap-2 
-               rounded-3xl bg-secondary
-               text-primary text-sm font-medium
-               transition-colors hover:bg-secondary/60"
-              >
-                <i className="fa-solid fa-phone-volume text-base" />
-                <span className="text-center leading-none">Telepon</span>
-              </a>
-
               {/* Maps */}
               <a
                 href={directionsUrl}
@@ -296,6 +284,19 @@ const HospitalDetail = () => {
                 <i className="fa-solid fa-location-arrow text-base" />
                 <span className="text-center leading-none">Peta</span>
               </a>
+
+              {/* Phone */}
+              <a
+                href={`tel:${(hospital.phone || "").replace(/\s+/g, "")}`}
+                className="flex-1 h-12 flex items-center justify-center gap-2 
+               rounded-3xl bg-secondary
+               text-primary text-sm font-medium
+               transition-colors hover:bg-secondary/60"
+              >
+                <i className="fa-solid fa-phone-volume text-base" />
+                <span className="text-center leading-none">Telepon</span>
+              </a>
+              
             </div>
           </div>
 
