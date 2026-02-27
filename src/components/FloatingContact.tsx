@@ -97,7 +97,7 @@ const FloatingContact = () => {
             }`}
           >
             <div className="bg-white text-gray-800 text-sm font-medium px-4 py-2 rounded-full shadow-lg border border-gray-200 whitespace-nowrap">
-              Ada yg bisa dibantu?
+              Butuh Bantuan?
             </div>
           </div>
 

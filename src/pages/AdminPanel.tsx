@@ -190,7 +190,7 @@ const AdminPanel = () => {
                             Kelas
                           </th>
                           <th className="text-left px-4 py-3 text-sm font-semibold text-foreground hidden md:table-cell">
-                            Bed
+                            Jumlah Kamar
                           </th>
                           <th className="text-right px-4 py-3 text-sm font-semibold text-foreground">
                             Edit | Hapus
@@ -791,7 +791,7 @@ const HospitalFormModal = ({
                 <option value="B">Kelas B</option>
                 <option value="C">Kelas C</option>
                 <option value="D">Kelas D</option>
-                <option value="Tidak Berkelas">Tidak Berkelas</option>
+                <option value="Klinik">Klinik</option>
               </select>
             </div>
             <div>
@@ -922,20 +922,6 @@ const HospitalFormModal = ({
                   })
                 }
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-1">
-                Link Google Maps
-              </label>
-              <input
-                type="url"
-                value={formData.googleMapsLink}
-                onChange={(e) =>
-                  setFormData({ ...formData, googleMapsLink: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-                placeholder="https://maps.app.goo.gl/..."
               />
             </div>
             {/* Latitude & Longitude (float8) */}

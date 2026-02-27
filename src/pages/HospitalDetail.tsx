@@ -191,10 +191,10 @@ const HospitalDetail = () => {
               </div>
             </div>
 
-            {/* Action Buttons (Desktop - Symmetric & Perfectly Centered) */}
+            {/* Action Buttons (Desktop) */}
             <div className="bg-card border border-border p-3 rounded-3xl">
               <div className="flex flex-col gap-3 w-full">
-                {/* Telepon */}
+                {/* Tombol Telepon */}
                 <a
                   href={`tel:${(hospital.phone || "").replace(/\s+/g, "")}`}
                   className="w-full h-14 flex items-center justify-center gap-3
@@ -206,7 +206,7 @@ const HospitalDetail = () => {
                   <span className="text-center leading-none">Telepon</span>
                 </a>
 
-                {/* Peta */}
+                {/* Tombol Peta */}
                 <a
                   href={directionsUrl}
                   target="_blank"
@@ -243,7 +243,7 @@ const HospitalDetail = () => {
           </div>
         </div>
         <div className="lg:hidden space-y-6">
-          {/* Hero Image */}
+          {/* Image */}
           <div className="relative aspect-video overflow-hidden rounded-3xl">
             <img
               src={hospital?.image ?? ""}
@@ -254,10 +254,10 @@ const HospitalDetail = () => {
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-            {/* IGD Badge - Atas Kiri */}
+            {/* badge igd */}
             {hospital?.hasIGD && (
               <div className="absolute top-0 left-0 z-10">
-                <span className="inline-flex bg-red-600 text-white text-sm font-semibold px-5 py-2 shadow-md -skew-x-12">
+                <span className="inline-flex bg-primary text-white text-sm font-semibold px-5 py-2 -skew-x-12">
                   <span className="inline-block skew-x-12">
                     IGD Tersedia 24 Jam
                   </span>
@@ -265,7 +265,7 @@ const HospitalDetail = () => {
               </div>
             )}
 
-            {/* Bottom Content */}
+            {/* title rumah sakit */}
             {hospital?.name && (
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <h1 className="text-2xl font-bold text-white font-heading">
@@ -274,10 +274,10 @@ const HospitalDetail = () => {
               </div>
             )}
           </div>
-          {/* Action Buttons Row (Mobile) - moved above Facilities) */}
+          {/* Baris Action Buttons(Mobile) */}
           <div className="bg-card border border-border p-3 rounded-3xl">
             <div className="flex gap-3">
-              {/* Maps */}
+              {/* Tombol Maps */}
               <a
                 href={directionsUrl}
                 target="_blank"
@@ -291,7 +291,7 @@ const HospitalDetail = () => {
                 <span className="text-center leading-none">Peta</span>
               </a>
 
-              {/* Phone */}
+              {/* Tombol Telepon */}
               <a
                 href={`tel:${(hospital.phone || "").replace(/\s+/g, "")}`}
                 className="flex-1 h-12 flex items-center justify-center gap-2 

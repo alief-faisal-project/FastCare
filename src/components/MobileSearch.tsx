@@ -11,11 +11,12 @@ const MobileSearch = () => {
     searchQuery,
     setSearchQuery,
   } = useApp();
+
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [isDetecting, setIsDetecting] = useState(false);
   const locationRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
+  // Tutup dropdown kalau klik di luar area
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -25,21 +26,23 @@ const MobileSearch = () => {
         setIsLocationOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Deteksi lokasi perangkat
   const handleDetectLocation = async () => {
     setIsDetecting(true);
     try {
       await detectLocation();
-      toast.success("Lokasi Terdeteksi");
+      toast.success("Lokasi terdeteksi");
       setIsLocationOpen(false);
     } catch (error) {
-      console.error("Failed to detect location", error);
+      console.error("Gagal mendeteksi lokasi", error);
       toast.error(
         error instanceof Error && error.message === "Permission denied"
-          ? "Izin lokasi ditolak. Aktifkan izin lokasi di pengaturan browser."
+          ? "Izin lokasi ditolak. Aktifkan izin lokasi di browser."
           : "Gagal mendeteksi lokasi. Coba lagi.",
       );
     } finally {
@@ -47,6 +50,7 @@ const MobileSearch = () => {
     }
   };
 
+  // Pilih kota atau semua wilayah
   const handleCitySelect = (city: BantenCity | "Semua") => {
     setSelectedCity(city);
     setIsLocationOpen(false);
@@ -55,33 +59,42 @@ const MobileSearch = () => {
   return (
     <div className="md:hidden px-4 py-3 bg-background border-b border-border">
       <div className="flex flex-col gap-3">
-        {/* Location Dropdown */}
+        {/* Dropdown lokasi */}
         <div className="relative" ref={locationRef}>
           <button
             onClick={() => setIsLocationOpen(!isLocationOpen)}
             className="w-full flex items-center space-x-2 px-4 py-3 rounded-xl border border-border hover:border-primary/50 transition-colors bg-card"
           >
             <i className="fa-solid fa-location-arrow text-primary" />
+
+            {/* Text lokasi yang tampil */}
             <span className="text-sm text-foreground truncate flex-1 text-left">
               {selectedCity === "Lokasi Terdekat"
                 ? "Lokasi Terdekat"
-                : selectedCity}
+                : selectedCity === "Semua"
+                  ? "Semua Wilayah"
+                  : selectedCity}
             </span>
+
             <i
-              className={`fa-solid fa-chevron-down text-x text-muted-foreground transition-transform ${isLocationOpen ? "rotate-180" : ""}`}
+              className={`fa-solid fa-chevron-down text-x text-muted-foreground transition-transform duration-700 ${
+                isLocationOpen ? "rotate-180" : ""
+              }`}
             />
           </button>
 
           {isLocationOpen && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border shadow-lg z-50 py-2 animate-scale-in">
-              {/* Detect Location */}
+              {/* Deteksi lokasi otomatis */}
               <button
                 onClick={handleDetectLocation}
                 disabled={isDetecting}
                 className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-accent transition-colors text-left"
               >
                 <i
-                  className={`fa-solid ${isDetecting ? "fa-spinner fa-spin" : "fa-street-view"} text-primary w-5`}
+                  className={`fa-solid ${
+                    isDetecting ? "fa-spinner fa-spin" : "fa-street-view"
+                  } text-primary w-5`}
                 />
                 <div>
                   <p className="text-sm font-medium text-foreground">
@@ -95,7 +108,7 @@ const MobileSearch = () => {
 
               <div className="border-t border-border my-2" />
 
-              {/* All */}
+              {/* Semua wilayah */}
               <button
                 onClick={() => handleCitySelect("Semua")}
                 className={`w-full flex items-center space-x-3 px-4 py-2.5 hover:bg-accent transition-colors text-left ${
@@ -107,7 +120,7 @@ const MobileSearch = () => {
 
               <div className="border-t border-border my-2" />
 
-              {/* Cities */}
+              {/* List kota */}
               <div className="max-h-48 overflow-y-auto">
                 {BANTEN_CITIES.map((city) => (
                   <button
@@ -125,7 +138,7 @@ const MobileSearch = () => {
           )}
         </div>
 
-        {/* Search */}
+        {/* Input pencarian */}
         <div className="relative">
           <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input

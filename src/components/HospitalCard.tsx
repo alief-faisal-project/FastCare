@@ -32,16 +32,18 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         )}
       </div>
 
-      {/* IGD Badge (always rendered to keep grid height consistent) */}
+      {/* IGD Badge */}
       <div className="relative -mt-1 -ml-1 h-[22px]">
         <span
           className={`inline-block px-4 py-1 text-[10px] font-bold text-white ${
-            hospital.hasIGD ? "bg-primary" : "bg-yellow-600"
+            hospital.hasIGD ? "bg-red-600" : "bg-yellow-500"
           }`}
           style={{ transform: "skewX(-15deg)" }}
         >
           <span style={{ display: "inline-block", transform: "skewX(15deg)" }}>
-            {hospital.hasIGD ? "IGD Tersedia 24 Jam" : "IGD Sesuai Jam Operasional"}
+            {hospital.hasIGD
+              ? "IGD Tersedia 24 Jam"
+              : "UGD Sesuai Jam Operasional"}
           </span>
         </span>
       </div>

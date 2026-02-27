@@ -15,12 +15,6 @@ const emergencyServices = [
     number: "112",
   },
   {
-    icon: "fa-solid fa-magnifying-glass-location",
-    label: "Basarnas",
-    number: "129",
-  },
-  { icon: "fa-solid fa-building-shield", label: "Polisi", number: "110" },
-  {
     icon: "fa-solid fa-person-shelter",
     label: (
       <>
@@ -31,6 +25,7 @@ const emergencyServices = [
     ),
     number: "129",
   },
+  { icon: "fa-solid fa-building-shield", label: "Polisi", number: "110" },
 ];
 
 const HeroBanner = () => {
@@ -140,7 +135,7 @@ const HeroBanner = () => {
     };
   }, []);
 
-  // ================= DESKTOP INDICATOR (SMOOTH SEPERTI MOBILE) =================
+  // ================= DESKTOP INDICATOR =================
 
   useEffect(() => {
     const indicator = desktopIndicatorRef.current;
@@ -216,7 +211,7 @@ const HeroBanner = () => {
                 )}
               </div>
 
-              {/* Indicator desktop (di luar wrapper banner agar arrow tetap center) */}
+              {/* Indicator arrow desktop  */}
               {activeBanners.length > 1 && (
                 <div className="flex items-center justify-center mt-4">
                   <div className="relative w-16 h-5 rounded-full bg-muted-foreground/20 overflow-hidden">
