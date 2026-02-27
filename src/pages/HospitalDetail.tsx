@@ -240,15 +240,29 @@ const HospitalDetail = () => {
               alt={hospital.name}
               className="w-full h-full object-cover"
             />
+
+            {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <div className="flex flex-wrap gap-2 mb-3">
-                {hospital.hasIGD && (
-                  <span className="px-3 py-1 bg-red-600 text-white text-sm font-semibold rounded">
-                    IGD 24 Jam
+
+            {/* IGD Badge - Top Left */}
+            {hospital.hasIGD && (
+              <div className="absolute top-1 left-0 z-10">
+                <span
+                  className="inline-block bg-red-600 text-white text-xs font-bold px-4 py-1 shadow-md"
+                  style={{ transform: "skewX(-15deg)" }}
+                >
+                  <span
+                    className="inline-block"
+                    style={{ transform: "skewX(15deg)" }}
+                  >
+                    IGD Tersedia 24 Jam
                   </span>
-                )}
+                </span>
               </div>
+            )}
+
+            {/* Bottom Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-6">
               <h1 className="text-2xl font-bold text-white font-heading">
                 {hospital.name}
               </h1>
