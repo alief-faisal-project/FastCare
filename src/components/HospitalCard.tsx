@@ -34,12 +34,16 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
 
       {/* IGD Badge */}
       {hospital.hasIGD && (
-        <div className="relative -mt-4 -ml-1">
+        <div className="relative -mt-1 -ml-1">
           <span
-            className="inline-block px-4 py-1 bg-red-600 text-white text-[10px] font-bold"
+            className="inline-block px-4 py-1 bg-primary text-white text-[10px] font-bold"
             style={{ transform: "skewX(-15deg)" }}
           >
-            IGD Tersedia 24 Jam
+            <span
+              style={{ display: "inline-block", transform: "skewX(15deg)" }}
+            >
+              IGD Tersedia 24 Jam
+            </span>
           </span>
         </div>
       )}
