@@ -27,7 +27,7 @@ const Footer = () => {
               <i className="fa-solid fa-envelope text-base" />
             </a>
             <a
-              href="https://wa.me/6281234567890"
+              href="https://wa.me/6285692985927"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white hover:text-yellow-400 transition-colors"
