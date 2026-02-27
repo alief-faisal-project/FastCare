@@ -83,7 +83,9 @@ const Navbar = () => {
                 <span className="text-sm text-foreground truncate flex-1 text-left">
                   {selectedCity === "Lokasi Terdekat"
                     ? "Lokasi Terdekat"
-                    : selectedCity}
+                    : selectedCity === "Semua"
+                      ? "Semua Wilayah"
+                      : selectedCity}
                 </span>
                 <i
                   className={`fa-solid fa-chevron-down text-primary text-muted-foreground transition-transform duration-700 ${isLocationOpen ? "rotate-180" : ""}`}

@@ -36,7 +36,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
       {hospital.hasIGD && (
         <div className="relative -mt-4 -ml-1">
           <span
-            className="inline-block px-4 py-1 bg-red-600 text-white text-[10px] font-semibold shadow-md"
+            className="inline-block px-4 py-1 bg-red-600 text-white text-[10px] font-bold"
             style={{ transform: "skewX(-15deg)" }}
           >
             IGD Tersedia 24 Jam
