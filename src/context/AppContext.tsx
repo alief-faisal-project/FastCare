@@ -36,6 +36,7 @@ interface AppContextType {
   updateHeroBanner: (id: string, banner: Partial<HeroBanner>) => Promise<void>;
   deleteHeroBanner: (id: string) => Promise<void>;
 
+  uploadHospitalImage: (file: File) => Promise<string>;
   uploadBannerImage: (file: File) => Promise<string>;
 
   userLocation: UserLocation | null;
@@ -255,15 +256,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error("Fetch Banners Error:", bannerError);
     } else if (bannerData) {
       // Map snake_case from Supabase to camelCase for frontend
-      const mappedBanners = (bannerData as any[]).map((b) => ({
-        id: b.id,
-        title: b.title,
-        subtitle: b.subtitle,
-        image: b.image,
-        link: b.link,
-        isActive: b.is_active, // ← Map snake_case to camelCase
-        order: b.order,
-      }));
+      const mappedBanners = (bannerData as unknown[]).map((b: unknown) => {
+        const banner = b as Record<string, unknown>;
+        return {
+          id: banner.id as string,
+          title: banner.title as string,
+          subtitle: banner.subtitle as string,
+          image: banner.image as string,
+          link: banner.link as string,
+          isActive: banner.is_active as boolean,
+          order: banner.order as number,
+        } as HeroBanner;
+      });
       setHeroBanners(mappedBanners);
     }
 
@@ -772,6 +776,61 @@ export function AppProvider({ children }: { children: ReactNode }) {
      IMAGE UPLOAD FUNCTIONS
      ========================================================= */
 
+  const uploadHospitalImage = useCallback(
+    async (file: File): Promise<string> => {
+      try {
+        console.log("📤 Uploading hospital image:", file.name);
+
+        // Generate unique filename
+        const timestamp = Date.now();
+        const randomStr = Math.random().toString(36).substring(2, 8);
+        const filename = `hospital-${timestamp}-${randomStr}-${file.name}`;
+        const filepath = `hospitals/${filename}`;
+
+        // Upload ke Supabase Storage bucket: hospital-bimagaes
+        const { data, error } = await supabase.storage
+          .from("hospital-bimagaes")
+          .upload(filepath, file, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        if (error) {
+          console.error("❌ Supabase Storage Error:", error);
+
+          // Provide more helpful error messages
+          let userMessage = error.message || "Gagal upload gambar";
+
+          if (error.message?.includes("row-level security")) {
+            userMessage =
+              "RLS Policy Error: Hubungi admin untuk setup bucket policy. Lihat SUPABASE_BUCKET_RLS_FIX.md";
+          } else if (error.message?.includes("not found")) {
+            userMessage =
+              "Bucket tidak ditemukan. Pastikan bucket 'hospital-bimagaes' sudah dibuat.";
+          } else if (error.message?.includes("authenticated")) {
+            userMessage = "Anda harus login untuk upload gambar.";
+          }
+
+          throw new Error(userMessage);
+        }
+
+        // Get public URL
+        const { data: urlData } = supabase.storage
+          .from("hospital-bimagaes")
+          .getPublicUrl(filepath);
+
+        const imageUrl = urlData.publicUrl;
+        console.log("✅ Hospital image uploaded successfully:", imageUrl);
+
+        return imageUrl;
+      } catch (err) {
+        console.error("💥 Unexpected error in uploadHospitalImage:", err);
+        throw err;
+      }
+    },
+    [],
+  );
+
   const uploadBannerImage = useCallback(async (file: File): Promise<string> => {
     try {
       console.log("📤 Uploading banner image:", file.name);
@@ -792,7 +851,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         console.error("❌ Supabase Storage Error:", error);
-        throw new Error(error.message || "Gagal upload gambar");
+
+        // Provide more helpful error messages
+        let userMessage = error.message || "Gagal upload gambar";
+
+        if (error.message?.includes("row-level security")) {
+          userMessage =
+            "RLS Policy Error: Hubungi admin untuk setup bucket policy. Lihat SUPABASE_BUCKET_RLS_FIX.md";
+        } else if (error.message?.includes("not found")) {
+          userMessage =
+            "Bucket tidak ditemukan. Pastikan bucket 'banner-images' sudah dibuat.";
+        } else if (error.message?.includes("authenticated")) {
+          userMessage = "Anda harus login untuk upload gambar.";
+        }
+
+        throw new Error(userMessage);
       }
 
       // Get public URL
@@ -848,6 +921,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addHeroBanner,
       updateHeroBanner,
       deleteHeroBanner,
+      uploadHospitalImage,
       uploadBannerImage,
       userLocation,
       setUserLocation,
@@ -878,6 +952,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addHeroBanner,
       updateHeroBanner,
       deleteHeroBanner,
+      uploadHospitalImage,
       uploadBannerImage,
       detectLocation,
       setUserLocation,

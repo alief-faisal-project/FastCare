@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { sanitizeInput, isValidUrl } from "@/lib/security";
+import { sanitizeInput } from "@/lib/security";
 import { useNavigate, Link } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { Hospital, HeroBanner, BANTEN_CITIES } from "@/types";
@@ -469,7 +469,7 @@ const AdminPanel = () => {
                   description: `${data.name} telah diperbarui di database`,
                 });
               } else {
-                const result = await addHospital(data as any);
+                const result = await addHospital(data);
                 if (result?.error) {
                   console.error("Add error:", result.error);
                   toast.error("Gagal menambah: " + result.error.message);
@@ -546,6 +546,9 @@ const HospitalFormModal = ({
   onClose,
   onSave,
 }: HospitalFormModalProps) => {
+  const { uploadHospitalImage } = useApp();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   type FormState = {
     name: string;
     type: Hospital["type"];
@@ -576,18 +579,71 @@ const HospitalFormModal = ({
     phone: hospital?.phone || "",
     image: hospital?.image || "",
     description: hospital?.description || "",
-    facilities: Array.isArray(hospital?.facilities)
-      ? hospital!.facilities.join(", ")
-      : "",
+    facilities:
+      hospital?.facilities && Array.isArray(hospital.facilities)
+        ? hospital.facilities.join(", ")
+        : "",
     totalBeds: hospital?.totalBeds || 100,
     hasIGD: hospital?.hasIGD ?? true,
     hasICU: hospital?.hasICU ?? true,
     operatingHours: hospital?.operatingHours || "24 Jam",
     // removed website, latitude and longitude — we only keep googleMapsLink
     googleMapsLink: hospital?.googleMapsLink || "",
-    latitude: hospital?.latitude != null ? String(hospital.latitude) : "",
-    longitude: hospital?.longitude != null ? String(hospital.longitude) : "",
+    latitude:
+      hospital?.latitude !== null && hospital?.latitude !== undefined
+        ? String(hospital.latitude)
+        : "",
+    longitude:
+      hospital?.longitude !== null && hospital?.longitude !== undefined
+        ? String(hospital.longitude)
+        : "",
   });
+
+  const [isUploading, setIsUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>(
+    hospital?.image || "",
+  );
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Pilih file gambar yang valid");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Ukuran gambar maksimal 5MB");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      console.log("📤 Starting image upload...");
+
+      // Upload to Supabase
+      const imageUrl = await uploadHospitalImage(file);
+
+      setFormData({ ...formData, image: imageUrl });
+      setImagePreview(imageUrl);
+      console.log("✅ Image uploaded successfully:", imageUrl);
+      toast.success("Gambar berhasil diupload!");
+    } catch (error) {
+      console.error("❌ Upload failed:", error);
+      toast.error(
+        "Gagal upload gambar: " +
+          (error instanceof Error ? error.message : "Error"),
+      );
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -606,8 +662,10 @@ const HospitalFormModal = ({
       alert("Telepon tidak boleh kosong!");
       return;
     }
-    if (!formData.image.trim() || !isValidUrl(formData.image)) {
-      alert("URL Gambar tidak boleh kosong dan harus berupa URL yang valid");
+    if (!formData.image.trim()) {
+      alert(
+        "Gambar tidak boleh kosong! Silakan upload gambar terlebih dahulu.",
+      );
       return;
     }
     if (!formData.description.trim()) {
@@ -786,32 +844,39 @@ const HospitalFormModal = ({
             {/* Website removed per request - use Google Maps link field instead */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                URL Gambar *
+                Gambar Rumah Sakit *
               </label>
-              <div className="flex gap-2">
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) =>
-                    setFormData({ ...formData, image: e.target.value })
-                  }
-                  className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    window.open(
-                      `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(
-                        formData.name + " " + formData.city,
-                      )}`,
-                      "_blank",
-                    )
-                  }
-                  className="px-3 py-2 bg-secondary/20 rounded-lg text-sm"
-                >
-                  Ambil dari Google
-                </button>
+
+              {/* Preview */}
+              {imagePreview && (
+                <div className="mb-3 relative w-full h-40 bg-muted rounded-lg overflow-hidden">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+
+              {/* Upload Options */}
+              <div className="space-y-2">
+                {/* File Upload */}
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-2">
+                    Upload Gambar Lokal
+                  </label>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    disabled={isUploading}
+                    className="w-full px-4 py-2 border border-border rounded-lg text-sm cursor-pointer hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                  {isUploading && (
+                    <p className="text-xs text-primary mt-1">📤 Uploading...</p>
+                  )}
+                </div>
               </div>
             </div>
             <div className="md:col-span-2">
@@ -937,7 +1002,8 @@ const HospitalFormModal = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+              disabled={isUploading}
+              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {hospital ? "Simpan Perubahan" : "Tambah Rumah Sakit"}
             </button>
@@ -1157,7 +1223,10 @@ const BannerFormModal = ({ banner, onClose, onSave }: BannerFormModalProps) => {
                 type="number"
                 value={formData.order}
                 onChange={(e) =>
-                  setFormData({ ...formData, order: parseInt(e.target.value) })
+                  setFormData({
+                    ...formData,
+                    order: Number.parseInt(e.target.value),
+                  })
                 }
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary"
               />
@@ -1187,7 +1256,10 @@ const BannerFormModal = ({ banner, onClose, onSave }: BannerFormModalProps) => {
               disabled={isUploading}
               className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isUploading ? "Uploading..." : banner ? "Simpan" : "Tambah"}
+              {(() => {
+                if (isUploading) return "Uploading...";
+                return banner ? "Simpan" : "Tambah";
+              })()}
             </button>
           </div>
         </form>

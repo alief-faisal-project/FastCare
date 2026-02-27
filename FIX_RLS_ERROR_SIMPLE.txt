@@ -1,0 +1,150 @@
+SOLUSI CEPAT: RLS Policy Error - Upload Gambar
+
+========================================
+
+🔴 ERROR YANG MUNCUL:
+"Gagal upload gambar: RLS Policy Error: Hubungi admin untuk setup bucket policy"
+
+========================================
+
+✅ PENYEBAB:
+Bucket di Supabase ada tapi Row-Level Security (RLS) policy belum disetup.
+Policy ini mengatur siapa yang boleh upload/read/delete file.
+
+========================================
+
+🚀 CARA FIX (5 MENIT):
+
+STEP 1: Buka Supabase Dashboard
+- Link: https://app.supabase.com
+- Login dengan akun Anda
+- Pilih project: FastCare
+
+STEP 2: Jalankan SQL Script
+- Sidebar kiri → SQL Editor
+- Click: New Query
+- COPY semua SQL di bawah (dari baris "ALTER TABLE" sampai akhir)
+- PASTE ke SQL Editor
+- Click: RUN atau Ctrl+Enter
+- Tunggu sampai ✅ Success
+
+SQL SCRIPT - COPY SEMUA INI:
+
+---BEGIN COPY---
+
+-- Enable RLS
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+-- HOSPITAL IMAGES BUCKET
+CREATE POLICY "Allow public read hospital images"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'hospital-bimagaes');
+
+CREATE POLICY "Allow authenticated users upload hospital"
+ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'hospital-bimagaes' AND auth.role() = 'authenticated');
+
+CREATE POLICY "Allow authenticated users update hospital images"
+ON storage.objects FOR UPDATE
+USING (bucket_id = 'hospital-bimagaes' AND auth.role() = 'authenticated')
+WITH CHECK (bucket_id = 'hospital-bimagaes' AND auth.role() = 'authenticated');
+
+CREATE POLICY "Allow authenticated users delete hospital images"
+ON storage.objects FOR DELETE
+USING (bucket_id = 'hospital-bimagaes' AND auth.role() = 'authenticated');
+
+-- BANNER IMAGES BUCKET
+CREATE POLICY "Allow public read banner images"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'banner-images');
+
+CREATE POLICY "Allow authenticated users upload banner"
+ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'banner-images' AND auth.role() = 'authenticated');
+
+CREATE POLICY "Allow authenticated users update banner images"
+ON storage.objects FOR UPDATE
+USING (bucket_id = 'banner-images' AND auth.role() = 'authenticated')
+WITH CHECK (bucket_id = 'banner-images' AND auth.role() = 'authenticated');
+
+CREATE POLICY "Allow authenticated users delete banner images"
+ON storage.objects FOR DELETE
+USING (bucket_id = 'banner-images' AND auth.role() = 'authenticated');
+
+---END COPY---
+
+STEP 3: Test
+- Refresh browser: Ctrl+F5
+- Login Admin Panel
+- Buka: Rumah Sakit tab
+- Klik: Tambah RS atau Edit RS
+- Scroll ke: Gambar Rumah Sakit
+- Upload file gambar
+- Should work! ✅ Berhasil
+
+========================================
+
+✨ FITUR BARU:
+
+Admin Panel sekarang bisa:
+✅ Upload gambar dari file lokal (tidak perlu URL)
+✅ Lihat preview gambar sebelum submit
+✅ Auto-upload ke Supabase
+✅ Error message yang jelas
+
+Ini berlaku untuk:
+- Gambar Rumah Sakit (hospital images)
+- Gambar Banner (hero banner images)
+
+========================================
+
+📋 CHECKLIST:
+
+[ ] Sudah membuka Supabase Dashboard
+[ ] Sudah login
+[ ] Sudah pilih project FastCare
+[ ] Sudah buka SQL Editor
+[ ] Sudah copy-paste SQL script
+[ ] Sudah click RUN
+[ ] Sudah tunggu sampai success
+[ ] Sudah refresh browser (Ctrl+F5)
+[ ] Sudah test upload gambar
+[ ] SELESAI ✅
+
+========================================
+
+❓ Q&A:
+
+Q: Error masih muncul?
+A: Refresh browser (Ctrl+F5), pastikan SQL berhasil di-run
+
+Q: Berapa lama upload?
+A: 1-3 detik (tergantung ukuran file)
+
+Q: Max file size?
+A: 5MB
+
+Q: Format apa saja?
+A: JPG, PNG, GIF, WebP, dan format image lainnya
+
+Q: Gambar hilang kalau server restart?
+A: Tidak, tersimpan di Supabase cloud
+
+========================================
+
+📁 FILE DOKUMENTASI (kalau perlu detail):
+
+- QUICK_FIX_RLS_ERROR.md
+- SUPABASE_RLS_SETUP_GUIDE.md
+- SUPABASE_BUCKET_RLS_FIX.md
+- IMPLEMENTATION_REPORT.md
+
+========================================
+
+SELESAI! 🎉
+
+Status: READY TO USE
+Waktu Setup: 5 menit
+Difficulty: MUDAH (copy-paste SQL)
+
+Jika ada masalah lagi, baca file dokumentasi di atas atau check console error (F12 key)
