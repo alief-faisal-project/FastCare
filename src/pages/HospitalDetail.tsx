@@ -356,7 +356,9 @@ const HospitalDetail = () => {
                     IGD 24 Jam
                   </span>
                   <span
-                    className={`font-medium text-sm ${hospital.hasIGD ? "text-primary" : "text-muted-foreground"}`}
+                    className={`font-medium text-sm ${
+                      hospital.hasIGD ? "text-red-600" : "text-muted-foreground"
+                    }`}
                   >
                     {hospital.hasIGD ? "Tersedia" : "Tidak Tersedia"}
                   </span>
