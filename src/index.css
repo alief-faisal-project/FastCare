@@ -68,11 +68,9 @@
       hsl(205 90% 65%) 100%
     );
     --card-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --card-shadow-hover:
-      0 20px 25px -5px rgba(0, 0, 0, 0.1),
-      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
 
   .dark {
@@ -241,28 +239,5 @@
   }
   100% {
     transform: translateY(0);
-  }
-}
-
-
-/* ================================
-   KHUSUS ANDROID (Chromium)
-   iOS & Safari TIDAK TERKENA
-   ================================ */
-@supports not (-webkit-touch-callout: none) {
-  .hospital-quick-info {
-    flex-wrap: wrap;
-  }
-
-  /* Kamar + ICU tetap satu baris */
-  .hospital-quick-info > span:not(.hospital-quick-kelas) {
-    white-space: nowrap;
-  }
-
-  /* Kelas dipaksa ke baris bawah */
-  .hospital-quick-kelas {
-    flex-basis: 100%;
-    margin-top: 2px;
-    white-space: nowrap;
   }
 }
