@@ -46,7 +46,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
           >
             {hospital.hasIGD
               ? "IGD Tersedia 24 Jam"
-              : "Ketersediaan UGD Terbatas"}
+              : "UGD Terbatas"}
           </span>
         </span>
       </div>
