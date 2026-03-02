@@ -73,7 +73,7 @@ const HospitalGrid = () => {
               {hospital.id === nearestHospitalId && (
                 <div
                   className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full 
-                                bg-primary text-white rounded-md text-xs font-semibold 
+                                bg-white text-primary rounded-md text-xs font-semibold 
                                 px-3 py-1 shadow-md 
                                 opacity-0 group-hover:opacity-100 
                                 transition-opacity duration-300 whitespace-nowrap"
