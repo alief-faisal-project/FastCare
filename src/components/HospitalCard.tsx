@@ -43,7 +43,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
           <span style={{ display: "inline-block", transform: "skewX(15deg)" }}>
             {hospital.hasIGD
               ? "IGD Tersedia 24 Jam"
-              : "UGD Sesuai Jam Operasional"}
+              : "Ketersediaan UGD Terbatas"}
           </span>
         </span>
       </div>
@@ -72,7 +72,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
           <span className="flex items-center gap-1">
             <i className="fa-solid fa-bed" />
-            {hospital.totalBeds} Kamar
+            {hospital.totalBeds}+ Kamar
           </span>
 
           {hospital.hasICU && (

@@ -86,17 +86,6 @@ const HospitalDetail = () => {
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                {/* IGD Badge - Atas Kiri (Clean) */}
-                {hospital.hasIGD && (
-                  <div className="absolute top-0 left-0 z-10">
-                    <span className="inline-flex bg-primary text-white text-sm font-semibold px-5 py-2 shadow-md -skew-x-12">
-                      <span className="inline-block skew-x-12">
-                        IGD Tersedia 24 Jam
-                      </span>
-                    </span>
-                  </div>
-                )}
-
                 {/* Bottom Content */}
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <h1 className="text-2xl font-bold text-white font-heading">
@@ -161,7 +150,7 @@ const HospitalDetail = () => {
                     Total Kamar
                   </span>
                   <span className="font-medium text-primary">
-                    {hospital.totalBeds}
+                    {hospital.totalBeds}+
                   </span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border">
@@ -257,7 +246,7 @@ const HospitalDetail = () => {
             {/* badge igd */}
             {hospital?.hasIGD && (
               <div className="absolute top-0 left-0 z-10">
-                <span className="inline-flex bg-primary text-white text-sm font-semibold px-5 py-2 -skew-x-12">
+                <span className="inline-flex bg-red-600 text-white text-sm font-semibold px-5 py-2 -skew-x-12">
                   <span className="inline-block skew-x-12">
                     IGD Tersedia 24 Jam
                   </span>
@@ -345,7 +334,7 @@ const HospitalDetail = () => {
                     Total Kamar
                   </span>
                   <span className="font-medium text-primary text-sm">
-                    {hospital.totalBeds}
+                    {hospital.totalBeds}+
                   </span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border">

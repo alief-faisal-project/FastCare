@@ -404,7 +404,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           description: hospital.description,
           has_icu: hospital.hasICU ?? false,
           has_igd: hospital.hasIGD ?? false,
-          total_beds: hospital.totalBeds ?? 0,
+          total_beds: hospital.totalBeds ?? "",
           operating_hours: hospital.operatingHours ?? "24 Jam",
           // only include latitude/longitude when available (from form or parsed maps link)
           latitude: hospital.latitude ?? (parsed ? parsed.lat : undefined),
