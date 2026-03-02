@@ -1,19 +1,22 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useApp } from "@/context/AppContext";
 import HospitalCard from "./HospitalCard";
 
 const HospitalGrid = () => {
   const { hospitals, selectedCity, searchQuery, userLocation } = useApp();
 
+  // State untuk menampilkan tooltip otomatis 3 detik
+  const [showAutoTooltip, setShowAutoTooltip] = useState(false);
+
   const filteredHospitals = useMemo(() => {
     let result = [...hospitals];
 
-    // Filter by city
+    // Filter berdasarkan kota
     if (selectedCity !== "Semua" && selectedCity !== "Lokasi Terdekat") {
       result = result.filter((h) => h.city === selectedCity);
     }
 
-    // Filter by search query
+    // Filter berdasarkan pencarian
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
@@ -25,7 +28,7 @@ const HospitalGrid = () => {
       );
     }
 
-    // cari berdasarkan lokasi
+    // Urutkan berdasarkan jarak jika lokasi terdekat
     if (selectedCity === "Lokasi Terdekat" && userLocation) {
       result.sort((a, b) => (a.distance || 999) - (b.distance || 999));
     }
@@ -33,7 +36,7 @@ const HospitalGrid = () => {
     return result;
   }, [hospitals, selectedCity, searchQuery, userLocation]);
 
-  // Ambil ID rumah sakit paling dekat (index 0 setelah sort)
+  // Ambil ID rumah sakit terdekat
   const nearestHospitalId =
     selectedCity === "Lokasi Terdekat" &&
     userLocation &&
@@ -41,9 +44,22 @@ const HospitalGrid = () => {
       ? filteredHospitals[0].id
       : null;
 
+  // Efek: tooltip otomatis muncul 3 detik saat RS terdekat terdeteksi
+  useEffect(() => {
+    if (nearestHospitalId) {
+      setShowAutoTooltip(true);
+
+      const timer = setTimeout(() => {
+        setShowAutoTooltip(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [nearestHospitalId]);
+
   return (
     <section className="container mx-auto px-4 py-6" id="hospitals">
-      {/* Section Header */}
+      {/* Header Section */}
       <div className="mb-4">
         <h2 className="text-xl md:text-2xl font-bold text-foreground font-heading">
           {selectedCity === "Semua"
@@ -54,35 +70,42 @@ const HospitalGrid = () => {
         </h2>
       </div>
 
-      {/* Grid Rumah Sakit - 5 columns di desktop, 2-3 di mobile/tablet */}
       {filteredHospitals.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols- lg:grid-cols-5 gap-3 md:gap-4">
-          {filteredHospitals.map((hospital, index) => (
-            <div
-              key={hospital.id}
-              className={`fade-in relative group ${
-                hospital.id === nearestHospitalId
-                  ? "border border-primary rounded-lg shadow-lg"
-                  : ""
-              }`}
-              style={{ animationDelay: `${index * 30}ms` }}
-            >
-              <HospitalCard hospital={hospital} />
+          {filteredHospitals.map((hospital, index) => {
+            const isNearest = hospital.id === nearestHospitalId;
 
-              {/* Tooltip untuk rumah sakit terdekat */}
-              {hospital.id === nearestHospitalId && (
-                <div
-                  className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full 
-                                bg-white text-primary rounded-md text-xs font-semibold 
-                                px-3 py-1 shadow-md 
-                                opacity-0 group-hover:opacity-100 
-                                transition-opacity duration-300 whitespace-nowrap"
-                >
-                  Paling dekat dari lokasi anda
-                </div>
-              )}
-            </div>
-          ))}
+            return (
+              <div
+                key={hospital.id}
+                className={`fade-in relative group ${
+                  isNearest ? "border border-primary rounded-lg shadow-lg" : ""
+                }`}
+                style={{ animationDelay: `${index * 30}ms` }}
+              >
+                <HospitalCard hospital={hospital} />
+
+                {/* Tooltip RS terdekat */}
+                {isNearest && (
+                  <div
+                    className={`
+                      absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full
+                      bg-white text-primary rounded-md text-xs font-semibold
+                      px-3 py-1 shadow-md whitespace-nowrap
+                      transition-opacity duration-300
+                      ${
+                        showAutoTooltip
+                          ? "opacity-100"
+                          : "opacity-0 group-hover:opacity-100"
+                      }
+                    `}
+                  >
+                    RS/Klinik terdekat dari lokasi anda
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="py-16 text-center">
