@@ -26,6 +26,21 @@ const emergencyServices = [
     number: "129",
   },
   { icon: "fa-solid fa-building-shield", label: "Polisi", number: "110" },
+  {
+    icon: "fa-solid fa-fire-extinguisher",
+    label: "Pemadam Kebakaran",
+    number: "113",
+  },
+  {
+    icon: "fa-solid fa-road",
+    label: "Jasa Marga (Tol)",
+    number: "14080",
+  },
+  {
+    icon: "fa-solid fa-bolt",
+    label: "Gangguan Listrik (PLN)",
+    number: "123",
+  },
 ];
 
 const HeroBanner = () => {
