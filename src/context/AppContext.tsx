@@ -237,7 +237,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         latitude: h.latitude,
         longitude: h.longitude,
         operatingHours: h.operating_hours,
-        googleMapsLink: h.google_maps_link,
         facilities: Array.isArray(h.facilities) ? h.facilities : [],
         createdAt: h.created_at,
         updatedAt: h.updated_at,
@@ -376,7 +375,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     latitude: data.latitude,
     longitude: data.longitude,
     operatingHours: data.operating_hours,
-    googleMapsLink: data.google_maps_link,
     facilities: Array.isArray(data.facilities) ? data.facilities : [],
     createdAt: data.created_at,
     updatedAt: data.updated_at,
@@ -408,7 +406,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           has_igd: hospital.hasIGD ?? false,
           total_beds: hospital.totalBeds ?? 0,
           operating_hours: hospital.operatingHours ?? "24 Jam",
-          google_maps_link: hospital.googleMapsLink ?? "",
           // only include latitude/longitude when available (from form or parsed maps link)
           latitude: hospital.latitude ?? (parsed ? parsed.lat : undefined),
           longitude: hospital.longitude ?? (parsed ? parsed.lng : undefined),
@@ -491,7 +488,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           has_igd: hospital.hasIGD,
           total_beds: hospital.totalBeds,
           operating_hours: hospital.operatingHours,
-          google_maps_link: hospital.googleMapsLink,
           latitude: hospital.latitude ?? (parsed ? parsed.lat : undefined),
           longitude: hospital.longitude ?? (parsed ? parsed.lng : undefined),
           facilities: hospital.facilities

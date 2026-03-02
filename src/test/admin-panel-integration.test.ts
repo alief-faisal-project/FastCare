@@ -89,7 +89,6 @@ describe("Admin Panel - Supabase Integration", () => {
         has_igd: true,
         total_beds: 100,
         operating_hours: "24 Jam",
-        google_maps_link: "https://maps.app.goo.gl/test",
         latitude: -6.1185,
         longitude: 106.1564,
         facilities: ["IGD", "ICU"],
@@ -295,7 +294,6 @@ describe("Data Flow Validation", () => {
       latitude: -6.1185,
       longitude: 106.1564,
       operating_hours: "24 Jam",
-      google_maps_link: "https://maps.app.goo.gl/test",
       facilities: ["IGD", "ICU"],
       created_at: "2026-02-20T00:00:00Z",
       updated_at: "2026-02-20T00:00:00Z",
@@ -312,7 +310,6 @@ describe("Data Flow Validation", () => {
       latitude: supabaseData.latitude,
       longitude: supabaseData.longitude,
       operatingHours: supabaseData.operating_hours,
-      googleMapsLink: supabaseData.google_maps_link,
       facilities: supabaseData.facilities,
     };
 
