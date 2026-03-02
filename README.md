@@ -1,5 +1,3 @@
-
-
 ---
 
 # FastCare.id
@@ -37,11 +35,11 @@ Data dapat difilter berdasarkan kabupaten atau kota di Provinsi Banten.
 
 Setiap rumah sakit menampilkan informasi seperti:
 
-* Jenis dan kelas rumah sakit
-* Alamat dan nomor telepon
-* Fasilitas dan layanan medis
-* Ketersediaan IGD dan ICU
-* Total dan ketersediaan tempat tidur
+- Jenis dan kelas rumah sakit
+- Alamat dan nomor telepon
+- Fasilitas dan layanan medis
+- diaan IGD dan ICU
+- Total dan ketersediaan tempat tidur
 
 ### Integrasi Peta
 
@@ -55,9 +53,9 @@ Tersedia halaman khusus untuk pengelolaan data rumah sakit dan banner informasi.
 
 ## Target Pengguna
 
-* Masyarakat umum yang membutuhkan layanan kesehatan
-* Keluarga pasien yang mencari rumah sakit terdekat
-* Operator atau admin yang mengelola data fasilitas kesehatan
+- Masyarakat umum yang membutuhkan layanan kesehatan
+- Keluarga pasien yang mencari rumah sakit terdekat
+- Operator atau admin yang mengelola data fasilitas kesehatan
 
 ---
 
@@ -69,10 +67,10 @@ Aplikasi ini berfokus pada wilayah Provinsi Banten, mencakup seluruh kabupaten d
 
 ## Teknologi yang Digunakan
 
-* React
-* TypeScript
-* Vite
-* Tailwind CSS
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
 
 ---
 
