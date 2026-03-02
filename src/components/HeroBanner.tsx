@@ -85,7 +85,7 @@ const HeroBanner = () => {
     setCurrentSlide((prev) => prev + 1);
   };
 
-  // ================= DRAG DESKTOP =================
+  // DRAG DESKTOP
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     isDraggingRef.current = true;
@@ -103,7 +103,7 @@ const HeroBanner = () => {
     isDraggingRef.current = false;
 
     const delta = dragDeltaRef.current;
-    const threshold = 40; // batas geser minimal
+    const threshold = 40; 
 
     if (delta > threshold) {
       goToPrevious();
@@ -115,7 +115,7 @@ const HeroBanner = () => {
     dragDeltaRef.current = 0;
   };
 
-  // ================= MOBILE INDICATOR (ULTRA SMOOTH) =================
+  // MOBILE INDICATOR  
 
   useEffect(() => {
     const container = mobileRef.current;
