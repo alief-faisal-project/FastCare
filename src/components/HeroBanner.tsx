@@ -275,7 +275,7 @@ const HeroBanner = () => {
             <div key={index} className="flex flex-col items-center gap-2">
               <a
                 href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border shadow-inner rounded-2xl w-24"
+                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border  rounded-2xl w-24"
               >
                 <i className={`${service.icon} text-primary text-lg`} />
                 <span className="text-xs font-bold text-primary text-center">
@@ -301,7 +301,7 @@ const HeroBanner = () => {
             >
               <a
                 href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border shadow-inner rounded-2xl min-w-[100px]"
+                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-2xl min-w-[100px]"
               >
                 <i className={`${service.icon} text-primary text-sm`} />
                 <span className="text-[10px] font-bold text-primary">
