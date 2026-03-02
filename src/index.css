@@ -244,4 +244,14 @@
   }
 }
 
+/* KHUSUS ANDROID / CHROMIUM
+   iOS & Safari TIDAK TERKENA */
+@supports not (-webkit-touch-callout: none) {
+  .hospital-quick-info {
+    white-space: nowrap;
+  }
 
+  .hospital-quick-info > span {
+    flex-shrink: 0;
+  }
+}
