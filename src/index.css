@@ -252,9 +252,3 @@
     stroke-dashoffset: 0;
   }
 }
-
-.heartbeat-path {
-  stroke-dasharray: 400;
-  stroke-dashoffset: 400;
-  animation: heartbeat-line 2s linear infinite;
-}

@@ -9,35 +9,28 @@ const LoadingScreen = ({ onLoadComplete }: LoadingScreenProps) => {
   const [progress, setProgress] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
 
-useEffect(() => {
-  const duration = 3000; // misalnya 3 detik
-  const intervalTime = 50;
-  const steps = duration / intervalTime;
-  const increment = 100 / steps;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setFadeOut(true);
+          setTimeout(() => {
+            onLoadComplete?.();
+          }, 500);
+          return 100;
+        }
+        return prev + Math.random() * 15 + 5;
+      });
+    }, 200);
 
-  const interval = setInterval(() => {
-    setProgress((prev) => {
-      if (prev >= 100) {
-        clearInterval(interval);
-        setFadeOut(true);
-
-        setTimeout(() => {
-          onLoadComplete?.();
-        }, 500);
-
-        return 100;
-      }
-      return prev + increment;
-    });
-  }, intervalTime);
-
-  return () => clearInterval(interval);
-}, [onLoadComplete]);
+    return () => clearInterval(interval);
+  }, [onLoadComplete]);
 
   return (
     <div
       className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background transition-opacity duration-500 ${
-        fadeOut ? "opacity-0" : "opacity-100"
+        fadeOut ? 'opacity-0' : 'opacity-100'
       }`}
     >
       <div className="flex flex-col items-center space-y-8">
@@ -55,45 +48,24 @@ useEffect(() => {
           Cari Rumah Sakit Terdekat di Banten
         </p>
 
-        {/* Heartbeat Loading */}
-        <div className="w-72 md:w-96">
-          <svg viewBox="0 0 400 100" className="w-full h-20" fill="none">
-            <path
-              d="M0 50 
-         L40 50 
-         L60 20 
-         L80 80 
-         L100 50 
-         L140 50 
-         L160 30 
-         L180 70 
-         L200 50 
-         L400 50"
-              stroke="currentColor"
-              strokeWidth="3"
-              className="heartbeat-path text-primary"
+        {/* Progress Bar */}
+        <div className="w-64 md:w-80">
+          <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
+              style={{ width: `${Math.min(progress, 100)}%` }}
             />
-          </svg>
-
+          </div>
           <p className="text-xs text-muted-foreground text-center mt-2">
-            Memuat data rumah sakit...
+            Memuat data... {Math.round(Math.min(progress, 100))}%
           </p>
         </div>
 
         {/* Loading dots */}
         <div className="flex space-x-2">
-          <div
-            className="w-2 h-2 bg-primary rounded-full animate-bounce"
-            style={{ animationDelay: "0ms" }}
-          />
-          <div
-            className="w-2 h-2 bg-primary rounded-full animate-bounce"
-            style={{ animationDelay: "150ms" }}
-          />
-          <div
-            className="w-2 h-2 bg-primary rounded-full animate-bounce"
-            style={{ animationDelay: "300ms" }}
-          />
+          <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
         </div>
       </div>
     </div>
