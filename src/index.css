@@ -245,3 +245,24 @@
 }
 
 
+/* ================================
+   KHUSUS ANDROID (Chromium)
+   iOS & Safari TIDAK TERKENA
+   ================================ */
+@supports not (-webkit-touch-callout: none) {
+  .hospital-quick-info {
+    flex-wrap: wrap;
+  }
+
+  /* Kamar + ICU tetap satu baris */
+  .hospital-quick-info > span:not(.hospital-quick-kelas) {
+    white-space: nowrap;
+  }
+
+  /* Kelas dipaksa ke baris bawah */
+  .hospital-quick-kelas {
+    flex-basis: 100%;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+}
