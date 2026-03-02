@@ -22,7 +22,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         {/* Distance Badge - only on image */}
         {typeof hospital.distance === "number" && (
           <div className="absolute top-2 right-2">
-            <span className="px-2 py-0.5 bg-white/95 text-foreground text-[9px] sm:text-[10px] font-medium shadow-sm flex items-center gap-2 rounded">
+            <span className="px-2 py-0.5 bg-white/95 text-foreground text-[10px] max-[360px]:text-[9px] font-medium shadow-sm flex items-center gap-2 rounded">
               <i className="fa-solid fa-location-arrow text-primary text-[8px]" />
               <span className="whitespace-nowrap leading-none">
                 {hospital.distance.toFixed(1)} km
@@ -41,7 +41,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
           style={{ transform: "skewX(-15deg)" }}
         >
           <span style={{ display: "inline-block", transform: "skewX(15deg)" }}>
-            {hospital.hasIGD ? "IGD Tersedia 24 Jam" : "UGD Terbatas"}
+            {hospital.hasIGD ? "IGD Tersedia 24 Jam" : " UGD Terbatas"}
           </span>
         </span>
       </div>
@@ -51,25 +51,25 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         <div>
           {/* Type Tag */}
           <div className="mb-1">
-            <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground leading-none">
+            <span className="text-[10px] max-[360px]:text-[9px] font-medium text-muted-foreground leading-none">
               {hospital.type}
             </span>
           </div>
 
           {/* Name */}
-          <h3 className="font-bold text-foreground text-[13px] sm:text-sm mb-1 line-clamp-1 leading-tight font-heading">
+          <h3 className="font-bold text-foreground text-sm max-[360px]:text-[13px] mb-1 line-clamp-1 leading-tight font-heading">
             {hospital.name}
           </h3>
 
           {/* Location */}
-          <p className="text-[11px] sm:text-xs text-muted-foreground mb-2 flex items-center gap-1 leading-tight truncate">
+          <p className="text-xs max-[360px]:text-[11px] text-muted-foreground mb-2 flex items-center gap-1 leading-tight truncate">
             <i className="fa-solid fa-location-dot text-[10px] shrink-0" />
             <span className="truncate">{hospital.city}</span>
           </p>
         </div>
 
         {/* Quick Info - Beds, Kelas, ICU */}
-        <div className="flex items-center gap-3 text-[9px] sm:text-[10px] text-muted-foreground leading-none">
+        <div className="flex items-center gap-3 text-[10px] max-[360px]:text-[9px] text-muted-foreground leading-none">
           <span className="flex items-center gap-1 truncate">
             <i className="fa-solid fa-bed shrink-0" />
             <span className="truncate">{hospital.totalBeds}+ Kamar</span>
