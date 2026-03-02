@@ -30,7 +30,18 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         {/* Distance Badge */}
         {typeof hospital.distance === "number" && (
           <div className="absolute top-2 right-2">
-            <span className="px-2 py-0.5 bg-white/95 text-foreground text-[10px] font-medium shadow-sm flex items-center gap-2 rounded">
+            <span
+              className="
+              px-2 py-0.5
+              bg-white/95
+              text-foreground
+              text-[10px]
+              font-medium
+              shadow-sm
+              flex items-center gap-2
+              rounded
+            "
+            >
               <i className="fa-solid fa-location-arrow text-primary text-[8px]" />
               <span className="whitespace-nowrap">
                 {hospital.distance.toFixed(1)} km
@@ -55,7 +66,13 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
       </div>
 
       {/* Content */}
-      <div className="p-3 flex flex-col flex-1">
+      <div
+        className="
+        p-3
+        flex flex-col
+        flex-1
+      "
+      >
         {/* Type */}
         <div className="mb-1 flex-shrink-0">
           <span className="text-[10px] font-medium text-muted-foreground">
@@ -63,58 +80,62 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
           </span>
         </div>
 
-        {/* Name */}
+        {/* Name (dibatasi agar tinggi konsisten di Android) */}
         <h3
           className="
-            font-bold
-            text-foreground
-            text-sm
-            mb-1
-            font-heading
-            line-clamp-2
-            min-h-[2.5rem]
-            sm:line-clamp-1
-            sm:min-h-0
-          "
+          font-bold
+          text-foreground
+          text-sm
+          mb-1
+          line-clamp-2
+          min-h-[2.5rem]
+          font-heading
+          sm:line-clamp-1
+          sm:min-h-0
+        "
         >
           {hospital.name}
         </h3>
 
         {/* Location */}
-        <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1 flex-shrink-0">
+        <p
+          className="
+          text-xs
+          text-muted-foreground
+          mb-3
+          flex items-center gap-1
+          flex-shrink-0
+        "
+        >
           <i className="fa-solid fa-location-dot text-[10px]" />
           {hospital.city}
         </p>
 
-        {/* Spacer */}
+        {/* Spacer biar info bawah selalu sejajar */}
         <div className="flex-1" />
 
         {/* Quick Info */}
         <div
           className="
-            flex
-            items-center
-            text-[10px]
-            text-muted-foreground
-            flex-nowrap
-            justify-between
-            sm:justify-start
-            sm:gap-3
-          "
+          flex items-center gap-3
+          text-[10px]
+          text-muted-foreground
+          flex-shrink-0
+        "
         >
-          <span className="flex items-center gap-1 whitespace-nowrap">
+          <span className="flex items-center gap-1">
             <i className="fa-solid fa-bed" />
             {hospital.totalBeds}+ Kamar
           </span>
 
           {hospital.hasICU && (
-            <span className="flex items-center gap-1 whitespace-nowrap">
+            <span className="flex items-center gap-1">
               <i className="fa-solid fa-heart-pulse" />
               ICU
             </span>
           )}
 
-          <span className="flex items-center gap-1 whitespace-nowrap">
+          <span className="flex items-center gap-1">
             Kelas {hospital.class}
           </span>
         </div>
