@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="bg-primary py-6 mt-12 border-t border-border rounded-t-3xl">
+    <footer className="bg-primary py-4 md:py-6 mt-12 border-t border-border rounded-t-3xl md:rounded-none">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Left - Copyright */}
@@ -18,8 +18,8 @@ const Footer = () => {
             Sumber Data: SIRS Kemkes RI
           </a>
 
-          {/* Right - Social Icons */}
-          <div className="flex items-center gap-4 order-1 md:order-3">
+          {/* Right - Social Icons (Desktop Only) */}
+          <div className="hidden md:flex items-center gap-4 order-1 md:order-3">
             <a
               href="mailto:info@fastcare.id"
               className="text-white hover:text-yellow-400 transition-colors"

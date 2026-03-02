@@ -61,7 +61,7 @@ const Navbar = () => {
   return (
     <nav className="navbar-sticky rounded-b-3xl">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20 md:h-24 ">
+        <div className="flex items-center justify-between h-20 md:h-20 ">
           {/* Logo */}
           <Link to="/" className="flex-shrink-0 mr-6">
             <img
