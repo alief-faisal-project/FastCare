@@ -60,10 +60,10 @@ const Navbar = () => {
 
   return (
     <nav className="navbar-sticky">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20 ">
+      <div className="container mx-auto px-4 ">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex-shrink-0 mr-6">
+          <Link to="/" className="flex-shrink-0 mr-6 ">
             <img
               src={fastcareLogo}
               alt="FastCare.id"
@@ -154,7 +154,7 @@ const Navbar = () => {
               <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Temukan rumah sakit di Banten..."
+                placeholder="Temukan pertolongan medis terdekat..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-card text-sm"
