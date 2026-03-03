@@ -9,10 +9,10 @@ import Login from "./pages/Login";
 import AdminPanel from "./pages/AdminPanel";
 import HospitalDetail from "./pages/HospitalDetail";
 import NotFound from "./pages/NotFound";
-import TutorialModal from "@/components/TutorialModal";
+import TutorialModal from "@/components/AlertModal";
 
-import tutorial1 from "@/assets/tutorial1.png";
-import tutorial2 from "@/assets/tutorial2.webp";
+import tutorial1 from "@/assets/alert1.webp";
+import tutorial2 from "@/assets/alert2.webp";
 
 const queryClient = new QueryClient();
 

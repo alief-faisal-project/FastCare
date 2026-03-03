@@ -71,15 +71,16 @@ const TutorialModal = ({ image1, image2 }: TutorialModalProps) => {
         {step === 2 && (
           <>
             <h2 className="text-base sm:text-lg font-semibold mb-3">
-             Deteksi Lokasi Perangkat
+              Fitur Deteksi Lokasi Perangkat
             </h2>
             <img
               src={image2}
               alt="Tutorial Step 2"
               className="w-full rounded-lg mb-3"
             />
-           <p className="text-xs sm:text-sm text-gray-600 mb-4">
-              Deteksi jarak dan temukan pertolongan medis terdekat.
+            <p className="text-xs sm:text-sm text-gray-600 mb-4">
+              Fitur deteksi lokasi untuk mengetahui jarak Anda dengan rumah
+              sakit atau klinik terdekat secara real-time.
             </p>
           </>
         )}
