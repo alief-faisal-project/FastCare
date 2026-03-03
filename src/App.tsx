@@ -9,6 +9,10 @@ import Login from "./pages/Login";
 import AdminPanel from "./pages/AdminPanel";
 import HospitalDetail from "./pages/HospitalDetail";
 import NotFound from "./pages/NotFound";
+import TutorialModal from "@/components/TutorialModal";
+
+import tutorial1 from "@/assets/tutorial1.png";
+import tutorial2 from "@/assets/tutorial2.webp";
 
 const queryClient = new QueryClient();
 
@@ -18,13 +22,16 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+
         <BrowserRouter>
+          {/* 🔥 PINDAHKAN KE DALAM ROUTER */}
+          <TutorialModal image1={tutorial1} image2={tutorial2} />
+
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/hospital/:id" element={<HospitalDetail />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
@@ -32,6 +39,5 @@ const App = () => (
     </AppProvider>
   </QueryClientProvider>
 );
-
 
 export default App;
