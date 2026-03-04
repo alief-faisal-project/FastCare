@@ -245,7 +245,7 @@ const HospitalDetail = () => {
             {/* badge igd */}
             {hospital?.hasIGD && (
               <div className="absolute top-3 left-3 z-10">
-                <span className="flex flex-col items-center justify-center bg-red-600 text-white w-16 h-16 rounded-full shadow-md text-center leading-tight">
+                <span className="flex flex-col items-center justify-center bg-red-600 text-white w-12 h-12 rounded-full shadow-md text-center leading-tight">
                   <span className="text-sm font-bold">IGD</span>
                   <span className="text-[10px] font-semibold">24 JAM</span>
                 </span>
@@ -349,7 +349,7 @@ const HospitalDetail = () => {
                     {getOwnership()}
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-2">
+                <div className="flex items-center justify-between py-">
                   <span className="text-sm text-muted-foreground">
                     IGD 24 Jam
                   </span>
