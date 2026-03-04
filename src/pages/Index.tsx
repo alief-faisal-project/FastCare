@@ -6,7 +6,6 @@ import HeroBanner from '@/components/HeroBanner';
 import MobileSearch from '@/components/MobileSearch';
 import HospitalGrid from '@/components/HospitalGrid';
 import Footer from '@/components/Footer';
-import FloatingContact from '@/components/FloatingContact';
 
 const Index = () => {
   const { isLoading } = useApp();
@@ -31,7 +30,6 @@ const Index = () => {
         <HospitalGrid />
       </main>
       <Footer />
-      <FloatingContact />
     </div>
   );
 };
