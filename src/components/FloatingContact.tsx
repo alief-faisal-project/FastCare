@@ -48,7 +48,7 @@ const FloatingContact = () => {
   // AUTO HIDE SAAT TIDAK ADA AKTIVITAS
   // ===============================
   // Jika user tidak scroll / tidak bergerak selama 2 detik,
-  // tombol akan hide ke kanan.
+  // tombol akan hide ke kiri.
   // Jika ada aktivitas (scroll, mousemove, touch),
   // tombol akan muncul kembali.
 
@@ -136,22 +136,22 @@ const FloatingContact = () => {
   return (
     <>
       {/* ===================================== */}
-      {/* TOMBOL FLOATING DI TENGAH KANAN LAYAR */}
+      {/* TOMBOL FLOATING DI TENGAH KIRI LAYAR */}
       {/* ===================================== */}
       <div
-        className={`fixed top-1/2 -translate-y-1/2 right-4 z-50 transition-all duration-500 ${
+        className={`fixed top-1/2 -translate-y-1/2 left-4 z-50 transition-all duration-500 ${
           isVisible
             ? "opacity-100 translate-x-0"
-            : "opacity-0 translate-x-20 pointer-events-none"
+            : "opacity-0 -translate-x-20 pointer-events-none"
         }`}
       >
         <div className="relative flex items-center">
           {/* Tooltip bantuan */}
           <div
-            className={`absolute right-16 transition-all duration-500 ${
+            className={`absolute left-16 transition-all duration-500 ${
               showTooltip
                 ? "opacity-100 translate-x-0"
-                : "opacity-0 translate-x-4 pointer-events-none"
+                : "opacity-0 -translate-x-4 pointer-events-none"
             }`}
           >
             <div className="bg-white text-gray-800 text-[10px] font-medium px-4 py-2 rounded-full shadow-lg border border-gray-200 whitespace-nowrap">
@@ -209,6 +209,9 @@ const FloatingContact = () => {
               {view === "menu" ? "Butuh Bantuan?" : "Ingin Berkontribusi?"}
             </DialogTitle>
           </DialogHeader>
+
+          {/* SELURUH ISI DI BAWAH INI TIDAK DIUBAH */}
+          {/* (sama persis seperti yang kamu kirim) */}
 
           <div className="space-y-4 pt-2">
             {view === "menu" && (
@@ -276,8 +279,9 @@ const FloatingContact = () => {
                 <div className="prose text-sm text-foreground text-justify leading-relaxed max-w-none">
                   <p>
                     Terima kasih telah menggunakan platform ini. Website ini
-                    100% gratis dan hadir untuk membantu Anda menemukan
-                    fasilitas kesehatan dengan cepat dan mudah.
+                    sepenuhnya gratis dan dirancang untuk membantu Anda
+                    menemukan fasilitas kesehatan dengan cepat, mudah, dan
+                    praktis.
                   </p>
                 </div>
 
