@@ -285,52 +285,48 @@ const HeroBanner = () => {
 
       <div className="container mx-auto px-4 mt-4">
         {/* Desktop emergency */}
-        <div className="hidden md:flex items-center justify-center gap-4 w-full max-w-4xl mx-auto">
+        <div className="hidden md:flex items-start justify-center gap-6 w-full max-w-4xl mx-auto">
           {emergencyServices.map((service, index) => (
-            <a
-              key={index}
-              href={`tel:${service.number.replace(/\s/g, "")}`}
-              className="flex flex-col items-center justify-between text-center
-                 px-3 py-3 w-24 h-28
-                 bg-card border border-border rounded-2xl"
-            >
-              <i className={`${service.icon} text-primary text-lg`} />
-
-              <span className="text-xs font-bold text-primary">
-                {service.number}
-              </span>
-
-              <span className="text-[10px] font-medium text-foreground leading-tight">
+            <div key={index} className="flex flex-col items-center gap-2">
+              <a
+                href={`tel:${service.number.replace(/\s/g, "")}`}
+                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border  rounded-2xl w-24"
+              >
+                <i className={`${service.icon} text-primary text-lg`} />
+                <span className="text-xs font-bold text-primary text-center">
+                  {service.number}
+                </span>
+              </a>
+              <span className="text-xs font-medium text-foreground text-center leading-tight">
                 {service.label}
               </span>
-            </a>
+            </div>
           ))}
         </div>
+
         {/* Mobile emergency */}
         <div
           className="md:hidden flex gap-3 overflow-x-auto scrollbar-hide"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {emergencyServices.map((service, index) => (
-            <a
+            <div
               key={index}
-              href={`tel:${service.number.replace(/\s/g, "")}`}
-              className="flex flex-col items-center justify-between text-center
-                 w-[110px] h-[115px]
-                 px-3 py-3
-                 bg-card border border-border rounded-2xl
-                 flex-shrink-0"
+              className="flex flex-col items-center gap-1 flex-shrink-0"
             >
-              <i className={`${service.icon} text-primary text-sm`} />
-
-              <span className="text-[10px] font-bold text-primary">
-                {service.number}
-              </span>
-
-              <span className="text-[9px] font-medium text-foreground leading-tight">
+              <a
+                href={`tel:${service.number.replace(/\s/g, "")}`}
+                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-2xl min-w-[100px]"
+              >
+                <i className={`${service.icon} text-primary text-sm`} />
+                <span className="text-[10px] font-bold text-primary">
+                  {service.number}
+                </span>
+              </a>
+              <span className="text-[10px] font-medium text-foreground text-center leading-tight">
                 {service.label}
               </span>
-            </a>
+            </div>
           ))}
         </div>
       </div>
