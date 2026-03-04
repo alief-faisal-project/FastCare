@@ -95,7 +95,7 @@ const ScrollToTopButton = () => {
           h-12 w-12
           rounded-2xl
           bg-transparent
-          text-primary
+          text-black
           flex items-center justify-center
         "
         aria-label="Scroll to top"
