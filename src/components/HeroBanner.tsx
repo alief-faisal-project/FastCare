@@ -321,11 +321,11 @@ const HeroBanner = () => {
             >
               <a
                 href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border rounded-2xl min-w-[100px]"
+                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border rounded-3xl min-w-[100px]"
               >
                 {/* Icon with circular background inside border */}
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <i className={`${service.icon} text-primary text-xs`} />
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                  <i className={`${service.icon} text-white text-xs`} />
                 </div>
 
                 <span className="text-[10px] font-bold text-primary text-center">
@@ -333,7 +333,7 @@ const HeroBanner = () => {
                 </span>
               </a>
 
-              <span className="text-[10px] font-medium text-foreground text-center leading-tight">
+              <span className="text-[8px] font-medium text-foreground text-center leading-tight">
                 {service.label}
               </span>
             </div>
