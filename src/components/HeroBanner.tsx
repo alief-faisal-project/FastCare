@@ -296,17 +296,16 @@ const HeroBanner = () => {
             >
               <i className={`${service.icon} text-primary text-lg`} />
 
-              <span className="text-[10px] font-medium text-foreground leading-tight">
-                {service.label}
-              </span>
-
               <span className="text-xs font-bold text-primary">
                 {service.number}
+              </span>
+
+              <span className="text-[10px] font-medium text-foreground leading-tight">
+                {service.label}
               </span>
             </a>
           ))}
         </div>
-
         {/* Mobile emergency */}
         <div
           className="md:hidden flex gap-3 overflow-x-auto scrollbar-hide"
@@ -317,17 +316,19 @@ const HeroBanner = () => {
               key={index}
               href={`tel:${service.number.replace(/\s/g, "")}`}
               className="flex flex-col items-center justify-between text-center
-                 px-3 py-3 min-w-[100px] h-24
-                 bg-card border border-border rounded-2xl flex-shrink-0"
+                 w-[110px] h-[115px]
+                 px-3 py-3
+                 bg-card border border-border rounded-2xl
+                 flex-shrink-0"
             >
               <i className={`${service.icon} text-primary text-sm`} />
 
-              <span className="text-[9px] font-medium text-foreground leading-tight">
-                {service.label}
-              </span>
-
               <span className="text-[10px] font-bold text-primary">
                 {service.number}
+              </span>
+
+              <span className="text-[9px] font-medium text-foreground leading-tight">
+                {service.label}
               </span>
             </a>
           ))}
