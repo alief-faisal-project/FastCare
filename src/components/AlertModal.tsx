@@ -11,31 +11,50 @@ const TutorialModal = ({ image1, image2 }: TutorialModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState(1);
 
-  useEffect(() => {
-    const hideTutorial = sessionStorage.getItem("hideTutorial");
+  const STORAGE_KEY = "tutorialLastSeen";
+  const ONE_DAY = 24 * 60 * 60 * 1000; // 1 hari dalam ms
 
-    if (location.pathname === "/" && !hideTutorial) {
+  useEffect(() => {
+    if (location.pathname !== "/") {
+      setIsOpen(false);
+      return;
+    }
+
+    const lastSeen = localStorage.getItem(STORAGE_KEY);
+
+    if (!lastSeen) {
       setIsOpen(true);
+      setStep(1);
+      return;
+    }
+
+    const now = Date.now();
+    const diff = now - Number(lastSeen);
+
+    // Jika sudah lewat 1 hari, tampilkan lagi
+    if (diff > ONE_DAY) {
+      setIsOpen(true);
+      setStep(1);
     } else {
       setIsOpen(false);
     }
   }, [location.pathname]);
 
-  useEffect(() => {
-    if (location.pathname !== "/") {
-      sessionStorage.setItem("hideTutorial", "true");
-    }
-  }, [location.pathname]);
+  const saveTimestamp = () => {
+    localStorage.setItem(STORAGE_KEY, Date.now().toString());
+  };
 
   const handleNext = () => {
     if (step === 1) {
       setStep(2);
     } else {
+      saveTimestamp(); // simpan waktu selesai
       setIsOpen(false);
     }
   };
 
   const handleClose = () => {
+    saveTimestamp(); // simpan waktu jika ditutup manual
     setIsOpen(false);
   };
 

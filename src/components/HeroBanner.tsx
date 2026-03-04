@@ -297,7 +297,7 @@ const HeroBanner = () => {
                   {service.number}
                 </span>
               </a>
-              <span className="text-xs font-medium text-foreground text-center leading-tight">
+              <span className="text-[10px] font-medium text-foreground text-center leading-tight">
                 {service.label}
               </span>
             </div>

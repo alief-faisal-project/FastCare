@@ -242,14 +242,12 @@ const HospitalDetail = () => {
 
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
             {/* badge igd */}
             {hospital?.hasIGD && (
-              <div className="absolute top-0 left-0 z-10">
-                <span className="inline-flex bg-red-600 text-white text-sm font-semibold px-5 py-2 -skew-x-12">
-                  <span className="inline-block skew-x-12">
-                    IGD Tersedia 24 Jam
-                  </span>
+              <div className="absolute top-3 left-3 z-10">
+                <span className="flex flex-col items-center justify-center bg-red-600 text-white w-16 h-16 rounded-full shadow-md text-center leading-tight">
+                  <span className="text-sm font-bold">IGD</span>
+                  <span className="text-[10px] font-semibold">24 JAM</span>
                 </span>
               </div>
             )}
