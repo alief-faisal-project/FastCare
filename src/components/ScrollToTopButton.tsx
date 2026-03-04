@@ -101,7 +101,7 @@ const ScrollToTopButton = () => {
         aria-label="Scroll to top"
       >
         {/* Icon panah ke atas */}
-        <i className="fa-solid fa-arrow-up text-5xl" />
+        <i className="fa-solid fa-angles-up text-5xl" />
       </button>
     </div>
   );
