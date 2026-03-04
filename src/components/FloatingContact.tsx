@@ -8,42 +8,88 @@ import {
 import bniLogo from "@/assets/bni-logo.webp";
 
 const FloatingContact = () => {
+  // ===============================
+  // STATE UTAMA
+  // ===============================
+
+  // Mengontrol apakah dialog/modal terbuka atau tidak
   const [isOpen, setIsOpen] = useState(false);
+
+  // Mengontrol visibilitas tombol floating (untuk animasi show/hide)
   const [isVisible, setIsVisible] = useState(true);
+
+  // Mengontrol tampilan di dalam dialog (menu utama atau halaman dukung)
   const [view, setView] = useState<"menu" | "dukung">("menu");
 
-  // State untuk animasi bounce icon
+  // ===============================
+  // STATE TAMBAHAN
+  // ===============================
+
+  // Mengontrol animasi bounce pada icon
   const [animate, setAnimate] = useState(false);
 
-  // State untuk show / hide nomor rekening
+  // Mengontrol apakah nomor rekening ditampilkan penuh atau disamarkan
   const [showRek, setShowRek] = useState(false);
 
-  // State untuk tooltip bantuan
+  // Mengontrol tooltip "Butuh Bantuan?"
   const [showTooltip, setShowTooltip] = useState(false);
+
+  // ===============================
+  // DATA REKENING
+  // ===============================
 
   // Nomor rekening asli
   const noRek = "1961828503";
 
-  // Mask 3 digit terakhir
+  // Menyembunyikan 3 digit terakhir dengan ***
   const maskedRek = noRek.slice(0, -3) + "***";
 
-  // Kontrol visibility saat scroll mendekati footer
+  // ===============================
+  // AUTO HIDE SAAT TIDAK ADA AKTIVITAS
+  // ===============================
+  // Jika user tidak scroll / tidak bergerak selama 2 detik,
+  // tombol akan hide ke kanan.
+  // Jika ada aktivitas (scroll, mousemove, touch),
+  // tombol akan muncul kembali.
+
   useEffect(() => {
-    const handleScroll = () => {
-      const footer = document.querySelector("footer");
-      if (footer) {
-        const footerRect = footer.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        setIsVisible(footerRect.top > windowHeight - 50);
-      }
+    let timeout: NodeJS.Timeout;
+
+    const resetTimer = () => {
+      // Saat ada aktivitas -> tampilkan tombol
+      setIsVisible(true);
+
+      // Reset timer sebelumnya
+      clearTimeout(timeout);
+
+      // Jika 2 detik tidak ada aktivitas -> sembunyikan
+      timeout = setTimeout(() => {
+        setIsVisible(false);
+      }, 2000);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Event yang dianggap sebagai aktivitas user
+    const events = ["scroll", "mousemove", "touchstart"];
+
+    // Tambahkan listener
+    events.forEach((event) => window.addEventListener(event, resetTimer));
+
+    // Jalankan pertama kali
+    resetTimer();
+
+    // Bersihkan event listener saat unmount
+    return () => {
+      clearTimeout(timeout);
+      events.forEach((event) => window.removeEventListener(event, resetTimer));
+    };
   }, []);
 
-  // Reset view saat dialog ditutup
+  // ===============================
+  // RESET VIEW SAAT DIALOG DITUTUP
+  // ===============================
+  // Ketika modal ditutup, kembalikan ke menu utama
+  // dan sembunyikan nomor rekening kembali
+
   useEffect(() => {
     if (!isOpen) {
       setView("menu");
@@ -51,18 +97,28 @@ const FloatingContact = () => {
     }
   }, [isOpen]);
 
-  // Animasi bounce setiap 3 detik
+  // ===============================
+  // ANIMASI BOUNCE SETIAP 3 DETIK
+  // ===============================
+  // Memberi efek hidup pada tombol agar menarik perhatian
+
   useEffect(() => {
     const interval = setInterval(() => {
       setAnimate(true);
+
+      // Hentikan animasi setelah 900ms
       setTimeout(() => setAnimate(false), 900);
     }, 3000);
 
     return () => clearInterval(interval);
   }, []);
 
-  // Tooltip otomatis muncul saat pertama render
-  // Akan muncul lagi jika halaman direfresh
+  // ===============================
+  // TOOLTIP OTOMATIS SAAT PERTAMA LOAD
+  // ===============================
+  // Akan muncul 800ms setelah halaman dibuka
+  // Lalu menghilang setelah 3 detik
+
   useEffect(() => {
     const showTimer = setTimeout(() => {
       setShowTooltip(true);
@@ -79,12 +135,14 @@ const FloatingContact = () => {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* ===================================== */}
+      {/* TOMBOL FLOATING DI TENGAH KANAN LAYAR */}
+      {/* ===================================== */}
       <div
-        className={`fixed bottom-8 right-4 z-50 transition-all duration-300 ${
+        className={`fixed top-1/2 -translate-y-1/2 right-4 z-50 transition-all duration-500 ${
           isVisible
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-4 pointer-events-none"
+            ? "opacity-100 translate-x-0"
+            : "opacity-0 translate-x-20 pointer-events-none"
         }`}
       >
         <div className="relative flex items-center">
@@ -96,29 +154,33 @@ const FloatingContact = () => {
                 : "opacity-0 translate-x-4 pointer-events-none"
             }`}
           >
-            <div className="bg-white text-gray-800 text-sm font-medium px-4 py-2 rounded-full shadow-lg border border-gray-200 whitespace-nowrap">
+            <div className="bg-white text-gray-800 text-[10px] font-medium px-4 py-2 rounded-full shadow-lg border border-gray-200 whitespace-nowrap">
               Butuh Bantuan?
             </div>
           </div>
 
+          {/* Tombol utama */}
           <button
             onClick={() => setIsOpen(true)}
             className={`flex items-center justify-center
-              w-14 h-14
+              w-12 h-12
               rounded-full
-              bg-transparent
-              text-primary
+              bg-primary
+              text-white
+              shadow-lg
               hover:scale-105 active:scale-95
               transition-transform duration-300
               ${animate ? "smooth-bounce" : ""}
             `}
           >
-            <i className="fa-solid fa-headset text-4xl" />
+            <i className="fa-solid fa-headset text-2xl" />
           </button>
         </div>
       </div>
 
-      {/* Animasi bounce icon */}
+      {/* ===================================== */}
+      {/* STYLE ANIMASI BOUNCE */}
+      {/* ===================================== */}
       <style>
         {`
           @keyframes smoothBounce {
@@ -136,7 +198,9 @@ const FloatingContact = () => {
         `}
       </style>
 
-      {/* Dialog bantuan */}
+      {/* ===================================== */}
+      {/* DIALOG / MODAL BANTUAN */}
+      {/* ===================================== */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -154,8 +218,10 @@ const FloatingContact = () => {
               </p>
             )}
 
+            {/* Tampilan Menu Utama */}
             {view === "menu" ? (
               <div className="space-y-3">
+                {/* WhatsApp */}
                 <a
                   href="https://wa.me/6285692985927"
                   target="_blank"
@@ -173,6 +239,7 @@ const FloatingContact = () => {
                   </div>
                 </a>
 
+                {/* Email */}
                 <a
                   href="mailto:help@fastcare.id"
                   className="flex items-center gap-3 p-3 border border-border rounded-xl hover:border-primary hover:bg-accent transition-colors"
@@ -186,6 +253,7 @@ const FloatingContact = () => {
                   </div>
                 </a>
 
+                {/* Menu Dukung */}
                 <button
                   type="button"
                   onClick={() => setView("dukung")}
@@ -203,27 +271,17 @@ const FloatingContact = () => {
                 </button>
               </div>
             ) : (
+              // Tampilan Halaman Dukung
               <div className="space-y-4">
                 <div className="prose text-sm text-foreground text-justify leading-relaxed max-w-none">
                   <p>
-                    Terima kasih telah menggunakan platform pencarian rumah
-                    sakit terdekat. Website ini 100% gratis dan hadir untuk
-                    membantu Anda menemukan fasilitas kesehatan dengan cepat,
-                    akurat, dan mudah diakses kapan pun dibutuhkan.
-                  </p>
-
-                  <p>
-                    Kami terus mengembangkan platform ini agar data semakin
-                    lengkap, deteksi lokasi dan jarak semakin akurat, serta
-                    pengalaman pengguna semakin nyaman.
-                  </p>
-
-                  <p>
-                    Bersama, mari membangun akses informasi kesehatan yang
-                    cepat, transparan, dan dapat diandalkan untuk semua orang.
+                    Terima kasih telah menggunakan platform ini. Website ini
+                    100% gratis dan hadir untuk membantu Anda menemukan
+                    fasilitas kesehatan dengan cepat dan mudah.
                   </p>
                 </div>
 
+                {/* Informasi rekening */}
                 <div className="flex items-center gap-4 pt-2">
                   <div className="w-20 h-20 flex items-center justify-center bg-white rounded-lg border border-border overflow-hidden">
                     <img
@@ -243,6 +301,7 @@ const FloatingContact = () => {
                         {showRek ? noRek : maskedRek}
                       </p>
 
+                      {/* Tombol show/hide nomor rekening */}
                       <button
                         type="button"
                         onClick={() => setShowRek(!showRek)}
