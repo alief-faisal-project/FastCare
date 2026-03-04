@@ -10,7 +10,6 @@ import AdminPanel from "./pages/AdminPanel";
 import HospitalDetail from "./pages/HospitalDetail";
 import NotFound from "./pages/NotFound";
 import TutorialModal from "@/components/AlertModal";
-import ScrollToTopButton from "@/components/ScrollToTopButton"; // ✅ Tambahan
 
 import tutorial1 from "@/assets/alert1.webp";
 import tutorial2 from "@/assets/alert2.webp";
@@ -35,9 +34,6 @@ const App = () => (
             <Route path="/hospital/:id" element={<HospitalDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-
-          {/* ✅ Scroll To Top Button */}
-          <ScrollToTopButton />
         </BrowserRouter>
       </TooltipProvider>
     </AppProvider>
