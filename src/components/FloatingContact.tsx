@@ -165,15 +165,15 @@ const FloatingContact = () => {
             className={`flex items-center justify-center
               w-12 h-12
               rounded-full
-              bg-primary
-              text-white
+              bg-transparent
+              text-primary
               shadow-lg
               hover:scale-105 active:scale-95
               transition-transform duration-300
               ${animate ? "smooth-bounce" : ""}
             `}
           >
-            <i className="fa-solid fa-headset text-2xl" />
+            <i className="fa-solid fa-headset text-[30px]" />
           </button>
         </div>
       </div>
