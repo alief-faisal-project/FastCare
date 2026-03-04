@@ -285,22 +285,25 @@ const HeroBanner = () => {
 
       <div className="container mx-auto px-4 mt-4">
         {/* Desktop emergency */}
-        <div className="hidden md:flex items-start justify-center gap-6 w-full max-w-4xl mx-auto">
+        <div className="hidden md:flex items-center justify-center gap-4 w-full max-w-4xl mx-auto">
           {emergencyServices.map((service, index) => (
-            <div key={index} className="flex flex-col items-center gap-2">
-              <a
-                href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border  rounded-2xl w-24"
-              >
-                <i className={`${service.icon} text-primary text-lg`} />
-                <span className="text-xs font-bold text-primary text-center">
-                  {service.number}
-                </span>
-              </a>
-              <span className="text-xs font-medium text-foreground text-center leading-tight">
+            <a
+              key={index}
+              href={`tel:${service.number.replace(/\s/g, "")}`}
+              className="flex flex-col items-center justify-between text-center
+                 px-3 py-3 w-24 h-28
+                 bg-card border border-border rounded-2xl"
+            >
+              <i className={`${service.icon} text-primary text-lg`} />
+
+              <span className="text-[10px] font-medium text-foreground leading-tight">
                 {service.label}
               </span>
-            </div>
+
+              <span className="text-xs font-bold text-primary">
+                {service.number}
+              </span>
+            </a>
           ))}
         </div>
 
@@ -310,23 +313,23 @@ const HeroBanner = () => {
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {emergencyServices.map((service, index) => (
-            <div
+            <a
               key={index}
-              className="flex flex-col items-center gap-1 flex-shrink-0"
+              href={`tel:${service.number.replace(/\s/g, "")}`}
+              className="flex flex-col items-center justify-between text-center
+                 px-3 py-3 min-w-[100px] h-24
+                 bg-card border border-border rounded-2xl flex-shrink-0"
             >
-              <a
-                href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-2xl min-w-[100px]"
-              >
-                <i className={`${service.icon} text-primary text-sm`} />
-                <span className="text-[10px] font-bold text-primary">
-                  {service.number}
-                </span>
-              </a>
-              <span className="text-[10px] font-medium text-foreground text-center leading-tight">
+              <i className={`${service.icon} text-primary text-sm`} />
+
+              <span className="text-[9px] font-medium text-foreground leading-tight">
                 {service.label}
               </span>
-            </div>
+
+              <span className="text-[10px] font-bold text-primary">
+                {service.number}
+              </span>
+            </a>
           ))}
         </div>
       </div>
