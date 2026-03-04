@@ -290,18 +290,13 @@ const HeroBanner = () => {
             <div key={index} className="flex flex-col items-center gap-2">
               <a
                 href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-3 px-4 py-4 bg-card border border-border rounded-2xl w-24"
+                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border  rounded-2xl w-24"
               >
-                {/* Icon with circular background inside border */}
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <i className={`${service.icon} text-primary text-base`} />
-                </div>
-
+                <i className={`${service.icon} text-primary text-lg`} />
                 <span className="text-xs font-bold text-primary text-center">
                   {service.number}
                 </span>
               </a>
-
               <span className="text-xs font-medium text-foreground text-center leading-tight">
                 {service.label}
               </span>
@@ -321,19 +316,14 @@ const HeroBanner = () => {
             >
               <a
                 href={`tel:${service.number.replace(/\s/g, "")}`}
-                className="flex flex-col items-center gap-2 px-4 py-3 bg-card border border-border rounded-3xl min-w-[100px]"
+                className="flex flex-col items-center gap-1.5 px-4 py-3 bg-card border border-border rounded-3xl min-w-[100px]"
               >
-                {/* Icon with circular background inside border */}
-                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                  <i className={`${service.icon} text-white text-xs`} />
-                </div>
-
-                <span className="text-[10px] font-bold text-primary text-center">
+                <i className={`${service.icon} text-primary text-sm`} />
+                <span className="text-[10px] font-bold text-primary">
                   {service.number}
                 </span>
               </a>
-
-              <span className="text-[8px] font-medium text-foreground text-center leading-tight">
+              <span className="text-[10px] font-medium text-foreground text-center leading-tight">
                 {service.label}
               </span>
             </div>
