@@ -90,7 +90,7 @@ const HospitalGrid = () => {
                   <div
                     className={`
                       absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full
-                      bg-white text-primary rounded-md text-xs font-semibold
+                      bg-primary text-white rounded-md text-xs font-semibold
                       px-3 py-1 shadow-md whitespace-nowrap
                       transition-opacity duration-300
                       ${
@@ -100,7 +100,7 @@ const HospitalGrid = () => {
                       }
                     `}
                   >
-                    RS/Klinik terdekat dari lokasi anda
+                    Terdekat dari Lokasi Anda Saat Ini
                   </div>
                 )}
               </div>

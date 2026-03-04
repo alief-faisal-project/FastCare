@@ -66,7 +66,7 @@ const Footer = () => {
                 onClick={() => setIsOpen(true)}
                 className="text-xs text-white hover:text-yellow-400 transition-colors"
               >
-                Butuh Bantuan
+                Hubungi Kami
               </button>
 
               {/* Social Icons (Desktop Only) */}
