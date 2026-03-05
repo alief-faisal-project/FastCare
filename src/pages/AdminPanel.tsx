@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { sanitizeInput } from "@/lib/security";
 import { useNavigate, Link } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
@@ -31,7 +31,17 @@ const AdminPanel = () => {
   const [editingBanner, setEditingBanner] = useState<HeroBanner | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Redirect if not authenticated
+//usememo
+
+  const filteredHospitals = useMemo(() => {
+    return hospitals.filter(
+      (h) =>
+        h.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        h.city.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [hospitals, searchQuery]);
+
+    // Logic mengalihkan jika belum terautentikasi
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
@@ -39,12 +49,6 @@ const AdminPanel = () => {
   }, [isAuthenticated, navigate]);
 
   if (!isAuthenticated) return null;
-
-  const filteredHospitals = hospitals.filter(
-    (h) =>
-      h.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      h.city.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
 
   const handleDeleteHospital = (id: string) => {
     if (confirm("Apakah Anda yakin ingin menghapus rumah sakit ini?")) {

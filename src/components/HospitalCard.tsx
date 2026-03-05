@@ -24,6 +24,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         <img
           src={hospital.image}
           alt={hospital.name}
+          loading="lazy"
           className="w-full h-full object-cover"
         />
 
