@@ -21,6 +21,11 @@ const Navbar = () => {
   const locationRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
+  // ===============================
+  // STATE UNTUK DETEKSI SCROLL
+  // ===============================
+  const [isScrolled, setIsScrolled] = useState(false);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -33,6 +38,18 @@ const Navbar = () => {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // ===============================
+  // DETEKSI POSISI SCROLL HALAMAN
+  // ===============================
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 120);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleDetectLocation = async () => {
@@ -63,13 +80,28 @@ const Navbar = () => {
       <div className="container mx-auto px-4 ">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex-shrink-0 mr-6 ">
+          <div
+            className="flex-shrink-0 mr-6 cursor-pointer"
+            onClick={() => {
+              // Jika halaman sudah discroll → scroll ke atas
+              if (isScrolled) {
+                window.scrollTo({
+                  top: 0,
+                  left: 0,
+                  behavior: "smooth",
+                });
+              } else {
+                // Jika masih di atas → kembali ke beranda
+                navigate("/");
+              }
+            }}
+          >
             <img
               src={fastcareLogo}
               alt="FastCare.id"
               className="h-14 md:h-20 w-auto object-contain"
             />
-          </Link>
+          </div>
 
           {/* Desktop: Location & Search */}
           <div className="hidden md:flex items-center gap-4 flex-1 max-w-3xl mx-6">
@@ -123,7 +155,6 @@ const Navbar = () => {
                       selectedCity === "Semua" ? "bg-accent" : ""
                     }`}
                   >
-                    {/* <i className="fa-solid fa-map text-muted-foreground w-5"></i> */}
                     <span className="text-sm text-foreground">
                       Semua Wilayah
                     </span>
