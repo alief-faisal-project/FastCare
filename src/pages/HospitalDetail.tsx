@@ -231,27 +231,27 @@ const HospitalDetail = () => {
             </div>
           </div>
         </div>
-<div className="lg:hidden space-y-6">
-  {/* Image */}
-  <div className="relative aspect-video overflow-hidden rounded-3xl">
-    <img
-      src={hospital?.image ?? ""}
-      alt={hospital?.name ?? "Hospital"}
-      className="w-full h-full object-cover"
-    />
+        <div className="lg:hidden space-y-6">
+          {/* Image */}
+          <div className="relative aspect-video overflow-hidden rounded-3xl">
+            <img
+              src={hospital?.image ?? ""}
+              alt={hospital?.name ?? "Hospital"}
+              className="w-full h-full object-cover"
+            />
 
-    {/* Overlay */}
-    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-    {/* badge igd */}
-    {hospital?.hasIGD && (
-      <div className="absolute bottom-16 left-4 z-10">
-        <span className="bg-red-600 text-white px-3 py-1 rounded-md shadow-md text-xs font-semibold">
-          IGD 24 JAM
-        </span>
-      </div>
-    )}
-
+            {/* badge igd */}
+            {hospital?.hasIGD && (
+              <div className="absolute top-0 right-8 z-10">
+                <span className="flex flex-col items-center justify-center bg-red-600 text-white px-3 py-3 rounded-b-xl shadow-md text-center leading-tight">
+                  <span className="text-xs font-bold">IGD</span>
+                  <span className="text-[10px] font-semibold">24 JAM</span>
+                </span>
+              </div>
+            )}
 
             {/* title rumah sakit */}
             {hospital?.name && (
