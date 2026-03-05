@@ -245,10 +245,9 @@ const HospitalDetail = () => {
 
     {/* badge igd */}
     {hospital?.hasIGD && (
-      <div className="absolute top-0 right-8 z-10">
-        <span className="flex flex-col items-center justify-center bg-red-600 text-white px-3 py-1 rounded-b-xl shadow-md text-center leading-tight">
-          <span className="text-xs font-bold">IGD</span>
-          <span className="text-[10px] font-semibold">24 JAM</span>
+      <div className="absolute bottom-16 left-4 z-10">
+        <span className="bg-red-600 text-white px-3 py-1 rounded-md shadow-md text-xs font-semibold">
+          IGD 24 JAM
         </span>
       </div>
     )}
